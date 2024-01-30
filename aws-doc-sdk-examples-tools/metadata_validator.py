@@ -193,7 +193,9 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     SdkVersion.sdks = sdks_yaml
     ServiceName.services = services_yaml
     ExampleId.services = services_yaml
-    BlockContent.block_names = os.listdir(doc_gen_root / ".doc_gen" / "cross-content")
+    cross_content = doc_gen_root / ".doc_gen" / "cross-content"
+    has_cross_content = cross_content.exists()
+    BlockContent.block_names = os.listdir(cross_content) if has_cross_content else []
 
     validators = DefaultValidators.copy()
     validators[ServiceName.tag] = ServiceName

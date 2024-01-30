@@ -176,7 +176,7 @@ def verify_no_secret_keys(
 ):
     """Verify the file does not contain 20- or 40- length character strings,
     which might be secret keys. Allow strings in the allowlist in
-    https://github.com/awsdocs/aws-doc-sdk-examples-tools/blob/main/.tools/validation/validator_config.py
+    https://github.com/awsdocs/aws-doc-sdk-examples-tools/blob/main/.tools/validation/validator_config.py.
     """
     keys = set(
         re.findall(TWENTY_LONG_KEY_REGEX, file_contents)
