@@ -133,6 +133,9 @@ class MissingSampleFile(MetadataError):
 def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
     """Verify sample files meet the requirements and have not moved."""
     sample_files_folder = root_path / "resources/sample_files"
+    if not sample_files_folder.exists():
+        # TODO allow projects to configure their specific expected sample files.
+        return
     media_folder = ".sample_media"
     file_list: list[str] = []
     for path in get_files(sample_files_folder):
@@ -173,7 +176,7 @@ def verify_no_secret_keys(
 ):
     """Verify the file does not contain 20- or 40- length character strings,
     which might be secret keys. Allow strings in the allowlist in
-    https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.tools/validation/validator_config.py.
+    https://github.com/awsdocs/aws-doc-sdk-examples-tools/blob/main/.tools/validation/validator_config.py
     """
     keys = set(
         re.findall(TWENTY_LONG_KEY_REGEX, file_contents)
