@@ -1,0 +1,24 @@
+name: "Validate AWS Doc SDK Examples Metadata"
+description: "A GitHub Action that validates metadata for projects that expose snippets via AWS Doc SDK Examples"
+inputs:
+  root:
+    description: "Root of the repository checkout to validate metadata for"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      shell: bash
+      with:
+        repository: awsdocs/aws-doc-sdk-examples-tools
+        path: tools
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+      shell: bash
+    - name: Run validator
+      run: python3 "${{ github.workspace }}/tools/aws-doc-sdk-examples-tools/validate.py" --root "${{ inputs.root }}"
+      shell: bash
