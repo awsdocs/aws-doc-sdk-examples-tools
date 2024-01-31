@@ -10,7 +10,7 @@ import yaml
 from pathlib import Path
 
 import metadata_errors
-from metadata import parse, Example, Url, Language, Version, Excerpt
+from metadata import parse, Example, Url, Language, Version, Excerpt, idFormat
 from doc_gen import DocGen
 from sdks import Sdk
 from services import Service
@@ -381,6 +381,17 @@ def test_common_errors(
 ):
     _, actual = load(Path(filename), DOC_GEN)
     assert expected_errors == [*actual]
+
+
+TEST_SERVICES = {"test": Service("test", "test", "test", "1")}
+
+
+def test_idFormat():
+    assert idFormat("serverless_Snippet", TEST_SERVICES)
+    assert idFormat("test_Test", TEST_SERVICES)
+    assert idFormat("cross_Cross", TEST_SERVICES)
+    assert not idFormat("other_Other", TEST_SERVICES)
+    assert not idFormat("test", TEST_SERVICES)
 
 
 if __name__ == "__main__":

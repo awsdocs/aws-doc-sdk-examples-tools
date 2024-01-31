@@ -3,7 +3,7 @@ description: "A GitHub Action that validates metadata for projects that expose s
 inputs:
   root:
     description: "Root of the repository checkout to validate metadata within"
-    required: true
+    default: ${{ github.workspace }}
 runs:
   using: "composite"
   steps:

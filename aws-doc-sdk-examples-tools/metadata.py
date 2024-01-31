@@ -304,7 +304,7 @@ def idFormat(id: str, services: dict[str, Service]) -> bool:
     [service, *rest] = id.split("_")
     if len(rest) == 0:
         return False
-    return service in services or service == "cross"
+    return service in services or service in ["cross", "serverless"]
 
 
 def parse(
