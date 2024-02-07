@@ -234,4 +234,4 @@ EXPECTED_SAMPLE_FILES = {
 }
 
 # Media file types.
-MEDIA_FILE_TYPES = {"mp3", "wav"}
+MEDIA_FILE_TYPES = {"mp3", "wav", "jpg", "jpeg", "png"}
