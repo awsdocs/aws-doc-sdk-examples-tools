@@ -37,16 +37,21 @@ class Url:
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.
-    snippet_tags: list[str]
+    snippet_tags: list[str] = field(default_factory=list)
     # A path within the repo to extract the entire file as a snippet.
     snippet_files: list[str] = field(default_factory=list)
+    # Literal contents to include as snippets
+    snippet_contents: list[str] = field(default_factory=list)
 
     @classmethod
     def from_yaml(cls, yaml: Any) -> Self:
         description = yaml.get("description")
         snippet_files = [str(file) for file in yaml.get("snippet_files", [])]
         snippet_tags = [str(tag) for tag in yaml.get("snippet_tags", [])]
-        return cls(description, snippet_tags, snippet_files)
+        snippet_contents = [
+            str(snippet) for snippet in yaml.get("snippet_contents", [])
+        ]
+        return cls(description, snippet_tags, snippet_files, snippet_contents)
 
 
 @dataclass
