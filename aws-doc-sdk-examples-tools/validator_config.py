@@ -184,6 +184,7 @@ ALLOW_LIST = {
     "src/main/java/com/example/iam/UpdateUser",
     "src/main/java/com/example/kms/ListGrants",
     "src/main/java/com/example/s3/ListObjects",
+    "src/main/java/com/example/s3/ListBuckets",
     "src/main/java/com/example/s3/S3BucketOps",
     "src/main/java/com/example/sns/ListOptOut",
     "src/main/java/com/example/sns/ListTopics",
