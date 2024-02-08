@@ -35,6 +35,12 @@ class SnippetError(MetadataError):
 
 
 @dataclass
+class DuplicateSnippetError(SnippetError):
+    def message(self):
+        return "duplicate snippet id"
+
+
+@dataclass
 class DuplicateSnippetStartError(SnippetError):
     def message(self):
         return "duplicate snippet-start tag"
@@ -163,15 +169,18 @@ class MissingSnippetFile(MetadataError):
     def message(self):
         return f"missing snippet_file {self.snippet_file}"
 
+
 @dataclass
 class WindowsUnsafeSnippetFile(MetadataError):
     snippet_file: Optional[str] = None
 
     def message(self):
         return f"snippet_file with unsafe Windows name {self.snippet_file}"
-    
+
+
 # This set is from https://superuser.com/a/358861, but does not include / or \ as those are verified as the entire path
 win_unsafe_re = r'[:*?"<>|]'
+
 
 def validate_snippets(
     examples: list[Example],
@@ -184,7 +193,24 @@ def validate_snippets(
         for lang in example.languages:
             language = example.languages[lang]
             for version in language.versions:
-                for excerpt in version.excerpts:
+                for i, excerpt in enumerate(version.excerpts):
+                    for j, contents in enumerate(excerpt.snippet_contents):
+                        id = f"{example.id}.{language.name}.{version.sdk_version}.{example.title}.{i}.{j}"
+                        snippet = Snippet(
+                            id,
+                            file=f"{id}.txt",
+                            code=contents,
+                            line_start=0,
+                            line_end=len(contents.split("\n")),
+                        )
+                        if id in snippets:
+                            errors.append(
+                                DuplicateSnippetError(
+                                    file=snippet.file, id=snippet.id, tag=snippet.id
+                                )
+                            )
+                        else:
+                            snippets[id] = snippet
                     for snippet_tag in excerpt.snippet_tags:
                         if snippet_tag not in snippets:
                             # Ensure all metadata snippets are found
