@@ -5,12 +5,16 @@
 from dataclasses import dataclass, field
 from typing import Any, Optional, Self
 from os.path import splitext
-import metadata_errors
 
-from metadata_errors import MetadataErrors, MetadataParseError, DuplicateItemException
-from metadata_validator import StringExtension
-from services import Service
-from sdks import Sdk
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.metadata_errors import (
+    MetadataErrors,
+    MetadataParseError,
+    DuplicateItemException,
+)
+from aws_doc_sdk_examples_tools.metadata_validator import StringExtension
+from aws_doc_sdk_examples_tools.services import Service
+from aws_doc_sdk_examples_tools.sdks import Sdk
 
 
 @dataclass

@@ -20,7 +20,10 @@ from typing import Any, Iterable, Optional
 from yamale import YamaleError
 from yamale.validators import DefaultValidators, Validator, String
 
-from metadata_errors import MetadataErrors, MetadataParseError
+from aws_doc_sdk_examples_tools.metadata_errors import (
+    MetadataErrors,
+    MetadataParseError,
+)
 
 
 class SdkVersion(Validator):

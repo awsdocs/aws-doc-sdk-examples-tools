@@ -2,9 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any, Self, Optional
-import metadata_errors
-from metadata_errors import MetadataErrors, MetadataParseError, check_mapping
 from dataclasses import dataclass, field
+
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.metadata_errors import (
+    MetadataErrors,
+    MetadataParseError,
+    check_mapping,
+)
 
 
 @dataclass

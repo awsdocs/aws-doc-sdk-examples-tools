@@ -9,13 +9,20 @@ from pathlib import Path
 
 # from os import glob
 
-from metadata import Example, parse as parse_examples
-from metadata_errors import MetadataErrors
-from metadata_validator import validate_metadata
-from project_validator import check_files, verify_sample_files
-from sdks import Sdk, parse as parse_sdks
-from services import Service, parse as parse_services
-from snippets import Snippet, collect_snippets, validate_snippets
+from aws_doc_sdk_examples_tools.metadata import Example, parse as parse_examples
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors
+from aws_doc_sdk_examples_tools.metadata_validator import validate_metadata
+from aws_doc_sdk_examples_tools.project_validator import (
+    check_files,
+    verify_sample_files,
+)
+from aws_doc_sdk_examples_tools.sdks import Sdk, parse as parse_sdks
+from aws_doc_sdk_examples_tools.services import Service, parse as parse_services
+from aws_doc_sdk_examples_tools.snippets import (
+    Snippet,
+    collect_snippets,
+    validate_snippets,
+)
 
 
 @dataclass
@@ -43,14 +50,14 @@ class DocGen:
         metadata = root / ".doc_gen/metadata"
 
         with open(
-            Path(__file__).parent.parent / "config/sdks.yaml", encoding="utf-8"
+            Path(__file__).parent.parent / "config" / "sdks.yaml", encoding="utf-8"
         ) as file:
             meta = yaml.safe_load(file)
             sdks, errs = parse_sdks("sdks.yaml", meta)
             errors.extend(errs)
 
         with open(
-            Path(__file__).parent.parent / "config/services.yaml", encoding="utf-8"
+            Path(__file__).parent.parent / "config" / "services.yaml", encoding="utf-8"
         ) as file:
             meta = yaml.safe_load(file)
             services, service_errors = parse_services("services.yaml", meta)

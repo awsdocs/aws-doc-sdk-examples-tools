@@ -3,8 +3,8 @@
 
 from typing import Any, Optional, Self
 from dataclasses import dataclass, field
-import metadata_errors
-from metadata_errors import MetadataErrors, check_mapping
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, check_mapping
 
 
 @dataclass

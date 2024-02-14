@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 from sys import exit
 
-from doc_gen import DocGen
+from aws_doc_sdk_examples_tools.doc_gen import DocGen
 
 
 def main():

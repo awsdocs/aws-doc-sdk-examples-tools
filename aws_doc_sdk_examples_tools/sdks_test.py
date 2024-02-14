@@ -9,8 +9,14 @@ import pytest
 import yaml
 from pathlib import Path
 
-import metadata_errors
-from sdks import parse, Sdk, SdkVersion, SdkApiRef, SdkTitleOverride
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.sdks import (
+    parse,
+    Sdk,
+    SdkVersion,
+    SdkApiRef,
+    SdkTitleOverride,
+)
 
 
 def load(path: str) -> tuple[dict[str, Sdk], metadata_errors.MetadataErrors]:

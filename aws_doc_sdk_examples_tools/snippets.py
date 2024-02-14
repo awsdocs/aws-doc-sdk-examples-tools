@@ -2,15 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from dataclasses import dataclass
-from metadata import Example
-from metadata_errors import MetadataErrors, MetadataError
 from typing import Optional
 from pathlib import Path
 from shutil import copyfile
 import re
-import validator_config
 
-from file_utils import get_files, clear
+from aws_doc_sdk_examples_tools import validator_config
+
+from aws_doc_sdk_examples_tools.file_utils import get_files, clear
+from aws_doc_sdk_examples_tools.metadata import Example
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -163,15 +164,18 @@ class MissingSnippetFile(MetadataError):
     def message(self):
         return f"missing snippet_file {self.snippet_file}"
 
+
 @dataclass
 class WindowsUnsafeSnippetFile(MetadataError):
     snippet_file: Optional[str] = None
 
     def message(self):
         return f"snippet_file with unsafe Windows name {self.snippet_file}"
-    
+
+
 # This set is from https://superuser.com/a/358861, but does not include / or \ as those are verified as the entire path
 win_unsafe_re = r'[:*?"<>|]'
+
 
 def validate_snippets(
     examples: list[Example],

@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-import metadata_errors
-from services import parse, Service, ServiceGuide
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.services import parse, Service, ServiceGuide
 
 
 def load(path: str) -> tuple[dict[str, Service], metadata_errors.MetadataErrors]:

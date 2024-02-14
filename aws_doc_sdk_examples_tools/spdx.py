@@ -7,8 +7,8 @@ from pathlib import Path
 import re
 from sys import argv
 
-from metadata_errors import MetadataError, MetadataErrors
-import validator_config
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataError, MetadataErrors
+from aws_doc_sdk_examples_tools import validator_config
 
 
 @dataclass

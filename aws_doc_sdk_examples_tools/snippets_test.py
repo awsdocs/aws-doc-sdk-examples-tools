@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-import snippets
+from aws_doc_sdk_examples_tools import snippets
 
 
 @pytest.mark.parametrize(

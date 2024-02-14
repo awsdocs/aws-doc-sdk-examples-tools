@@ -9,11 +9,19 @@ import pytest
 import yaml
 from pathlib import Path
 
-import metadata_errors
-from metadata import parse, Example, Url, Language, Version, Excerpt, idFormat
-from doc_gen import DocGen
-from sdks import Sdk
-from services import Service
+from aws_doc_sdk_examples_tools import metadata_errors
+from aws_doc_sdk_examples_tools.metadata import (
+    parse,
+    Example,
+    Url,
+    Language,
+    Version,
+    Excerpt,
+    idFormat,
+)
+from aws_doc_sdk_examples_tools.doc_gen import DocGen
+from aws_doc_sdk_examples_tools.sdks import Sdk
+from aws_doc_sdk_examples_tools.services import Service
 
 
 def load(
@@ -23,7 +31,7 @@ def load(
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services)
+    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, set())
 
 
 SERVICES = {
@@ -41,7 +49,9 @@ SDKS = {
     "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property=""),
     "PHP": Sdk(name="PHP", versions=[], guide="", property=""),
 }
-DOC_GEN = DocGen(services=SERVICES, sdks=SDKS)
+DOC_GEN = DocGen(
+    root=Path(), errors=metadata_errors.MetadataErrors(), services=SERVICES, sdks=SDKS
+)
 
 GOOD_SINGLE_CPP = """
 sns_DeleteTopic:
@@ -70,7 +80,7 @@ sns_DeleteTopic:
 
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
-    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES)
+    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set())
     assert len(errors) == 0
     assert parsed == [
         Example(
@@ -122,7 +132,7 @@ cross_DeleteTopic:
 
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
-    actual, errors = parse("cross.yaml", meta, SDKS, SERVICES)
+    actual, errors = parse("cross.yaml", meta, SDKS, SERVICES, set())
     assert len(errors) == 0
     assert actual == [
         Example(
@@ -164,7 +174,7 @@ autogluon_tabular_with_sagemaker_pipelines:
 
 def test_parse_curated():
     meta = yaml.safe_load(CURATED)
-    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES)
+    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set())
     assert len(errors) == 0
     assert actual == [
         Example(
