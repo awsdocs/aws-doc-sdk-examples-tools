@@ -64,10 +64,6 @@ def check_files(root: Path, errors: MetadataErrors, do_check_spdx: bool):
     print(f"{file_count} files scanned in {root}.\n")
 
 
-def verify_spdx(a: str, b: Path, c: MetadataErrors):
-    pass
-
-
 def word_parts(contents: str):
     for word in contents.split():
         # split on / for URLs, to find invalid Host names
@@ -144,7 +140,7 @@ def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
         if path.name not in validator_config.EXPECTED_SAMPLE_FILES:
             errors.append(UnknownSampleFile(file=str(path)))
         if ext.lower() in validator_config.MEDIA_FILE_TYPES:
-            if media_folder not in path:
+            if media_folder not in str(path):
                 errors.append(InvalidSampleDirectory(file=str(path), dir=media_folder))
         size_in_mb = os.path.getsize(path) / ONE_MB_AS_BYTES
         if size_in_mb > MAX_FILE_SIZE_MB:

@@ -75,7 +75,7 @@ class Version:
         services: dict[str, Service],
         cross_content_blocks: set[str],
         is_action: bool,
-    ) -> tuple[Self, MetadataErrors]:
+    ) -> tuple["Version", MetadataErrors]:
         errors = MetadataErrors()
 
         sdk_version = int(yaml.get("sdk_version", 0))
@@ -162,11 +162,11 @@ class Language:
 
         versions: list[Version] = []
         for version in yaml_versions:
-            version, version_errors = Version.from_yaml(
+            vers, version_errors = Version.from_yaml(
                 version, services, blocks, is_action
             )
             errors.extend(version_errors)
-            versions.append(version)
+            versions.append(vers)
 
         for error in errors:
             error.language = name

@@ -129,7 +129,7 @@ def parse_snippets(
 
 def find_snippets(file: Path) -> tuple[dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
-    snippets = {}
+    snippets: dict[str, Snippet] = {}
     with open(file, encoding="utf-8") as snippet_file:
         try:
             snippets, errs = parse_snippets(snippet_file.readlines(), file)

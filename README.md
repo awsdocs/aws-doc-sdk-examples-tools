@@ -1,11 +1,8 @@
-## My Project
+## AWS Doc SDK Examples Tools
 
-TODO: Fill this README out!
-
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+This python library is a set of tools to manage [AWS Doc SDK Example metadata](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/.doc_gen).
+It is used by the AWS Doc SDK Examples team, as well as tributary sources of
+example snippets.
 
 ## Security
 
@@ -14,4 +11,3 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This project is licensed under the Apache-2.0 License.
-

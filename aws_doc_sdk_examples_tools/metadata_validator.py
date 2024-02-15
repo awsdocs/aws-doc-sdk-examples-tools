@@ -40,12 +40,12 @@ class ServiceName(Validator):
     """Validate that service names appear in services.yaml."""
 
     tag = "service_name"
-    services = {}
+    services: set[str] = set()
 
     def get_name(self):
         return "service name found in services.yaml"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         return value in self.services
 
 
@@ -55,16 +55,15 @@ class ServiceVersion(Validator):
     def get_name(self):
         return "valid service version"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         try:
             hyphen_index = len(value)
             for _ in range(3):
                 hyphen_index = value.rfind("-", 0, hyphen_index)
-            time = datetime.datetime.strptime(value[hyphen_index + 1 :], "%Y-%m-%d")
-            isdate = isinstance(time, datetime.date)
+            datetime.datetime.strptime(value[hyphen_index + 1 :], "%Y-%m-%d")
+            return True
         except ValueError:
-            isdate = False
-        return isdate
+            return False
 
 
 class ExampleId(Validator):
@@ -74,17 +73,17 @@ class ExampleId(Validator):
     """
 
     tag = "example_id"
-    services: dict[str, any] = {}
+    services: set[str] = set()
 
     def get_name(self):
         return "valid example ID"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         if not re.fullmatch("^[\\da-z-]+(_[\\da-zA-Z]+)+$", value):
             return False
         else:
             svc = value.split("_")[0]
-            return svc == "cross" or svc in self.services
+            return (svc == "cross") or (svc in self.services)
 
 
 class BlockContent(Validator):

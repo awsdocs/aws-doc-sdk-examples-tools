@@ -31,8 +31,8 @@ def walk_with_gitignore(
     """
     gitignore = root / ".gitignore"
     if gitignore.exists():
-        with open(root / ".gitignore", "r", encoding="utf-8") as gitignore:
-            specs = [*specs, GitIgnoreSpec.from_lines(gitignore.readlines())]
+        with open(root / ".gitignore", "r", encoding="utf-8") as ignore_file:
+            specs = [*specs, GitIgnoreSpec.from_lines(ignore_file.readlines())]
     for entry in os.scandir(root):
         path = Path(entry.path)
         if not match_path_to_specs(path, specs):
