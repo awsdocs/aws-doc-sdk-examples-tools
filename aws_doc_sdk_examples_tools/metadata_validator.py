@@ -13,12 +13,13 @@ import datetime
 import os
 import re
 import yaml
-import yamale
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Optional
-from yamale import YamaleError
-from yamale.validators import DefaultValidators, Validator, String
+
+import yamale  # type: ignore
+from yamale import YamaleError  # type: ignore
+from yamale.validators import DefaultValidators, Validator, String  # type: ignore
 
 from aws_doc_sdk_examples_tools.metadata_errors import (
     MetadataErrors,

@@ -169,7 +169,8 @@ class Language:
             versions.append(vers)
 
         for error in errors:
-            error.language = name
+            if isinstance(error, MetadataParseError):
+                error.language = name
 
         return cls(name, versions), errors
 
