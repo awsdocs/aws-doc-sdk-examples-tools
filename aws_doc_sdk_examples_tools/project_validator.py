@@ -25,6 +25,7 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import List
 
 from aws_doc_sdk_examples_tools.file_utils import get_files
 from aws_doc_sdk_examples_tools.metadata_errors import (
@@ -133,7 +134,7 @@ def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
         # TODO allow projects to configure their specific expected sample files.
         return
     media_folder = ".sample_media"
-    file_list: list[str] = []
+    file_list: List[str] = []
     for path in get_files(sample_files_folder):
         file_list.append(path.name)
         ext = path.suffix

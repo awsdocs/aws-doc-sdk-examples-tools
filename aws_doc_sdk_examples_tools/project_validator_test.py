@@ -7,6 +7,7 @@ This script contains tests that verify the project_validator script works as exp
 
 import pytest
 from pathlib import Path
+from typing import List
 
 from aws_doc_sdk_examples_tools import project_validator
 from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors
@@ -19,7 +20,7 @@ from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors
         ("https://example.com/foo", ["https", "", "example.com", "foo"]),
     ],
 )
-def test(contents: str, expected_parts: list[str]):
+def test(contents: str, expected_parts: List[str]):
     """Test that the word part stemmer finds the right pieces"""
     actual_parts = [part for _, part in project_validator.word_parts(contents)]
     assert expected_parts == actual_parts

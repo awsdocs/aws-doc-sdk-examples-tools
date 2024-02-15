@@ -8,6 +8,7 @@ This script contains tests that verify the examples loader finds appropriate err
 import pytest
 import yaml
 from pathlib import Path
+from typing import List, Set, Tuple
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from aws_doc_sdk_examples_tools.metadata import (
@@ -25,8 +26,8 @@ from aws_doc_sdk_examples_tools.services import Service
 
 
 def load(
-    path: Path, doc_gen: DocGen, blocks: set[str] = set()
-) -> tuple[list[Example], metadata_errors.MetadataErrors]:
+    path: Path, doc_gen: DocGen, blocks: Set[str] = set()
+) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
@@ -407,7 +408,7 @@ def test_verify_load_successful():
     ],
 )
 def test_common_errors(
-    filename: str, expected_errors: list[metadata_errors.MetadataError]
+    filename: str, expected_errors: List[metadata_errors.MetadataError]
 ):
     _, actual = load(Path(filename), DOC_GEN, set(["test/block", "cross_block.xml"]))
     assert expected_errors == [*actual]

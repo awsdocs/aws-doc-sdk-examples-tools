@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
+from typing import Dict, Tuple
 import pytest
 import yaml
 
@@ -9,7 +10,7 @@ from aws_doc_sdk_examples_tools import metadata_errors
 from aws_doc_sdk_examples_tools.services import parse, Service, ServiceGuide
 
 
-def load(path: str) -> tuple[dict[str, Service], metadata_errors.MetadataErrors]:
+def load(path: str) -> Tuple[Dict[str, Service], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:

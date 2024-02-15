@@ -1,7 +1,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Self, Optional
+from __future__ import annotations
+
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 from aws_doc_sdk_examples_tools import metadata_errors
@@ -26,8 +28,8 @@ class SdkApiRef:
 
     @classmethod
     def from_yaml(
-        cls, yaml: dict[str, str] | None, errors: MetadataErrors
-    ) -> None | Self:
+        cls, yaml: Dict[str, str] | None, errors: MetadataErrors
+    ) -> Optional[SdkApiRef]:
         if yaml is None:
             return None
         uid = yaml.get("uid")
@@ -64,8 +66,8 @@ class SdkVersion:
 
     @classmethod
     def from_yaml(
-        cls, version: int, yaml: dict[str, Any]
-    ) -> tuple[Self, MetadataErrors]:
+        cls, version: int, yaml: Dict[str, Any]
+    ) -> tuple[SdkVersion, MetadataErrors]:
         errors = MetadataErrors()
         long = check_mapping(yaml.get("long"), "long")
         short = check_mapping(yaml.get("short"), "short")
@@ -124,12 +126,12 @@ class SdkVersion:
 @dataclass
 class Sdk:
     name: str
-    versions: list[SdkVersion]
+    versions: List[SdkVersion]
     guide: str
     property: str
 
     @classmethod
-    def from_yaml(cls, name: str, yaml: dict[str, Any]) -> tuple[Self, MetadataErrors]:
+    def from_yaml(cls, name: str, yaml: Dict[str, Any]) -> tuple[Sdk, MetadataErrors]:
         errors = MetadataErrors()
         property = yaml.get("property", "")
         guide = check_mapping(yaml.get("guide"), "guide")
@@ -137,8 +139,8 @@ class Sdk:
             errors.append(guide)
             guide = ""
 
-        versions: list[SdkVersion] = []
-        sdk_versions: None | dict[str, Any] = yaml.get("sdk")
+        versions: List[SdkVersion] = []
+        sdk_versions: None | Dict[str, Any] = yaml.get("sdk")
         if sdk_versions is None:
             sdk_versions = {}
         for version in sdk_versions:
@@ -151,8 +153,8 @@ class Sdk:
         return cls(name=name, versions=versions, guide=guide, property=property), errors
 
 
-def parse(file: str, yaml: dict[str, Any]) -> tuple[dict[str, Sdk], MetadataErrors]:
-    sdks: dict[str, Sdk] = {}
+def parse(file: str, yaml: Dict[str, Any]) -> tuple[Dict[str, Sdk], MetadataErrors]:
+    sdks: Dict[str, Sdk] = {}
     errors = MetadataErrors()
 
     for name in yaml:

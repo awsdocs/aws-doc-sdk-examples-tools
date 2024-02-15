@@ -1,9 +1,11 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
-from typing import Optional, Iterator, Iterable, TypeVar, Self
+from typing import Optional, Iterator, Iterable, List, TypeVar
 
 
 @dataclass
@@ -54,11 +56,11 @@ class DuplicateItemException(Exception):
 
 
 class MetadataErrors:
-    """MyPy isn't catching list[Foo].append(list[Foo])"""
+    """MyPy isn't catching List[Foo].append(List[Foo])"""
 
     def __init__(self, no_duplicates: bool = False):
         self.no_duplicates = no_duplicates
-        self._errors: list[MetadataError] = []
+        self._errors: List[MetadataError] = []
 
     def append(self, item: MetadataError):
         if not isinstance(item, MetadataError):
@@ -74,7 +76,7 @@ class MetadataErrors:
     def extend(self, errors: Iterable[MetadataError]):
         self._errors.extend(errors)
 
-    def maybe_extend(self, maybe_errors: K | Self) -> K | None:
+    def maybe_extend(self, maybe_errors: K | MetadataErrors) -> K | None:
         if isinstance(maybe_errors, MetadataErrors):
             self.extend(maybe_errors._errors)
             return None

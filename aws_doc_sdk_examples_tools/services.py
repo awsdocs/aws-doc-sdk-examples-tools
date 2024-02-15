@@ -1,7 +1,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Any, Optional, Self
+from __future__ import annotations
+
+from typing import Any, Dict, Optional, Set, Union
 from dataclasses import dataclass, field
 from aws_doc_sdk_examples_tools import metadata_errors
 from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, check_mapping
@@ -18,16 +20,18 @@ class Service:
     long: str
     short: str
     sort: str
-    version: int | str
+    version: Union[int, str]
     api_ref: Optional[str] = field(default=None)
     blurb: Optional[str] = field(default=None)
     bundle: Optional[str] = field(default=None)
     caveat: Optional[str] = field(default=None)
     guide: Optional[ServiceGuide] = field(default=None)
-    tags: dict[str, set[str]] = field(default_factory=dict)
+    tags: Dict[str, Set[str]] = field(default_factory=dict)
 
     @classmethod
-    def from_yaml(cls, name: str, yaml: dict[str, Any]) -> tuple[Self, MetadataErrors]:
+    def from_yaml(
+        cls, name: str, yaml: Dict[str, Any]
+    ) -> tuple[Service, MetadataErrors]:
         errors = MetadataErrors()
 
         long = check_mapping(yaml.get("long"), "long")
@@ -88,10 +92,10 @@ class Service:
 
 
 def parse(
-    filename: str, yaml: dict[str, Any]
-) -> tuple[dict[str, Service], MetadataErrors]:
+    filename: str, yaml: Dict[str, Any]
+) -> tuple[Dict[str, Service], MetadataErrors]:
     errors = metadata_errors.MetadataErrors()
-    services: dict[str, Service] = {}
+    services: Dict[str, Service] = {}
     for name in yaml:
         meta = yaml[name]
         if meta is None:

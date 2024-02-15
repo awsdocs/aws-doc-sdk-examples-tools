@@ -2,8 +2,10 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any, Optional, Self
+from typing import Any, Dict, List, Optional, Set, Union
 from os.path import splitext
 
 from aws_doc_sdk_examples_tools import metadata_errors
@@ -24,8 +26,8 @@ class Url:
 
     @classmethod
     def from_yaml(
-        cls, yaml: None | dict[str, str | None]
-    ) -> None | Self | MetadataParseError:
+        cls, yaml: None | Dict[str, Optional[str]]
+    ) -> Optional[Union[Url, MetadataParseError]]:
         if yaml is None:
             return None
         title = yaml.get("title", "")
@@ -41,12 +43,12 @@ class Url:
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.
-    snippet_tags: list[str]
+    snippet_tags: List[str]
     # A path within the repo to extract the entire file as a snippet.
-    snippet_files: list[str] = field(default_factory=list)
+    snippet_files: List[str] = field(default_factory=list)
 
     @classmethod
-    def from_yaml(cls, yaml: Any) -> Self:
+    def from_yaml(cls, yaml: Any) -> "Excerpt":
         description = yaml.get("description")
         snippet_files = [str(file) for file in yaml.get("snippet_files", [])]
         snippet_tags = [str(tag) for tag in yaml.get("snippet_tags", [])]
@@ -59,21 +61,21 @@ class Version:
     # Additional ZonBook XML to include in the tab for this sample.
     block_content: Optional[str] = field(default=None)
     # The specific code samples to include in the example.
-    excerpts: list[Excerpt] = field(default_factory=list)
+    excerpts: List[Excerpt] = field(default_factory=list)
     # Link to the source code for this example. TODO rename.
     github: Optional[str] = field(default=None)
-    add_services: dict[str, list[str]] = field(default_factory=dict)
+    add_services: Dict[str, List[str]] = field(default_factory=dict)
     # Deprecated. Replace with guide_topic list.
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places. TODO: Overwritten by aws-doc-sdk-example when merging.
-    more_info: list[Url] = field(default_factory=list)
+    more_info: List[Url] = field(default_factory=list)
 
     @classmethod
     def from_yaml(
         cls,
-        yaml: dict[str, Any],
-        services: dict[str, Service],
-        cross_content_blocks: set[str],
+        yaml: Dict[str, Any],
+        services: Dict[str, Service],
+        cross_content_blocks: Set[str],
         is_action: bool,
     ) -> tuple["Version", MetadataErrors]:
         errors = MetadataErrors()
@@ -107,7 +109,7 @@ class Version:
         if len(excerpts) > 0 and block_content is not None:
             errors.append(metadata_errors.BlockContentAndExcerptConflict())
 
-        more_info: list[Url] = []
+        more_info: List[Url] = []
         for url in yaml.get("more_info", []):
             url = Url.from_yaml(url)
             if isinstance(url, Url):
@@ -139,28 +141,28 @@ class Version:
 @dataclass
 class Language:
     name: str
-    versions: list[Version]
+    versions: List[Version]
 
     @classmethod
     def from_yaml(
         cls,
         name: str,
         yaml: Any,
-        sdks: dict[str, Sdk],
-        services: dict[str, Service],
-        blocks: set[str],
+        sdks: Dict[str, Sdk],
+        services: Dict[str, Service],
+        blocks: Set[str],
         is_action: bool,
-    ) -> tuple[Self, MetadataErrors]:
+    ) -> tuple[Language, MetadataErrors]:
         errors = MetadataErrors()
         if name not in sdks:
             errors.append(metadata_errors.UnknownLanguage(language=name))
 
-        yaml_versions: list[dict[str, Any]] | None = yaml.get("versions")
+        yaml_versions: List[Dict[str, Any]] | None = yaml.get("versions")
         if yaml_versions is None or len(yaml_versions) == 0:
             errors.append(metadata_errors.MissingField(field="versions"))
             yaml_versions = []
 
-        versions: list[Version] = []
+        versions: List[Version] = []
         for version in yaml_versions:
             vers, version_errors = Version.from_yaml(
                 version, services, blocks, is_action
@@ -184,27 +186,27 @@ class Example:
     # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
     title_abbrev: str
     synopsis: str
-    languages: dict[str, Language]
+    languages: Dict[str, Language]
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
     category: Optional[str] = field(default=None)
     # Link to additional topic places.
-    guide_topic: Optional[Url] = field(default=None)  # TODO: Url|list[Url]
+    guide_topic: Optional[Url] = field(default=None)  # TODO: Url|List[Url]
     # TODO how to add a language here and require it in services_schema.
     # TODO document service_main and services. Not to be used by tributaries. Part of Cross Service.
     # List of services used by the examples. Lines up with those in services.yaml.
     service_main: Optional[str] = field(default=None)
-    services: dict[str, list[str]] = field(default_factory=dict)
-    synopsis_list: list[str] = field(default_factory=list)
+    services: Dict[str, List[str]] = field(default_factory=dict)
+    synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
 
     @classmethod
     def from_yaml(
         cls,
         yaml: Any,
-        sdks: dict[str, Sdk],
-        services: dict[str, Service],
-        blocks: set[str],
-    ) -> tuple[Self, MetadataErrors]:
+        sdks: Dict[str, Sdk],
+        services: Dict[str, Service],
+        blocks: Set[str],
+    ) -> tuple[Example, MetadataErrors]:
         errors = MetadataErrors()
 
         title = get_with_valid_entities("title", yaml, errors)
@@ -233,7 +235,7 @@ class Example:
         is_action = category == "Api"
 
         yaml_languages = yaml.get("languages")
-        languages: dict[str, Language] = {}
+        languages: Dict[str, Language] = {}
         if yaml_languages is None:
             errors.append(metadata_errors.MissingField(field="languages"))
         else:
@@ -264,16 +266,16 @@ class Example:
 
 
 def parse_services(
-    yaml: Any, errors: MetadataErrors, known_services: dict[str, Service]
-) -> dict[str, list[str]]:
+    yaml: Any, errors: MetadataErrors, known_services: Dict[str, Service]
+) -> Dict[str, List[str]]:
     if yaml is None:
         return {}
-    services: dict[str, list[str]] = {}
+    services: Dict[str, List[str]] = {}
     for name in yaml:
         if name not in known_services:
             errors.append(metadata_errors.UnknownService(service=name))
         else:
-            service: dict[str, None] | None = yaml.get(name)
+            service: Dict[str, None] | None = yaml.get(name)
             # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
             if service is None:
                 service = {}
@@ -286,7 +288,7 @@ ALLOWED = ["&AWS;", "&AWS-Region;", "&AWS-Regions;" "AWSJavaScriptSDK"]
 
 
 def get_with_valid_entities(
-    name: str, d: dict[str, str], errors: MetadataErrors, opt: bool = False
+    name: str, d: Dict[str, str], errors: MetadataErrors, opt: bool = False
 ) -> str:
     field = d.get(name)
     if field is None:
@@ -305,7 +307,7 @@ def get_with_valid_entities(
     return field
 
 
-def idFormat(id: str, services: dict[str, Service]) -> bool:
+def idFormat(id: str, services: Dict[str, Service]) -> bool:
     [service, *rest] = id.split("_")
     if len(rest) == 0:
         return False
@@ -314,12 +316,12 @@ def idFormat(id: str, services: dict[str, Service]) -> bool:
 
 def parse(
     file: str,
-    yaml: dict[str, Any],
-    sdks: dict[str, Sdk],
-    services: dict[str, Service],
-    blocks: set[str],
-) -> tuple[list[Example], MetadataErrors]:
-    examples: list[Example] = []
+    yaml: Dict[str, Any],
+    sdks: Dict[str, Sdk],
+    services: Dict[str, Service],
+    blocks: Set[str],
+) -> tuple[List[Example], MetadataErrors]:
+    examples: List[Example] = []
     errors = MetadataErrors()
     for id in yaml:
         if not idFormat(id, services):

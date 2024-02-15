@@ -8,6 +8,7 @@ This script contains tests that verify the examples loader finds appropriate err
 import pytest
 import yaml
 from pathlib import Path
+from typing import Dict, Tuple
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from aws_doc_sdk_examples_tools.sdks import (
@@ -19,7 +20,7 @@ from aws_doc_sdk_examples_tools.sdks import (
 )
 
 
-def load(path: str) -> tuple[dict[str, Sdk], metadata_errors.MetadataErrors]:
+def load(path: str) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:

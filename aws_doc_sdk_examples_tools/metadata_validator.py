@@ -15,7 +15,7 @@ import re
 import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional, Set
 
 import yamale  # type: ignore
 from yamale import YamaleError  # type: ignore
@@ -31,7 +31,7 @@ class SdkVersion(Validator):
     """Validate that sdk version appears in sdks.yaml."""
 
     tag = "sdk_version"
-    sdks: dict[str, Any] = {}
+    sdks: Dict[str, Any] = {}
 
     def _is_valid(self, value: str):
         return value in self.sdks
@@ -41,7 +41,7 @@ class ServiceName(Validator):
     """Validate that service names appear in services.yaml."""
 
     tag = "service_name"
-    services: set[str] = set()
+    services: Set[str] = set()
 
     def get_name(self):
         return "service name found in services.yaml"
@@ -74,7 +74,7 @@ class ExampleId(Validator):
     """
 
     tag = "example_id"
-    services: set[str] = set()
+    services: Set[str] = set()
 
     def get_name(self):
         return "valid example ID"
@@ -91,7 +91,7 @@ class BlockContent(Validator):
     """Validate that block content refers to an existing file."""
 
     tag = "block_content"
-    block_names: list[str] = []
+    block_names: List[str] = []
 
     def get_name(self):
         return "file found in the cross-content folder"
@@ -168,7 +168,7 @@ class ValidateYamaleError(MetadataParseError):
 def validate_files(
     schema_name: Path,
     meta_names: Iterable[Path],
-    validators: dict[str, Validator],
+    validators: Dict[str, Validator],
     errors: MetadataErrors,
 ):
     """Iterate a list of files and validate each one against a schema."""
@@ -186,7 +186,7 @@ def validate_files(
 
 def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErrors:
     with open(Path(__file__).parent.parent / "config" / "sdks.yaml") as sdks_file:
-        sdks_yaml: dict[str, Any] = yaml.safe_load(sdks_file)
+        sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
 
     with open(
         Path(__file__).parent.parent / "config" / "services.yaml"

@@ -3,9 +3,9 @@
 
 import yaml
 
-from typing import Self
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Dict, List, Optional, Set
 
 # from os import glob
 
@@ -29,14 +29,14 @@ from aws_doc_sdk_examples_tools.snippets import (
 class DocGen:
     root: Path
     errors: MetadataErrors
-    sdks: dict[str, Sdk] = field(default_factory=dict)
-    services: dict[str, Service] = field(default_factory=dict)
-    snippets: dict[str, Snippet] = field(default_factory=dict)
-    snippet_files: set[str] = field(default_factory=set)
-    examples: list[Example] = field(default_factory=list)
-    cross_blocks: set[str] = field(default_factory=set)
+    sdks: Dict[str, Sdk] = field(default_factory=dict)
+    services: Dict[str, Service] = field(default_factory=dict)
+    snippets: Dict[str, Snippet] = field(default_factory=dict)
+    snippet_files: Set[str] = field(default_factory=set)
+    examples: List[Example] = field(default_factory=list)
+    cross_blocks: Set[str] = field(default_factory=set)
 
-    def collect_snippets(self, snippets_root: Path | None):
+    def collect_snippets(self, snippets_root: Optional[Path]):
         if snippets_root is None:
             snippets_root = self.root.parent.parent
         snippets, errs = collect_snippets(snippets_root)
@@ -44,7 +44,7 @@ class DocGen:
         self.errors.extend(errs)
 
     @classmethod
-    def from_root(cls, root: Path) -> Self:
+    def from_root(cls, root: Path) -> "DocGen":
         errors = MetadataErrors()
 
         metadata = root / ".doc_gen/metadata"
