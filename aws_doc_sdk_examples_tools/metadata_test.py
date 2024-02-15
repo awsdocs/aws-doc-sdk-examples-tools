@@ -25,13 +25,13 @@ from aws_doc_sdk_examples_tools.services import Service
 
 
 def load(
-    path: Path, doc_gen: DocGen
+    path: Path, doc_gen: DocGen, blocks: set[str] = set()
 ) -> tuple[list[Example], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, set())
+    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, blocks)
 
 
 SERVICES = {
@@ -82,38 +82,38 @@ def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
     parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set())
     assert len(errors) == 0
-    assert parsed == [
-        Example(
-            file="test_cpp.yaml",
-            id="sns_DeleteTopic",
-            title="Deleting an &SNS; topic",
-            title_abbrev="Deleting a topic",
-            synopsis="Shows how to delete an &SNS; topic.",
-            services={
-                "sns": ["Operation1", "Operation2"],
-                "ses": ["Operation1", "Operation2"],
-                "sqs": [],
-            },
-            languages={
-                "C++": Language(
-                    name="C++",
-                    versions=[
-                        Version(
-                            sdk_version=1,
-                            github="cpp/example_code/sns",
-                            sdkguide="sdkguide/link",
-                            excerpts=[
-                                Excerpt(
-                                    description="test excerpt description",
-                                    snippet_tags=["test.excerpt"],
-                                )
-                            ],
-                        )
-                    ],
-                )
-            },
-        )
-    ]
+    assert len(parsed) == 1
+    language = Language(
+        name="C++",
+        versions=[
+            Version(
+                sdk_version=1,
+                github="cpp/example_code/sns",
+                sdkguide="sdkguide/link",
+                excerpts=[
+                    Excerpt(
+                        description="test excerpt description",
+                        snippet_tags=["test.excerpt"],
+                    )
+                ],
+            )
+        ],
+    )
+    example = Example(
+        file="test_cpp.yaml",
+        id="sns_DeleteTopic",
+        category="Cross",
+        title="Deleting an &SNS; topic",
+        title_abbrev="Deleting a topic",
+        synopsis="Shows how to delete an &SNS; topic.",
+        services={
+            "sns": ["Operation1", "Operation2"],
+            "ses": ["Operation1", "Operation2"],
+            "sqs": [],
+        },
+        languages={"C++": language},
+    )
+    assert parsed[0] == example
 
 
 CROSS_META = """
@@ -132,28 +132,26 @@ cross_DeleteTopic:
 
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
-    actual, errors = parse("cross.yaml", meta, SDKS, SERVICES, set())
+    actual, errors = parse(
+        "cross.yaml", meta, SDKS, SERVICES, set(["cross_DeleteTopic_block.xml"])
+    )
     assert len(errors) == 0
-    assert actual == [
-        Example(
-            file="cross.yaml",
-            id="cross_DeleteTopic",
-            title="Delete Topic",
-            title_abbrev="delete topic",
-            synopsis="",
-            services={"sns": []},
-            languages={
-                "Java": Language(
-                    name="Java",
-                    versions=[
-                        Version(
-                            sdk_version=3, block_content="cross_DeleteTopic_block.xml"
-                        )
-                    ],
-                )
-            },
-        )
-    ]
+    assert len(actual) == 1
+    language = Language(
+        name="Java",
+        versions=[Version(sdk_version=3, block_content="cross_DeleteTopic_block.xml")],
+    )
+    example = Example(
+        file="cross.yaml",
+        id="cross_DeleteTopic",
+        category="Api",
+        title="Delete Topic",
+        title_abbrev="delete topic",
+        synopsis="",
+        services={"sns": []},
+        languages={"Java": language},
+    )
+    assert actual[0] == example
 
 
 CURATED = """
@@ -174,103 +172,112 @@ autogluon_tabular_with_sagemaker_pipelines:
 
 def test_parse_curated():
     meta = yaml.safe_load(CURATED)
-    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set())
+    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]))
     assert len(errors) == 0
-    assert actual == [
-        Example(
-            id="autogluon_tabular_with_sagemaker_pipelines",
-            file="curated.yaml",
-            title="AutoGluon Tabular with SageMaker Pipelines",
-            title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
-            source_key="amazon-sagemaker-examples",
-            languages={
-                "Java": Language(
-                    name="Java",
-                    versions=[Version(sdk_version=2, block_content="block.xml")],
-                )
-            },
-            services={"s3": []},
-            synopsis="use AutoGluon with SageMaker Pipelines.",
-        )
-    ]
+    assert len(actual) == 1
+    language = Language(
+        name="Java",
+        versions=[Version(sdk_version=2, block_content="block.xml")],
+    )
+    example = Example(
+        id="autogluon_tabular_with_sagemaker_pipelines",
+        file="curated.yaml",
+        category="Api",
+        title="AutoGluon Tabular with SageMaker Pipelines",
+        title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
+        source_key="amazon-sagemaker-examples",
+        languages={"Java": language},
+        services={"s3": []},
+        synopsis="use AutoGluon with SageMaker Pipelines.",
+    )
+
+    assert actual[0] == example
 
 
 def test_verify_load_successful():
-    examples, errors = load(Path("valid_metadata.yaml"), DOC_GEN)
+    actual, errors = load(Path("valid_metadata.yaml"), DOC_GEN, set(["test block"]))
     assert len(errors) == 0
-    assert examples == [
-        Example(
-            file="valid_metadata.yaml",
-            id="sns_TestExample",
-            title="Check whether a phone number is opted out using an &AWS; SDK",
-            title_abbrev="Check whether a phone number is opted out",
-            synopsis="check whether a phone number is opted out using some of the &AWS; SDKs that are available.",
-            synopsis_list=["Check the one thing.", "Do some other thing."],
-            guide_topic=Url(title="Test guide topic title", url="test-guide/url"),
-            category="Usage",
-            service_main=None,
-            languages={
-                "Java": Language(
-                    name="Java",
-                    versions=[
-                        Version(
-                            sdk_version=2,
-                            github="javav2/example_code/sns",
-                            block_content="test block",
-                            excerpts=[],
-                            add_services={},
-                            sdkguide=None,
-                            more_info=[],
-                        ),
-                    ],
-                ),
-                "JavaScript": Language(
-                    name="JavaScript",
-                    versions=[
-                        Version(
-                            sdk_version=3,
-                            github=None,
-                            block_content=None,
-                            add_services={"s3": []},
-                            excerpts=[
-                                Excerpt(
-                                    description="Descriptive",
-                                    snippet_files=[],
-                                    snippet_tags=["javascript.snippet.tag"],
-                                )
-                            ],
-                            sdkguide=None,
-                            more_info=[],
-                        ),
-                    ],
-                ),
-                "PHP": Language(
-                    name="PHP",
-                    versions=[
-                        Version(
-                            sdk_version=3,
-                            github="php/example_code/sns",
-                            sdkguide="php/sdkguide/link",
-                            block_content=None,
-                            excerpts=[
-                                Excerpt(
-                                    description="Optional description.",
-                                    snippet_tags=[
-                                        "php.snippet.tag.1",
-                                        "php.snippet.tag.2",
-                                    ],
-                                    snippet_files=[],
-                                )
-                            ],
-                            add_services={},
-                            more_info=[],
-                        )
-                    ],
-                ),
-            },
-            services={"sns": [], "sqs": []},
-        )
-    ]
+    assert len(actual) == 1
+    java = Language(
+        name="Java",
+        versions=[
+            Version(
+                sdk_version=2,
+                github="javav2/example_code/sns",
+                block_content="test block",
+                excerpts=[],
+                add_services={},
+                sdkguide=None,
+                more_info=[],
+            ),
+        ],
+    )
+
+    javascript = Language(
+        name="JavaScript",
+        versions=[
+            Version(
+                sdk_version=3,
+                github=None,
+                block_content=None,
+                add_services={"s3": []},
+                excerpts=[
+                    Excerpt(
+                        description="Descriptive",
+                        snippet_files=[],
+                        snippet_tags=["javascript.snippet.tag"],
+                    )
+                ],
+                sdkguide=None,
+                more_info=[],
+            ),
+        ],
+    )
+
+    php = Language(
+        name="PHP",
+        versions=[
+            Version(
+                sdk_version=3,
+                github="php/example_code/sns",
+                sdkguide="php/sdkguide/link",
+                block_content=None,
+                excerpts=[
+                    Excerpt(
+                        description="Optional description.",
+                        snippet_tags=[
+                            "php.snippet.tag.1",
+                            "php.snippet.tag.2",
+                        ],
+                        snippet_files=[],
+                    )
+                ],
+                add_services={},
+                more_info=[],
+            )
+        ],
+    )
+
+    languages = {
+        "Java": java,
+        "JavaScript": javascript,
+        "PHP": php,
+    }
+
+    example = Example(
+        file="valid_metadata.yaml",
+        id="sns_TestExample",
+        title="Check whether a phone number is opted out using an &AWS; SDK",
+        title_abbrev="Check whether a phone number is opted out",
+        synopsis="check whether a phone number is opted out using some of the &AWS; SDKs that are available.",
+        synopsis_list=["Check the one thing.", "Do some other thing."],
+        guide_topic=Url(title="Test guide topic title", url="test-guide/url"),
+        category="Usage",
+        service_main=None,
+        languages=languages,
+        services={"sns": [], "sqs": []},
+    )
+    assert actual[0] == example
 
 
 @pytest.mark.parametrize(
@@ -311,6 +318,12 @@ def test_verify_load_successful():
                     guide="https://docs.aws.amazon.com/absolute/link-to-my-guide",
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
+                    file="errors_metadata.yaml",
+                    id="sqs_WrongServiceSlug",
+                    language="Perl",
+                    sdk_version=None,
+                ),
+                metadata_errors.APIExampleCannotAddService(
                     file="errors_metadata.yaml",
                     id="sqs_WrongServiceSlug",
                     language="Perl",
@@ -358,6 +371,13 @@ def test_verify_load_successful():
                     file="errors_metadata.yaml",
                     id="cross_TestExample_Versions",
                 ),
+                metadata_errors.MissingCrossContent(
+                    file="errors_metadata.yaml",
+                    id="cross_TestExample_Missing",
+                    language="Java",
+                    sdk_version=None,
+                    block="missing_block_content.xml",
+                ),
                 metadata_errors.NameFormat(
                     file="errors_metadata.yaml",
                     id="snsBadFormat",
@@ -389,7 +409,7 @@ def test_verify_load_successful():
 def test_common_errors(
     filename: str, expected_errors: list[metadata_errors.MetadataError]
 ):
-    _, actual = load(Path(filename), DOC_GEN)
+    _, actual = load(Path(filename), DOC_GEN, set(["test/block", "cross_block.xml"]))
     assert expected_errors == [*actual]
 
 

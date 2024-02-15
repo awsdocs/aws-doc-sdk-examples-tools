@@ -9,12 +9,17 @@ on:
 
 jobs:
   pytest:
-    name: Pytest all tests
+    name: lint, check, and test
     runs-on: ubuntu-latest
     steps:
-      - name: checkout contents
-        uses: actions/checkout@v3
-      - name: install dependencies
-        run: pip install -r requirements.txt
-      - name: run pytest
-        run: python -m pytest
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - run: python -m black --check **/*.py
+      - run: python -m mypy aws_doc_sdk_examples_tools
+        # Run both checks and formatting
+        if: success() || failure()
+      - run: python -m pytest -vv
