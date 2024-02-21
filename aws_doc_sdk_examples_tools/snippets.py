@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from shutil import copyfile
 import re
 
@@ -63,6 +63,14 @@ class MissingSnippetEndError(SnippetError):
 class SnippetAlreadyWritten(MetadataError):
     def message(self):
         return "Snippet file already exists, which means this tag is defined more than once in separate files."
+
+
+@dataclass
+class SnippetWriteError(MetadataError):
+    error: Any = None
+
+    def message(self):
+        return "Error writing snippet file."
 
 
 @dataclass
@@ -227,8 +235,11 @@ def write_snippets(root: Path, snippets: Dict[str, Snippet]):
         if name.exists():
             errors.append(SnippetAlreadyWritten(file=str(name)))
         else:
-            with open(name, "w", encoding="utf-8") as file:
-                file.write(snippets[tag].code)
+            try:
+                with open(name, "w", encoding="utf-8") as file:
+                    file.write(snippets[tag].code)
+            except Exception as error:
+                errors.append(SnippetWriteError(file=str(name), error=error))
     return errors
 
 
