@@ -169,6 +169,7 @@ ALLOW_LIST = {
     "nFindProductsWithNegativePriceWithConfig",
     "preview/examples/cognitoidentityprovider",
     "preview/examples/lambda/src/bin/scenario",
+    "role/AmazonBedrockExecutionRoleForAgents",
     "role/AmazonSageMakerGeospatialFullAccess",
     "s3_client_side_encryption_sym_master_key",
     "serial/CORE_THING_NAME/write/dev/serial1",
