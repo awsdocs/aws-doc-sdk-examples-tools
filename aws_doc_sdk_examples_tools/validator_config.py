@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
+from typing import Set
 from urllib.request import urlopen
 import json
 
@@ -79,10 +80,15 @@ GOOD_WORDS = {
     "throat",
 }
 
-DATA = urlopen(
-    "https://raw.githubusercontent.com/zacanger/profane-words/5ad6c62fa5228293bc610602eae475d50036dac2/words.json"
-)
-WORDS = set(json.load(DATA)).difference(GOOD_WORDS)
+try:
+    DATA = urlopen(
+        "https://raw.githubusercontent.com/zacanger/profane-words/5ad6c62fa5228293bc610602eae475d50036dac2/words.json"
+    )
+    words: Set[str] = set(json.load(DATA)).difference(GOOD_WORDS)
+except:  # noqa: E722
+    words: Set[str] = set()
+
+WORDS = words
 
 # List of words that should never be in code examples.
 DENY_LIST = {"alpha-docs-aws.amazon.com", "integ-docs-aws.amazon.com"}.union(WORDS)
