@@ -80,13 +80,14 @@ GOOD_WORDS = {
     "throat",
 }
 
+words: Set[str] = set()
 try:
     DATA = urlopen(
         "https://raw.githubusercontent.com/zacanger/profane-words/5ad6c62fa5228293bc610602eae475d50036dac2/words.json"
     )
-    words: Set[str] = set(json.load(DATA)).difference(GOOD_WORDS)
+    words = set(json.load(DATA)).difference(GOOD_WORDS)
 except:  # noqa: E722
-    words: Set[str] = set()
+    pass
 
 WORDS = words
 
