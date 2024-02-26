@@ -25,16 +25,17 @@ import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import List
 
-from file_utils import get_files
-from metadata_errors import (
+from aws_doc_sdk_examples_tools.file_utils import get_files
+from aws_doc_sdk_examples_tools.metadata_errors import (
     MetadataErrors,
     MetadataError,
     MetadataParseError,
     DuplicateItemException,
 )
-from spdx import verify_spdx
-import validator_config
+from aws_doc_sdk_examples_tools.spdx import verify_spdx
+from aws_doc_sdk_examples_tools import validator_config
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +63,6 @@ def check_files(root: Path, errors: MetadataErrors, do_check_spdx: bool):
             verify_spdx(file_contents, file_path, errors)
 
     print(f"{file_count} files scanned in {root}.\n")
-
-
-def verify_spdx(a: str, b: Path, c: MetadataErrors):
-    pass
 
 
 def word_parts(contents: str):
@@ -137,14 +134,14 @@ def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
         # TODO allow projects to configure their specific expected sample files.
         return
     media_folder = ".sample_media"
-    file_list: list[str] = []
+    file_list: List[str] = []
     for path in get_files(sample_files_folder):
         file_list.append(path.name)
         ext = path.suffix
         if path.name not in validator_config.EXPECTED_SAMPLE_FILES:
             errors.append(UnknownSampleFile(file=str(path)))
         if ext.lower() in validator_config.MEDIA_FILE_TYPES:
-            if media_folder not in path:
+            if media_folder not in str(path):
                 errors.append(InvalidSampleDirectory(file=str(path), dir=media_folder))
         size_in_mb = os.path.getsize(path) / ONE_MB_AS_BYTES
         if size_in_mb > MAX_FILE_SIZE_MB:

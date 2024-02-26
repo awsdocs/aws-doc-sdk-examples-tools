@@ -12,8 +12,8 @@ runs:
       with:
         python-version: "3.11"
     - name: Install Dependencies
-      run: pip install -r "${{ github.action_path }}/requirements.txt"
+      run: pip install -e .
       shell: bash
     - name: Run validator
-      run: python3 "${{ github.action_path }}/aws-doc-sdk-examples-tools/validate.py" --root "${{ inputs.root }}"
+      run: python3 "${{ github.action_path }}/aws_doc_sdk_examples_tools/validate.py" --root "${{ inputs.root }}"
       shell: bash

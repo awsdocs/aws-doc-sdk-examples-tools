@@ -13,21 +13,25 @@ import datetime
 import os
 import re
 import yaml
-import yamale
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Optional
-from yamale import YamaleError
-from yamale.validators import DefaultValidators, Validator, String
+from typing import Any, Dict, Iterable, List, Optional, Set
 
-from metadata_errors import MetadataErrors, MetadataParseError
+import yamale  # type: ignore
+from yamale import YamaleError  # type: ignore
+from yamale.validators import DefaultValidators, Validator, String  # type: ignore
+
+from aws_doc_sdk_examples_tools.metadata_errors import (
+    MetadataErrors,
+    MetadataParseError,
+)
 
 
 class SdkVersion(Validator):
     """Validate that sdk version appears in sdks.yaml."""
 
     tag = "sdk_version"
-    sdks: dict[str, Any] = {}
+    sdks: Dict[str, Any] = {}
 
     def _is_valid(self, value: str):
         return value in self.sdks
@@ -37,12 +41,12 @@ class ServiceName(Validator):
     """Validate that service names appear in services.yaml."""
 
     tag = "service_name"
-    services = {}
+    services: Set[str] = set()
 
     def get_name(self):
         return "service name found in services.yaml"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         return value in self.services
 
 
@@ -52,16 +56,15 @@ class ServiceVersion(Validator):
     def get_name(self):
         return "valid service version"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         try:
             hyphen_index = len(value)
             for _ in range(3):
                 hyphen_index = value.rfind("-", 0, hyphen_index)
-            time = datetime.datetime.strptime(value[hyphen_index + 1 :], "%Y-%m-%d")
-            isdate = isinstance(time, datetime.date)
+            datetime.datetime.strptime(value[hyphen_index + 1 :], "%Y-%m-%d")
+            return True
         except ValueError:
-            isdate = False
-        return isdate
+            return False
 
 
 class ExampleId(Validator):
@@ -71,24 +74,24 @@ class ExampleId(Validator):
     """
 
     tag = "example_id"
-    services: dict[str, any] = {}
+    services: Set[str] = set()
 
     def get_name(self):
         return "valid example ID"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str):
         if not re.fullmatch("^[\\da-z-]+(_[\\da-zA-Z]+)+$", value):
             return False
         else:
             svc = value.split("_")[0]
-            return svc == "cross" or svc in self.services
+            return (svc == "cross") or (svc in self.services)
 
 
 class BlockContent(Validator):
     """Validate that block content refers to an existing file."""
 
     tag = "block_content"
-    block_names: list[str] = []
+    block_names: List[str] = []
 
     def get_name(self):
         return "file found in the cross-content folder"
@@ -165,7 +168,7 @@ class ValidateYamaleError(MetadataParseError):
 def validate_files(
     schema_name: Path,
     meta_names: Iterable[Path],
-    validators: dict[str, Validator],
+    validators: Dict[str, Validator],
     errors: MetadataErrors,
 ):
     """Iterate a list of files and validate each one against a schema."""
@@ -183,7 +186,7 @@ def validate_files(
 
 def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErrors:
     with open(Path(__file__).parent.parent / "config" / "sdks.yaml") as sdks_file:
-        sdks_yaml: dict[str, Any] = yaml.safe_load(sdks_file)
+        sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
 
     with open(
         Path(__file__).parent.parent / "config" / "services.yaml"

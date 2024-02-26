@@ -3,14 +3,14 @@
 
 import os
 
-from shutil import rmtree
 from pathlib import Path
-from collections.abc import Generator, Callable
+from typing import Callable, Generator, List
+from shutil import rmtree
 
 from pathspec import GitIgnoreSpec
 
 
-def match_path_to_specs(path: Path, specs: list[GitIgnoreSpec]) -> bool:
+def match_path_to_specs(path: Path, specs: List[GitIgnoreSpec]) -> bool:
     """
     Return True if we should skip this path, that is, it is matched by a .gitignore.
     """
@@ -21,7 +21,7 @@ def match_path_to_specs(path: Path, specs: list[GitIgnoreSpec]) -> bool:
 
 
 def walk_with_gitignore(
-    root: Path, specs: list[GitIgnoreSpec] = []
+    root: Path, specs: List[GitIgnoreSpec] = []
 ) -> Generator[Path, None, None]:
     """
     Starting from a root directory, walk the file system yielding a path for each file.
@@ -31,8 +31,8 @@ def walk_with_gitignore(
     """
     gitignore = root / ".gitignore"
     if gitignore.exists():
-        with open(root / ".gitignore", "r", encoding="utf-8") as gitignore:
-            specs = [*specs, GitIgnoreSpec.from_lines(gitignore.readlines())]
+        with open(root / ".gitignore", "r", encoding="utf-8") as ignore_file:
+            specs = [*specs, GitIgnoreSpec.from_lines(ignore_file.readlines())]
     for entry in os.scandir(root):
         path = Path(entry.path)
         if not match_path_to_specs(path, specs):

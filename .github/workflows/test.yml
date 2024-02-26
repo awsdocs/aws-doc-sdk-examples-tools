@@ -1,0 +1,25 @@
+name: Test awsdocs/aws-doc-sdk-examples-tools
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    name: lint, check, and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - run: python -m black --check **/*.py
+      - run: python -m mypy aws_doc_sdk_examples_tools
+        # Run both checks and formatting
+        if: success() || failure()
+      - run: python -m pytest -vv

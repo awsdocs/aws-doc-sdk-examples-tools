@@ -2,15 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from dataclasses import dataclass
-from metadata import Example
-from metadata_errors import MetadataErrors, MetadataError
-from typing import Optional
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 from shutil import copyfile
 import re
-import validator_config
 
-from file_utils import get_files, clear
+from aws_doc_sdk_examples_tools import validator_config
+
+from aws_doc_sdk_examples_tools.file_utils import get_files, clear
+from aws_doc_sdk_examples_tools.metadata import Example
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -65,6 +66,14 @@ class SnippetAlreadyWritten(MetadataError):
 
 
 @dataclass
+class SnippetWriteError(MetadataError):
+    error: Any = None
+
+    def message(self):
+        return "Error writing snippet file."
+
+
+@dataclass
 class MetadataUnicodeError(MetadataError):
     err: Optional[UnicodeDecodeError] = None
 
@@ -79,11 +88,11 @@ def _tag_from_line(token: str, line: str) -> str:
 
 
 def parse_snippets(
-    lines: list[str], file: Path
-) -> tuple[dict[str, Snippet], MetadataErrors]:
-    snippets: dict[str, Snippet] = {}
+    lines: List[str], file: Path
+) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+    snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
-    open_tags: set[str] = set()
+    open_tags: Set[str] = set()
     for line_idx, line in enumerate(lines):
         if SNIPPET_START in line:
             tag = _tag_from_line(SNIPPET_START, line)
@@ -126,9 +135,9 @@ def parse_snippets(
     return snippets, errors
 
 
-def find_snippets(file: Path) -> tuple[dict[str, Snippet], MetadataErrors]:
+def find_snippets(file: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
-    snippets = {}
+    snippets: Dict[str, Snippet] = {}
     with open(file, encoding="utf-8") as snippet_file:
         try:
             snippets, errs = parse_snippets(snippet_file.readlines(), file)
@@ -138,8 +147,8 @@ def find_snippets(file: Path) -> tuple[dict[str, Snippet], MetadataErrors]:
     return snippets, errors
 
 
-def collect_snippets(root: Path) -> tuple[dict[str, Snippet], MetadataErrors]:
-    snippets: dict[str, Snippet] = {}
+def collect_snippets(root: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+    snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     for file in get_files(root, validator_config.skip):
         snips, errs = find_snippets(file)
@@ -163,20 +172,23 @@ class MissingSnippetFile(MetadataError):
     def message(self):
         return f"missing snippet_file {self.snippet_file}"
 
+
 @dataclass
 class WindowsUnsafeSnippetFile(MetadataError):
     snippet_file: Optional[str] = None
 
     def message(self):
         return f"snippet_file with unsafe Windows name {self.snippet_file}"
-    
+
+
 # This set is from https://superuser.com/a/358861, but does not include / or \ as those are verified as the entire path
 win_unsafe_re = r'[:*?"<>|]'
 
+
 def validate_snippets(
-    examples: list[Example],
-    snippets: dict[str, Snippet],
-    snippet_files: set[str],
+    examples: List[Example],
+    snippets: Dict[str, Snippet],
+    snippet_files: Set[str],
     errors: MetadataErrors,
     root: Path,
 ):
@@ -216,15 +228,18 @@ def validate_snippets(
                         snippet_files.add(snippet_file)
 
 
-def write_snippets(root: Path, snippets: dict[str, Snippet]):
+def write_snippets(root: Path, snippets: Dict[str, Snippet]):
     errors = MetadataErrors()
     for tag in snippets:
         name = root / f"{tag}.txt"
         if name.exists():
             errors.append(SnippetAlreadyWritten(file=str(name)))
         else:
-            with open(name, "w", encoding="utf-8") as file:
-                file.write(snippets[tag].code)
+            try:
+                with open(name, "w", encoding="utf-8") as file:
+                    file.write(snippets[tag].code)
+            except Exception as error:
+                errors.append(SnippetWriteError(file=str(name), error=error))
     return errors
 
 
