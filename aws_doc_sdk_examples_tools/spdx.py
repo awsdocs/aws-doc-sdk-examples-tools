@@ -95,7 +95,13 @@ def main():
         p = Path(p)
         with open(p, encoding="utf8") as f:
             contents = f.readlines()
-        prefix = "#" if p.suffix == ".py" or p.suffix == ".sh" else "//"
+        prefix = (
+            "#"
+            if p.suffix in [".py", ".sh", ".rb"]
+            else '"'
+            if p.suffix in [".abap"]
+            else "//"
+        )
         offset = (
             1
             if contents[0].startswith("#!")
