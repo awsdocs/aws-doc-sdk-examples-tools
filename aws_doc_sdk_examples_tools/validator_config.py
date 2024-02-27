@@ -67,7 +67,7 @@ IGNORE_SPDX_SUFFIXES = {
     ".yml",
 }
 
-SPDX_LEADER = r"^(#|//) "
+SPDX_LEADER = r"^(#|//|\") "
 SPDX_COPYRIGHT = r"Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved."
 SPDX_LICENSE = r"SPDX-License-Identifier: (Apache-2.0|MIT-0)"
 
