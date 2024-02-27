@@ -97,8 +97,10 @@ def main():
             contents = f.readlines()
         prefix = (
             "#"
-            if p.suffix == ".py" or p.suffix == ".sh"
-            else '"' if p.suffix == ".abap" else "//"
+            if p.suffix in [".py", ".sh", ".rb"]
+            else '"'
+            if p.suffix in [".abap"]
+            else "//"
         )
         offset = (
             1
