@@ -43,6 +43,13 @@ class DocGen:
         self.snippets = snippets
         self.errors.extend(errs)
 
+    def languages(self) -> Set[str]:
+        languages: Set[str] = set()
+        for sdk_name, sdk in self.sdks.items():
+            for version in sdk.versions:
+                languages += f"{sdk_name}:{version.version}"
+        return languages
+
     @classmethod
     def from_root(cls, root: Path) -> "DocGen":
         errors = MetadataErrors()
