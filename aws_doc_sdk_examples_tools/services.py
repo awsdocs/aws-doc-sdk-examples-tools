@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Set, Union
 from dataclasses import dataclass, field
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, check_mapping
+from .metadata_errors import MetadataErrors, check_mapping
 
 
 @dataclass

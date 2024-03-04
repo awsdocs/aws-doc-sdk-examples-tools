@@ -9,9 +9,9 @@ import re
 
 from aws_doc_sdk_examples_tools import validator_config
 
-from aws_doc_sdk_examples_tools.file_utils import get_files, clear
-from aws_doc_sdk_examples_tools.metadata import Example
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
+from .file_utils import get_files, clear
+from .metadata import Example
+from .metadata_errors import MetadataErrors, MetadataError
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["

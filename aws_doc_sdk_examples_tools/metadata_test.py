@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata import (
+from .metadata import (
     parse,
     Example,
     Url,
@@ -20,9 +20,9 @@ from aws_doc_sdk_examples_tools.metadata import (
     Excerpt,
     idFormat,
 )
-from aws_doc_sdk_examples_tools.doc_gen import DocGen
-from aws_doc_sdk_examples_tools.sdks import Sdk
-from aws_doc_sdk_examples_tools.services import Service, ServiceExpanded
+from .doc_gen import DocGen
+from .sdks import Sdk
+from .services import Service, ServiceExpanded
 
 
 def load(

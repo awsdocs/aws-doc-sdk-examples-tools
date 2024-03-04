@@ -8,7 +8,7 @@ from typing import List
 import re
 from sys import argv
 
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataError, MetadataErrors
+from .metadata_errors import MetadataError, MetadataErrors
 from aws_doc_sdk_examples_tools import validator_config
 
 

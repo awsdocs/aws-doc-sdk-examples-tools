@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 
 from aws_doc_sdk_examples_tools import project_validator
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors
+from .metadata_errors import MetadataErrors
 
 
 @pytest.mark.parametrize(

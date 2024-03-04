@@ -9,16 +9,16 @@ from typing import Dict, List, Optional, Set
 
 # from os import glob
 
-from aws_doc_sdk_examples_tools.metadata import Example, parse as parse_examples
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
-from aws_doc_sdk_examples_tools.metadata_validator import validate_metadata
-from aws_doc_sdk_examples_tools.project_validator import (
+from .metadata import Example, parse as parse_examples
+from .metadata_errors import MetadataErrors, MetadataError
+from .metadata_validator import validate_metadata
+from .project_validator import (
     check_files,
     verify_sample_files,
 )
-from aws_doc_sdk_examples_tools.sdks import Sdk, parse as parse_sdks
-from aws_doc_sdk_examples_tools.services import Service, parse as parse_services
-from aws_doc_sdk_examples_tools.snippets import (
+from .sdks import Sdk, parse as parse_sdks
+from .services import Service, parse as parse_services
+from .snippets import (
     Snippet,
     collect_snippets,
     validate_snippets,

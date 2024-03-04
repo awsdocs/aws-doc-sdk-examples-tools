@@ -9,14 +9,14 @@ from typing import Any, Dict, List, Optional, Set, Union
 from os.path import splitext
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
     DuplicateItemException,
 )
-from aws_doc_sdk_examples_tools.metadata_validator import StringExtension
-from aws_doc_sdk_examples_tools.services import Service
-from aws_doc_sdk_examples_tools.sdks import Sdk
+from .metadata_validator import StringExtension
+from .services import Service
+from .sdks import Sdk
 
 
 @dataclass

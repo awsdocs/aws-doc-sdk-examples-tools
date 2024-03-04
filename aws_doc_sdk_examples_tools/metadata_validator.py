@@ -21,7 +21,7 @@ import yamale  # type: ignore
 from yamale import YamaleError  # type: ignore
 from yamale.validators import DefaultValidators, Validator, String  # type: ignore
 
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
 )

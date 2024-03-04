@@ -27,14 +27,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-from aws_doc_sdk_examples_tools.file_utils import get_files
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .file_utils import get_files
+from .metadata_errors import (
     MetadataErrors,
     MetadataError,
     MetadataParseError,
     DuplicateItemException,
 )
-from aws_doc_sdk_examples_tools.spdx import verify_spdx
+from .spdx import verify_spdx
 from aws_doc_sdk_examples_tools import validator_config
 
 logger = logging.getLogger(__name__)
