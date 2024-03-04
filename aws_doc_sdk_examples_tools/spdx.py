@@ -31,6 +31,10 @@ class MissingSPDX(MetadataError):
         return "Missing SPDX"
 
 
+RE_COPYRIGHT = validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT
+RE_LICENSE = validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE
+
+
 def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors):
     """Verify the file starts with an SPDX comment, possibly following a shebang line"""
     if file_location.suffix in validator_config.IGNORE_SPDX_SUFFIXES:
@@ -47,32 +51,14 @@ def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors)
     if len(lines) < 2:
         return
     # First line may be a start of comment
-    has_copyright = (
-        False
-        if re.match(
-            validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT, lines[0]
-        )
-        is None
-        else True
-    )
-    has_license = (
-        False
-        if re.match(
-            validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE, lines[1]
-        )
-        is None
-        else True
-    )
+    has_copyright = re.match(RE_COPYRIGHT, lines[0]) is not None
+    has_license = re.match(RE_LICENSE, lines[1]) is not None
     if not (has_copyright and has_license):
         file_has_copyright = (
-            True
-            if re.match(validator_config.SPDX_COPYRIGHT, file_contents) is None
-            else False
+            re.match(validator_config.SPDX_COPYRIGHT, file_contents) is not None
         )
         file_has_license = (
-            True
-            if re.match(validator_config.SPDX_LICENSE, file_contents) is None
-            else False
+            re.match(validator_config.SPDX_LICENSE, file_contents) is not None
         )
         if file_has_copyright or file_has_license:
             errors.append(
@@ -98,9 +84,7 @@ def main():
         prefix = (
             "#"
             if p.suffix in [".py", ".sh", ".rb"]
-            else '"'
-            if p.suffix in [".abap"]
-            else "//"
+            else '"' if p.suffix in [".abap"] else "//"
         )
         offset = (
             1
