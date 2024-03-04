@@ -81,21 +81,21 @@ class MetadataUnicodeError(MetadataError):
         return f" unicode error: {str(self.err)}"
 
 
-def _tag_from_line(token: str, line: str) -> str:
+def _tag_from_line(token: str, line: str, prefix: str) -> str:
     tag_start = line.find(token) + len(token)
     tag_end = line.find("]", tag_start)
-    return line[tag_start:tag_end].strip()
+    return prefix + line[tag_start:tag_end].strip()
 
 
 def parse_snippets(
-    lines: List[str], file: Path
+    lines: List[str], file: Path, prefix: str
 ) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     open_tags: Set[str] = set()
     for line_idx, line in enumerate(lines):
         if SNIPPET_START in line:
-            tag = _tag_from_line(SNIPPET_START, line)
+            tag = _tag_from_line(SNIPPET_START, line, prefix)
             if tag in snippets:
                 errors.append(
                     DuplicateSnippetStartError(file=str(file), line=line_idx, tag=tag)
@@ -110,7 +110,7 @@ def parse_snippets(
                 )
                 open_tags.add(tag)
         elif SNIPPET_END in line:
-            tag = _tag_from_line(SNIPPET_END, line)
+            tag = _tag_from_line(SNIPPET_END, line, prefix)
             if tag not in snippets:
                 errors.append(
                     MissingSnippetStartError(file=str(file), line=line_idx, tag=tag)
@@ -135,23 +135,25 @@ def parse_snippets(
     return snippets, errors
 
 
-def find_snippets(file: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
     snippets: Dict[str, Snippet] = {}
     with open(file, encoding="utf-8") as snippet_file:
         try:
-            snippets, errs = parse_snippets(snippet_file.readlines(), file)
+            snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
             errors.extend(errs)
         except UnicodeDecodeError as err:
             errors.append(MetadataUnicodeError(file=str(file), err=err))
     return snippets, errors
 
 
-def collect_snippets(root: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+def collect_snippets(
+    root: Path, prefix: str = ""
+) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     for file in get_files(root, validator_config.skip):
-        snips, errs = find_snippets(file)
+        snips, errs = find_snippets(file, prefix)
         snippets.update(snips)
         errors.extend(errs)
     return snippets, errors

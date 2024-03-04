@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Set
 # from os import glob
 
 from aws_doc_sdk_examples_tools.metadata import Example, parse as parse_examples
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors
+from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
 from aws_doc_sdk_examples_tools.metadata_validator import validate_metadata
 from aws_doc_sdk_examples_tools.project_validator import (
     check_files,
@@ -26,6 +26,11 @@ from aws_doc_sdk_examples_tools.snippets import (
 
 
 @dataclass
+class DocGenMergeWarning(MetadataError):
+    pass
+
+
+@dataclass
 class DocGen:
     root: Path
     errors: MetadataErrors
@@ -36,10 +41,16 @@ class DocGen:
     examples: List[Example] = field(default_factory=list)
     cross_blocks: Set[str] = field(default_factory=set)
 
-    def collect_snippets(self, snippets_root: Optional[Path]):
+    def collect_snippets(
+        self, snippets_root: Optional[Path] = None, prefix: Optional[str] = None
+    ):
         if snippets_root is None:
             snippets_root = self.root.parent.parent
-        snippets, errs = collect_snippets(snippets_root)
+        if prefix is not None:
+            prefix = f"{prefix}_"
+        if prefix is None:
+            prefix = ""
+        snippets, errs = collect_snippets(snippets_root, prefix)
         self.snippets = snippets
         self.errors.extend(errs)
 
@@ -47,25 +58,59 @@ class DocGen:
         languages: Set[str] = set()
         for sdk_name, sdk in self.sdks.items():
             for version in sdk.versions:
-                languages += f"{sdk_name}:{version.version}"
+                languages.add(f"{sdk_name}:{version.version}")
         return languages
 
+    def merge(self, other: "DocGen") -> MetadataErrors:
+        """Merge fiends from other into self, prioritizing self fields"""
+        warnings = MetadataErrors()
+        for name, sdk in other.sdks.items():
+            if name not in self.sdks:
+                self.sdks[name] = sdk
+            else:
+                warnings.append(
+                    DocGenMergeWarning(
+                        file=str(other.root), id=f"conflict in sdk {name}"
+                    )
+                )
+        for name, service in other.services.items():
+            if name not in self.services:
+                self.services[name] = service
+                warnings.append(
+                    DocGenMergeWarning(
+                        file=str(other.root), id=f"conflict in service {name}"
+                    )
+                )
+        for name, snippet in other.snippets.items():
+            if name not in self.snippets:
+                self.snippets[name] = snippet
+                warnings.append(
+                    DocGenMergeWarning(
+                        file=str(other.root), id=f"conflict in snippet {name}"
+                    )
+                )
+
+        self.snippet_files.update(other.snippet_files)
+        self.cross_blocks.update(other.cross_blocks)
+        self.examples += other.examples
+
+        return warnings
+
     @classmethod
-    def from_root(cls, root: Path) -> "DocGen":
+    def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
         errors = MetadataErrors()
 
         metadata = root / ".doc_gen/metadata"
 
-        with open(
-            Path(__file__).parent.parent / "config" / "sdks.yaml", encoding="utf-8"
-        ) as file:
+        if config is None:
+            config = Path(__file__).parent / "config"
+
+        with open(config / "sdks.yaml", encoding="utf-8") as file:
             meta = yaml.safe_load(file)
             sdks, errs = parse_sdks("sdks.yaml", meta)
             errors.extend(errs)
 
-        with open(
-            Path(__file__).parent.parent / "config" / "services.yaml", encoding="utf-8"
-        ) as file:
+        with open(config / "services.yaml", encoding="utf-8") as file:
             meta = yaml.safe_load(file)
             services, service_errors = parse_services("services.yaml", meta)
             errors.extend(service_errors)

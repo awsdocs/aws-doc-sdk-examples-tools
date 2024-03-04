@@ -275,12 +275,14 @@ def parse_services(
         if name not in known_services:
             errors.append(metadata_errors.UnknownService(service=name))
         else:
-            service: Dict[str, None] | None = yaml.get(name)
+            service: Dict[str, None] | Set[str] | None = yaml.get(name)
             # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
+            if isinstance(service, dict):
+                service = set(service.keys())
             if service is None:
-                service = {}
+                service = set()
             # Make a copy of the dict
-            services[name] = [*service.keys()]
+            services[name] = [*service]
     return services
 
 
