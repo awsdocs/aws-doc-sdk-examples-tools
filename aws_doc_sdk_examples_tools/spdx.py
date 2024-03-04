@@ -4,6 +4,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List
 import re
 from sys import argv
 
@@ -31,48 +32,36 @@ class MissingSPDX(MetadataError):
         return "Missing SPDX"
 
 
+RE_COPYRIGHT = validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT
+RE_LICENSE = validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE
+
+
+def skip_first_line(lines: List[str]) -> bool:
+    return (
+        lines[0].startswith("#!")
+        or lines[0].startswith("// swift-tools-version:")
+        or lines[0] == "<?php"
+    )
+
+
 def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors):
     """Verify the file starts with an SPDX comment, possibly following a shebang line"""
     if file_location.suffix in validator_config.IGNORE_SPDX_SUFFIXES:
         return
     lines = file_contents.splitlines()
-    if len(lines) < 2:
-        return
-    if (
-        lines[0].startswith("#!")
-        or lines[0].startswith("// swift-tools-version:")
-        or lines[0] == "<?php"
-    ):
+    if skip_first_line(lines):
         lines = lines[1:]
     if len(lines) < 2:
         return
     # First line may be a start of comment
-    has_copyright = (
-        False
-        if re.match(
-            validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT, lines[0]
-        )
-        is None
-        else True
-    )
-    has_license = (
-        False
-        if re.match(
-            validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE, lines[1]
-        )
-        is None
-        else True
-    )
+    has_copyright = re.match(RE_COPYRIGHT, lines[0]) is not None
+    has_license = re.match(RE_LICENSE, lines[1]) is not None
     if not (has_copyright and has_license):
         file_has_copyright = (
-            True
-            if re.match(validator_config.SPDX_COPYRIGHT, file_contents) is None
-            else False
+            re.match(validator_config.SPDX_COPYRIGHT, file_contents) is not None
         )
         file_has_license = (
-            True
-            if re.match(validator_config.SPDX_LICENSE, file_contents) is None
-            else False
+            re.match(validator_config.SPDX_LICENSE, file_contents) is not None
         )
         if file_has_copyright or file_has_license:
             errors.append(
@@ -90,33 +79,29 @@ def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors)
             )
 
 
+def insert_spdx(path: Path):
+    with open(path, encoding="utf8") as f:
+        contents = f.readlines()
+    prefix = "//"
+    if path.suffix in [".py", ".sh", ".rb"]:
+        prefix = "#"
+    if path.suffix in [".abap"]:
+        prefix = '"'
+    offset = 1 if skip_first_line(contents) else 0
+    contents.insert(
+        offset,
+        prefix
+        + " Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.\n",
+    )
+    contents.insert(offset + 1, prefix + " SPDX-License-Identifier: Apache-2.0\n")
+    with open(path, "wt", encoding="utf-8-sig") as f:
+        f.writelines(contents)
+
+
 def main():
     for p in argv[1:]:
         p = Path(p)
-        with open(p, encoding="utf8") as f:
-            contents = f.readlines()
-        prefix = (
-            "#"
-            if p.suffix in [".py", ".sh", ".rb"]
-            else '"'
-            if p.suffix in [".abap"]
-            else "//"
-        )
-        offset = (
-            1
-            if contents[0].startswith("#!")
-            or contents[0].startswith("<?php")
-            or contents[0].startswith("// swift-tools-version")
-            else 0
-        )
-        contents.insert(
-            offset,
-            prefix
-            + " Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.\n",
-        )
-        contents.insert(offset + 1, prefix + " SPDX-License-Identifier: Apache-2.0\n")
-        with open(p, "wt", encoding="utf-8-sig") as f:
-            f.writelines(contents)
+        insert_spdx(p)
 
 
 if __name__ == "__main__":
