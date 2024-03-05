@@ -62,6 +62,6 @@ from aws_doc_sdk_examples_tools import snippets
 def test_verify_snippet_start_end(file_contents: str, expected_error_count: int):
     """Test that various kinds of mismatched snippet-start and -end tags are
     counted correctly as errors."""
-    _, errors = snippets.parse_snippets(file_contents.split("\n"), Path("test"))
+    _, errors = snippets.parse_snippets(file_contents.split("\n"), Path("test"), "")
     error_count = len(errors)
     assert error_count == expected_error_count

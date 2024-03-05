@@ -44,12 +44,12 @@ class DocGen:
     def collect_snippets(
         self, snippets_root: Optional[Path] = None, prefix: Optional[str] = None
     ):
-        if snippets_root is None:
-            snippets_root = self.root.parent.parent
         if prefix is not None:
             prefix = f"{prefix}_"
         if prefix is None:
             prefix = ""
+        if snippets_root is None:
+            snippets_root = self.root
         snippets, errs = collect_snippets(snippets_root, prefix)
         self.snippets = snippets
         self.errors.extend(errs)
@@ -97,9 +97,23 @@ class DocGen:
         return warnings
 
     @classmethod
-    def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
-        errors = MetadataErrors()
+    def empty(cls) -> "DocGen":
+        return DocGen(root=Path("/"), errors=MetadataErrors())
 
+    def clone(self) -> "DocGen":
+        return DocGen(
+            root=self.root,
+            errors=MetadataErrors(),
+            sdks={**self.sdks},
+            services={**self.services},
+            snippets={},
+            snippet_files=set(),
+            cross_blocks=set(),
+            examples=[],
+        )
+
+    def for_root(self, root: Path, config: Optional[Path] = None) -> "DocGen":
+        self.root = root
         metadata = root / ".doc_gen/metadata"
 
         if config is None:
@@ -108,38 +122,39 @@ class DocGen:
         with open(config / "sdks.yaml", encoding="utf-8") as file:
             meta = yaml.safe_load(file)
             sdks, errs = parse_sdks("sdks.yaml", meta)
-            errors.extend(errs)
+            self.errors.extend(errs)
 
         with open(config / "services.yaml", encoding="utf-8") as file:
             meta = yaml.safe_load(file)
             services, service_errors = parse_services("services.yaml", meta)
-            errors.extend(service_errors)
+            self.errors.extend(service_errors)
 
         cross = set(
             [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
         )
 
-        doc_gen = cls(
-            root=root,
-            sdks=sdks,
-            services=services,
-            errors=errors,
-            cross_blocks=cross,
-        )
+        self.root = root
+        self.sdks = sdks
+        self.services = services
+        self.cross_blocks = cross
 
         for path in metadata.glob("*_metadata.yaml"):
             with open(path) as file:
                 ex, errs = parse_examples(
                     path.name,
                     yaml.safe_load(file),
-                    doc_gen.sdks,
-                    doc_gen.services,
-                    doc_gen.cross_blocks,
+                    self.sdks,
+                    self.services,
+                    self.cross_blocks,
                 )
-                doc_gen.examples.extend(ex)
-                errors.extend(errs)
+                self.examples.extend(ex)
+                self.errors.extend(errs)
 
-        return doc_gen
+        return self
+
+    @classmethod
+    def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
+        return DocGen.empty().for_root(root, config)
 
     def validate(self, check_spdx: bool):
         check_files(self.root, self.errors, check_spdx)

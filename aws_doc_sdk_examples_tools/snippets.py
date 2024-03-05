@@ -230,11 +230,11 @@ def validate_snippets(
                         snippet_files.add(snippet_file)
 
 
-def write_snippets(root: Path, snippets: Dict[str, Snippet]):
+def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False):
     errors = MetadataErrors()
     for tag in snippets:
         name = root / f"{tag}.txt"
-        if name.exists():
+        if check and name.exists():
             errors.append(SnippetAlreadyWritten(file=str(name)))
         else:
             try:
@@ -248,8 +248,7 @@ def write_snippets(root: Path, snippets: Dict[str, Snippet]):
 def write_snippet_file(folder: Path, snippet_file: Path):
     name = str(snippet_file).replace("/", ".")
     dest = folder / f"{name}.txt"
-    if not dest.exists():
-        copyfile(folder / snippet_file, dest)
+    copyfile(folder / snippet_file, dest)
 
 
 def main():
