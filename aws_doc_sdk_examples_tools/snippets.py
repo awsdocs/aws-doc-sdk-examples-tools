@@ -209,25 +209,24 @@ def validate_snippets(
                                     tag=snippet_tag,
                                 )
                             )
-                    for snippet_file in excerpt.snippet_files:
-                        if not (root / snippet_file).exists():
-                            # Ensure all snippet_files exist
-                            errors.append(
-                                MissingSnippetFile(
-                                    file=example.file,
-                                    snippet_file=snippet_file,
-                                    id=f"{lang}:{version.sdk_version}",
-                                )
-                            )
-                        if re.search(win_unsafe_re, str(snippet_file)):
-                            errors.append(
-                                WindowsUnsafeSnippetFile(
-                                    file=example.file,
-                                    snippet_file=snippet_file,
-                                    id=f"{lang}:{version.sdk_version}",
-                                )
-                            )
-                        snippet_files.add(snippet_file)
+    for snippet_file in excerpt.snippet_files:
+        if not (root / snippet_file).exists():
+            # Ensure all snippet_files exist
+            errors.append(
+                MissingSnippetFile(
+                    file=example.file,
+                    snippet_file=snippet_file,
+                    id=f"{lang}:{version.sdk_version}",
+                )
+            )
+        if re.search(win_unsafe_re, str(snippet_file)):
+            errors.append(
+                WindowsUnsafeSnippetFile(
+                    file=example.file,
+                    snippet_file=snippet_file,
+                    id=f"{lang}:{version.sdk_version}",
+                )
+            )
 
 
 def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False):

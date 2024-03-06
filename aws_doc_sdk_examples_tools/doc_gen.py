@@ -140,15 +140,21 @@ class DocGen:
 
         for path in metadata.glob("*_metadata.yaml"):
             with open(path) as file:
-                ex, errs = parse_examples(
+                examples, errs = parse_examples(
                     path.name,
                     yaml.safe_load(file),
                     self.sdks,
                     self.services,
                     self.cross_blocks,
                 )
-                self.examples.extend(ex)
+                self.examples.extend(examples)
                 self.errors.extend(errs)
+                for example in examples:
+                    for lang in example.languages:
+                        language = example.languages[lang]
+                        for version in language.versions:
+                            for excerpt in version.excerpts:
+                                self.snippet_files.update(excerpt.snippet_files)
 
         return self
 
