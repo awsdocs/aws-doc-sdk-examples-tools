@@ -5,7 +5,7 @@ import yaml
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, Iterable, Optional, Set
 
 # from os import glob
 
@@ -38,7 +38,7 @@ class DocGen:
     services: Dict[str, Service] = field(default_factory=dict)
     snippets: Dict[str, Snippet] = field(default_factory=dict)
     snippet_files: Set[str] = field(default_factory=set)
-    examples: List[Example] = field(default_factory=list)
+    examples: Dict[str, Example] = field(default_factory=dict)
     cross_blocks: Set[str] = field(default_factory=set)
 
     def collect_snippets(
@@ -92,9 +92,17 @@ class DocGen:
 
         self.snippet_files.update(other.snippet_files)
         self.cross_blocks.update(other.cross_blocks)
-        self.examples += other.examples
+        self.extend_examples(other.examples.values())
 
         return warnings
+
+    def extend_examples(self, examples: Iterable[Example]):
+        for example in examples:
+            id = example.id
+            if id in self.examples:
+                self.examples[id].merge(example, self.errors)
+            else:
+                self.examples[id] = example
 
     @classmethod
     def empty(cls) -> "DocGen":
@@ -109,7 +117,7 @@ class DocGen:
             snippets={},
             snippet_files=set(),
             cross_blocks=set(),
-            examples=[],
+            examples={},
         )
 
     def for_root(self, root: Path, config: Optional[Path] = None) -> "DocGen":
@@ -147,7 +155,7 @@ class DocGen:
                     self.services,
                     self.cross_blocks,
                 )
-                self.examples.extend(examples)
+                self.extend_examples(examples)
                 self.errors.extend(errs)
                 for example in examples:
                     for lang in example.languages:
@@ -167,7 +175,7 @@ class DocGen:
         verify_sample_files(self.root, self.errors)
         validate_metadata(self.root, self.errors)
         validate_snippets(
-            self.examples,
+            [*self.examples.values()],
             self.snippets,
             self.snippet_files,
             self.errors,

@@ -10,6 +10,7 @@ from os.path import splitext
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
+    MetadataError,
     MetadataErrors,
     MetadataParseError,
     DuplicateItemException,
@@ -143,6 +144,22 @@ class Language:
     name: str
     versions: List[Version]
 
+    def merge(self, other: "Language", errors: MetadataErrors):
+        """Add new versions from `other`"""
+        # TODO Error for mismatched names?
+        if self.name != other.name:
+            return
+        for other_version in other.versions:
+            self_version = filter(
+                lambda v: v.sdk_version == other_version.sdk_version, self.versions
+            )
+            if self_version is None:
+                self.versions.append(other_version)
+            # Merge down to the SDK Version level, so later guides can add new
+            # excerpts to existing examples, but don't try to merge the excerpts
+            # within the language. If a tributary or writer feels they need to
+            # modify an excerpt, they should go modify the excerpt directly.
+
     @classmethod
     def from_yaml(
         cls,
@@ -178,6 +195,12 @@ class Language:
 
 
 @dataclass
+class ExampleMergeMismatchedId(MetadataError):
+    other_id: str = ""
+    other_file: str = ""
+
+
+@dataclass
 class Example:
     id: str
     file: str
@@ -198,6 +221,35 @@ class Example:
     services: Dict[str, List[str]] = field(default_factory=dict)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
+
+    def merge(self, other: Example, errors: MetadataErrors):
+        """Combine `other` Example into self example.
+
+        Merge down to the SDK Version level, so later guides can add new excerpts to existing examples, but don't try to merge the excerpts within the language.
+        If a tributary or writer feels they need to modify an excerpt, they should go modify the excerpt directly.
+
+        Keep title, title_abbrev, synopsis, guide_topic, category, service_main, synopsis_list, and source_key from source (typically awsdocs/aws-doc-sdk-examples).
+        !NOTE: This means `merge` is NOT associative!
+
+        Add error if IDs are not the same and return early.
+        """
+        if self.id != other.id:
+            errors.append(
+                ExampleMergeMismatchedId(
+                    id=self.id, other_id=other.id, file=self.file, other_file=other.file
+                )
+            )
+            return
+
+        for service, actions in other.services.items():
+            if service not in self.services:
+                self.services[service] = actions
+
+        for name, language in other.languages.items():
+            if name not in self.languages:
+                self.languages[name] = language
+            else:
+                self.languages[name].merge(language, errors)
 
     @classmethod
     def from_yaml(
