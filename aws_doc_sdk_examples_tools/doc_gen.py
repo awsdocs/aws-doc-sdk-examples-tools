@@ -62,7 +62,7 @@ class DocGen:
         return languages
 
     def merge(self, other: "DocGen") -> MetadataErrors:
-        """Merge fiends from other into self, prioritizing self fields"""
+        """Merge fields from other into self, prioritizing self fields"""
         warnings = MetadataErrors()
         for name, sdk in other.sdks.items():
             if name not in self.sdks:

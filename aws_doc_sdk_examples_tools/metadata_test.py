@@ -10,7 +10,8 @@ import yaml
 from pathlib import Path
 from typing import List, Set, Tuple
 
-from aws_doc_sdk_examples_tools import metadata_errors
+from . import metadata_errors
+from .metadata_errors import MetadataErrors
 from .metadata import (
     parse,
     Example,
@@ -459,6 +460,40 @@ def test_idFormat():
     assert idFormat("cross_Cross", TEST_SERVICES)
     assert not idFormat("other_Other", TEST_SERVICES)
     assert not idFormat("test", TEST_SERVICES)
+
+
+@pytest.mark.parametrize(
+    ["a", "b", "d"],
+    [
+        (
+            DocGen(
+                root=Path("/a"),
+                errors=MetadataErrors(),
+                sdks={
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+                },
+            ),
+            DocGen(
+                root=Path("/b"),
+                errors=MetadataErrors(),
+                sdks={
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                },
+            ),
+            DocGen(
+                root=Path("/a"),
+                errors=MetadataErrors(),
+                sdks={
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                },
+            ),
+        )
+    ],
+)
+def test_merge(a: DocGen, b: DocGen, d: DocGen):
+    a.merge(b)
+    assert a == d
 
 
 if __name__ == "__main__":
