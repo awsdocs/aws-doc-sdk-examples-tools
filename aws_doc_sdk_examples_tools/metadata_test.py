@@ -36,12 +36,45 @@ def load(
 
 
 SERVICES = {
-    "ses": Service(long="&SESlong;", short="&SES;", sort="ses", version=1),
-    "sns": Service(long="&SNSlong;", short="&SNS;", sort="sns", version=1),
-    "sqs": Service(long="&SQSlong;", short="&SQS;", sort="sqs", version=1),
-    "s3": Service(long="&S3long;", short="&S3;", sort="s3", version=1),
+    "ses": Service(
+        long="&SESlong;",
+        expanded_long="Amazon Simple Email Service (Amazon SES)",
+        short="&SES;",
+        expanded_short="Amazon SES",
+        sort="ses",
+        version=1,
+    ),
+    "sns": Service(
+        long="&SNSlong;",
+        expanded_long="Amazon Simple Notification Service (Amazon SNS)",
+        short="&SNS;",
+        expanded_short="Amazon SNS",
+        sort="sns",
+        version=1,
+    ),
+    "sqs": Service(
+        long="&SQSlong;",
+        expanded_long="Amazon Simple Queue Service (Amazon SQS)",
+        short="&SQS;",
+        expanded_short="Amazon SQS",
+        sort="sqs",
+        version=1,
+    ),
+    "s3": Service(
+        long="&S3long;",
+        expanded_long="Amazon Simple Storage Service (Amazon S3)",
+        short="&S3;",
+        expanded_short="Amazon S3",
+        sort="s3",
+        version=1,
+    ),
     "autogluon": Service(
-        long="AutoGluon Test", short="AG Test", sort="autogluon", version=1
+        long="AutoGluon Test",
+        expanded_long="AutoGluon Test",
+        short="AG Test",
+        expanded_short="AutoGluon Test",
+        sort="autogluon",
+        version=1,
     ),
 }
 SDKS = {
@@ -414,7 +447,7 @@ def test_common_errors(
     assert expected_errors == [*actual]
 
 
-TEST_SERVICES = {"test": Service("test", "test", "test", "1")}
+TEST_SERVICES = {"test": Service("test", "test", "test", "test", "test", "1")}
 
 
 def test_idFormat():

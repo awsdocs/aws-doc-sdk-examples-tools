@@ -1,4 +1,7 @@
 sns:
   long: SNSlong
   short: SNS
+  expanded:
+    long: Amazon Simple Notification Service (Amazon SNS)
+    short: Amazon SNS
   sort: SNS
