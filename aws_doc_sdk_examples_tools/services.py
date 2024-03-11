@@ -35,6 +35,9 @@ class Service:
     guide: Optional[ServiceGuide] = field(default=None)
     tags: Dict[str, Set[str]] = field(default_factory=dict)
 
+    def validate(self, errors: MetadataErrors):
+        pass
+
     @classmethod
     def from_yaml(
         cls, name: str, yaml: Dict[str, Any]
