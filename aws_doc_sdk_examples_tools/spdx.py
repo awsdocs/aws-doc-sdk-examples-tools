@@ -49,6 +49,8 @@ def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors)
     if file_location.suffix in validator_config.IGNORE_SPDX_SUFFIXES:
         return
     lines = file_contents.splitlines()
+    if len(lines) == 0:
+        return
     if skip_first_line(lines):
         lines = lines[1:]
     if len(lines) < 2:

@@ -35,6 +35,9 @@ class Service:
     guide: Optional[ServiceGuide] = field(default=None)
     tags: Dict[str, Set[str]] = field(default_factory=dict)
 
+    def validate(self, errors: MetadataErrors):
+        pass
+
     @classmethod
     def from_yaml(
         cls, name: str, yaml: Dict[str, Any]
@@ -46,6 +49,7 @@ class Service:
         short = check_mapping(yaml.get("short"), "short")
         sort = yaml.get("sort")
         version = yaml.get("version")
+        api_ref = yaml.get("api_ref")
 
         if isinstance(long, metadata_errors.MetadataParseError):
             errors.append(long)
@@ -69,8 +73,9 @@ class Service:
         if version is None:
             errors.append(metadata_errors.MissingField(field="version"))
             version = "0"
+        if api_ref is None:
+            errors.append(metadata_errors.MissingField(field="api_ref"))
 
-        api_ref = yaml.get("api_ref")
         blurb = yaml.get("blurb")
         caveat = yaml.get("caveat")
         bundle = yaml.get("bundle")

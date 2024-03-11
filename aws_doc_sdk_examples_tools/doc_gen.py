@@ -171,6 +171,10 @@ class DocGen:
         return DocGen.empty().for_root(root, config)
 
     def validate(self, check_spdx: bool):
+        for sdk in self.sdks.values():
+            sdk.validate(self.errors)
+        for service in self.services.values():
+            service.validate(self.errors)
         check_files(self.root, self.errors, check_spdx)
         verify_sample_files(self.root, self.errors)
         validate_metadata(self.root, self.errors)

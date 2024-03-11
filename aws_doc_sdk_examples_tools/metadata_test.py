@@ -145,9 +145,9 @@ def test_parse():
         title_abbrev="Deleting a topic",
         synopsis="Shows how to delete an &SNS; topic.",
         services={
-            "sns": ["Operation1", "Operation2"],
-            "ses": ["Operation1", "Operation2"],
-            "sqs": [],
+            "sns": set(["Operation1", "Operation2"]),
+            "ses": set(["Operation1", "Operation2"]),
+            "sqs": set(),
         },
         languages={"C++": language},
     )
@@ -186,7 +186,7 @@ def test_parse_cross():
         title="Delete Topic",
         title_abbrev="delete topic",
         synopsis="",
-        services={"sns": []},
+        services={"sns": set()},
         languages={"Java": language},
     )
     assert actual[0] == example
@@ -225,7 +225,7 @@ def test_parse_curated():
         title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
         source_key="amazon-sagemaker-examples",
         languages={"Java": language},
-        services={"s3": []},
+        services={"s3": set()},
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
 
@@ -258,7 +258,7 @@ def test_verify_load_successful():
                 sdk_version=3,
                 github=None,
                 block_content=None,
-                add_services={"s3": []},
+                add_services={"s3": set()},
                 excerpts=[
                     Excerpt(
                         description="Descriptive",
@@ -313,7 +313,7 @@ def test_verify_load_successful():
         category="Usage",
         service_main=None,
         languages=languages,
-        services={"sns": [], "sqs": []},
+        services={"sns": set(), "sqs": set()},
     )
     assert actual[0] == example
 
