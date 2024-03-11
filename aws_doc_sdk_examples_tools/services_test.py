@@ -7,7 +7,12 @@ import pytest
 import yaml
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.services import parse, Service, ServiceGuide
+from aws_doc_sdk_examples_tools.services import (
+    parse,
+    Service,
+    ServiceGuide,
+    ServiceExpanded,
+)
 
 
 def load(path: str) -> Tuple[Dict[str, Service], metadata_errors.MetadataErrors]:
@@ -47,9 +52,10 @@ def test_services():
     assert examples == {
         "s3": Service(
             short="&S3;",
-            expanded_short="Amazon S3",
+            expanded=ServiceExpanded(
+                long="Amazon Simple Storage Service (Amazon S3)", short="Amazon S3"
+            ),
             long="&S3long;",
-            expanded_long="Amazon Simple Storage Service (Amazon S3)",
             sort="S3",
             version="s3-2006-03-01",
             caveat="The examples in this section are pretty neat, and we recommend you print them out so you can read them in bed with a good glass of wine.",
@@ -62,18 +68,21 @@ def test_services():
         ),
         "sns": Service(
             short="&SNS;",
-            expanded_short="Amazon SNS",
             long="&SNSlong;",
-            expanded_long="Amazon Simple Notification Service (Amazon SNS)",
+            expanded=ServiceExpanded(
+                long="Amazon Simple Notification Service (Amazon SNS)",
+                short="Amazon SNS",
+            ),
             sort="SNS",
             version="sns-2010-03-31",
             bundle="sqs",
         ),
         "sqs": Service(
             short="&SQS;",
-            expanded_short="Amazon SQS",
             long="&SQSlong;",
-            expanded_long="Amazon Simple Queue Service (Amazon SQS)",
+            expanded=ServiceExpanded(
+                long="Amazon Simple Queue Service (Amazon SQS)", short="Amazon SQS"
+            ),
             sort="SQS",
             tags={
                 "product_categories": set(["Category 1", "Category 2"]),
@@ -83,9 +92,8 @@ def test_services():
         ),
         "textract": Service(
             short="&TEXTRACT;",
-            expanded_short="Amazon Textract",
             long="&TEXTRACTlong;",
-            expanded_long="Amazon Textract",
+            expanded=ServiceExpanded(long="Amazon Textract", short="Amazon Textract"),
             sort="Textract",
             tags={"product_categories": set(["Category 1"])},
             version="textract-2018-06-27",
