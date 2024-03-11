@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
     check_mapping,
@@ -124,11 +124,21 @@ class SdkVersion:
 
 
 @dataclass
+class SdkWithNoVersionsError(metadata_errors.MetadataError):
+    def message(self):
+        return "SDK has no versions"
+
+
+@dataclass
 class Sdk:
     name: str
     versions: List[SdkVersion]
     guide: str
     property: str
+
+    def validate(self, errors: MetadataErrors):
+        if len(self.versions) == 0:
+            errors.append(SdkWithNoVersionsError(id=self.name))
 
     @classmethod
     def from_yaml(cls, name: str, yaml: Dict[str, Any]) -> tuple[Sdk, MetadataErrors]:

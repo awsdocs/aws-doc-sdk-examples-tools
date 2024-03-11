@@ -21,7 +21,7 @@ import yamale  # type: ignore
 from yamale import YamaleError  # type: ignore
 from yamale.validators import DefaultValidators, Validator, String  # type: ignore
 
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
 )
@@ -185,12 +185,11 @@ def validate_files(
 
 
 def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErrors:
-    with open(Path(__file__).parent.parent / "config" / "sdks.yaml") as sdks_file:
+    config = Path(__file__).parent / "config"
+    with open(config / "sdks.yaml") as sdks_file:
         sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
 
-    with open(
-        Path(__file__).parent.parent / "config" / "services.yaml"
-    ) as services_file:
+    with open(config / "services.yaml") as services_file:
         services_yaml = yaml.safe_load(services_file)
 
     SdkVersion.sdks = sdks_yaml
@@ -207,7 +206,7 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     validators[BlockContent.tag] = BlockContent
     validators[String.tag] = StringExtension
 
-    schema_root = Path(__file__).parent.parent / "config"
+    schema_root = Path(__file__).parent / "config"
 
     to_validate = [
         # (schema, metadata_glob)

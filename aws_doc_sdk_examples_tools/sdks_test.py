@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, Tuple
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.sdks import (
+from .sdks import (
     parse,
     Sdk,
     SdkVersion,

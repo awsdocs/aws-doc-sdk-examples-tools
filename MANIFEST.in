@@ -1,2 +1,2 @@
-graft config
+include aws_doc_sdk_examples_tools/config/*.yaml
 

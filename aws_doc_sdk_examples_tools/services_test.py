@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.services import (
+from .services import (
     parse,
     Service,
     ServiceGuide,

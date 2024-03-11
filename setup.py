@@ -7,6 +7,7 @@ setup(
     name="aws_doc_sdk_examples_tools",
     version="0.0.1",
     packages=["aws_doc_sdk_examples_tools"],
+    package_data={"aws_doc_sdk_examples_tools": ["config/*.yaml"]},
     install_requires=[
         "pathspec==0.11.2",
         "PyYAML==6.0.1",

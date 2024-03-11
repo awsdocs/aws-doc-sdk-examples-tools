@@ -10,8 +10,9 @@ import yaml
 from pathlib import Path
 from typing import List, Set, Tuple
 
-from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata import (
+from . import metadata_errors
+from .metadata_errors import MetadataErrors
+from .metadata import (
     parse,
     Example,
     Url,
@@ -20,9 +21,9 @@ from aws_doc_sdk_examples_tools.metadata import (
     Excerpt,
     idFormat,
 )
-from aws_doc_sdk_examples_tools.doc_gen import DocGen
-from aws_doc_sdk_examples_tools.sdks import Sdk
-from aws_doc_sdk_examples_tools.services import Service, ServiceExpanded
+from .doc_gen import DocGen
+from .sdks import Sdk
+from .services import Service, ServiceExpanded
 
 
 def load(
@@ -144,9 +145,9 @@ def test_parse():
         title_abbrev="Deleting a topic",
         synopsis="Shows how to delete an &SNS; topic.",
         services={
-            "sns": ["Operation1", "Operation2"],
-            "ses": ["Operation1", "Operation2"],
-            "sqs": [],
+            "sns": set(["Operation1", "Operation2"]),
+            "ses": set(["Operation1", "Operation2"]),
+            "sqs": set(),
         },
         languages={"C++": language},
     )
@@ -185,7 +186,7 @@ def test_parse_cross():
         title="Delete Topic",
         title_abbrev="delete topic",
         synopsis="",
-        services={"sns": []},
+        services={"sns": set()},
         languages={"Java": language},
     )
     assert actual[0] == example
@@ -224,7 +225,7 @@ def test_parse_curated():
         title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
         source_key="amazon-sagemaker-examples",
         languages={"Java": language},
-        services={"s3": []},
+        services={"s3": set()},
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
 
@@ -257,7 +258,7 @@ def test_verify_load_successful():
                 sdk_version=3,
                 github=None,
                 block_content=None,
-                add_services={"s3": []},
+                add_services={"s3": set()},
                 excerpts=[
                     Excerpt(
                         description="Descriptive",
@@ -312,7 +313,7 @@ def test_verify_load_successful():
         category="Usage",
         service_main=None,
         languages=languages,
-        services={"sns": [], "sqs": []},
+        services={"sns": set(), "sqs": set()},
     )
     assert actual[0] == example
 
@@ -459,6 +460,40 @@ def test_idFormat():
     assert idFormat("cross_Cross", TEST_SERVICES)
     assert not idFormat("other_Other", TEST_SERVICES)
     assert not idFormat("test", TEST_SERVICES)
+
+
+@pytest.mark.parametrize(
+    ["a", "b", "d"],
+    [
+        (
+            DocGen(
+                root=Path("/a"),
+                errors=MetadataErrors(),
+                sdks={
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+                },
+            ),
+            DocGen(
+                root=Path("/b"),
+                errors=MetadataErrors(),
+                sdks={
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                },
+            ),
+            DocGen(
+                root=Path("/a"),
+                errors=MetadataErrors(),
+                sdks={
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                },
+            ),
+        )
+    ],
+)
+def test_merge(a: DocGen, b: DocGen, d: DocGen):
+    a.merge(b)
+    assert a == d
 
 
 if __name__ == "__main__":

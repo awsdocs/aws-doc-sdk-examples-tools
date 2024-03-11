@@ -101,6 +101,9 @@ class MetadataErrors:
         errs = "\n".join([f"\t{err}" for err in self._errors])
         return f"ExampleErrors with {len(self)} errors:\n{errs}"
 
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, MetadataErrors) and self._errors == __value._errors
+
 
 @dataclass
 class MissingServiceBody(MetadataParseError):

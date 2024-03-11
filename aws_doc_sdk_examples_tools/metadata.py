@@ -9,14 +9,15 @@ from typing import Any, Dict, List, Optional, Set, Union
 from os.path import splitext
 
 from aws_doc_sdk_examples_tools import metadata_errors
-from aws_doc_sdk_examples_tools.metadata_errors import (
+from .metadata_errors import (
+    MetadataError,
     MetadataErrors,
     MetadataParseError,
     DuplicateItemException,
 )
-from aws_doc_sdk_examples_tools.metadata_validator import StringExtension
-from aws_doc_sdk_examples_tools.services import Service
-from aws_doc_sdk_examples_tools.sdks import Sdk
+from .metadata_validator import StringExtension
+from .services import Service
+from .sdks import Sdk
 
 
 @dataclass
@@ -64,10 +65,10 @@ class Version:
     excerpts: List[Excerpt] = field(default_factory=list)
     # Link to the source code for this example. TODO rename.
     github: Optional[str] = field(default=None)
-    add_services: Dict[str, List[str]] = field(default_factory=dict)
+    add_services: Dict[str, Set[str]] = field(default_factory=dict)
     # Deprecated. Replace with guide_topic list.
     sdkguide: Optional[str] = field(default=None)
-    # Link to additional topic places. TODO: Overwritten by aws-doc-sdk-example when merging.
+    # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
 
     @classmethod
@@ -143,6 +144,22 @@ class Language:
     name: str
     versions: List[Version]
 
+    def merge(self, other: "Language", errors: MetadataErrors):
+        """Add new versions from `other`"""
+        # TODO Error for mismatched names?
+        if self.name != other.name:
+            return
+        for other_version in other.versions:
+            self_version = filter(
+                lambda v: v.sdk_version == other_version.sdk_version, self.versions
+            )
+            if self_version is None:
+                self.versions.append(other_version)
+            # Merge down to the SDK Version level, so later guides can add new
+            # excerpts to existing examples, but don't try to merge the excerpts
+            # within the language. If a tributary or writer feels they need to
+            # modify an excerpt, they should go modify the excerpt directly.
+
     @classmethod
     def from_yaml(
         cls,
@@ -178,6 +195,12 @@ class Language:
 
 
 @dataclass
+class ExampleMergeMismatchedId(MetadataError):
+    other_id: str = ""
+    other_file: str = ""
+
+
+@dataclass
 class Example:
     id: str
     file: str
@@ -195,9 +218,38 @@ class Example:
     # TODO document service_main and services. Not to be used by tributaries. Part of Cross Service.
     # List of services used by the examples. Lines up with those in services.yaml.
     service_main: Optional[str] = field(default=None)
-    services: Dict[str, List[str]] = field(default_factory=dict)
+    services: Dict[str, Set[str]] = field(default_factory=dict)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
+
+    def merge(self, other: Example, errors: MetadataErrors):
+        """Combine `other` Example into self example.
+
+        Merge down to the SDK Version level, so later guides can add new excerpts to existing examples, but don't try to merge the excerpts within the language.
+        If a tributary or writer feels they need to modify an excerpt, they should go modify the excerpt directly.
+
+        Keep title, title_abbrev, synopsis, guide_topic, category, service_main, synopsis_list, and source_key from source (typically awsdocs/aws-doc-sdk-examples).
+        !NOTE: This means `merge` is NOT associative!
+
+        Add error if IDs are not the same and return early.
+        """
+        if self.id != other.id:
+            errors.append(
+                ExampleMergeMismatchedId(
+                    id=self.id, other_id=other.id, file=self.file, other_file=other.file
+                )
+            )
+            return
+
+        for service, actions in other.services.items():
+            if service not in self.services:
+                self.services[service] = actions
+
+        for name, language in other.languages.items():
+            if name not in self.languages:
+                self.languages[name] = language
+            else:
+                self.languages[name].merge(language, errors)
 
     @classmethod
     def from_yaml(
@@ -212,15 +264,19 @@ class Example:
         title = get_with_valid_entities("title", yaml, errors)
         title_abbrev = get_with_valid_entities("title_abbrev", yaml, errors)
         synopsis = get_with_valid_entities("synopsis", yaml, errors, opt=True)
-
-        category = yaml.get("category", "")
-        source_key = yaml.get("source_key")
-        parsed_services = parse_services(yaml.get("services", {}), errors, services)
         synopsis_list = [str(syn) for syn in yaml.get("synopsis_list", [])]
+
+        source_key = yaml.get("source_key")
         guide_topic = Url.from_yaml(yaml.get("guide_topic"))
         if isinstance(guide_topic, MetadataParseError):
             errors.append(guide_topic)
             guide_topic = None
+
+        parsed_services = parse_services(yaml.get("services", {}), errors, services)
+        category = yaml.get("category")
+        if category is None or category == "":
+            category = "Api" if len(parsed_services) == 1 else "Cross"
+        is_action = category == "Api"
 
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
@@ -228,11 +284,6 @@ class Example:
                 errors.append(metadata_errors.UnknownService(service=service_main))
             except DuplicateItemException:
                 pass
-
-        if category == "":
-            category = "Api" if len(parsed_services) == 1 else "Cross"
-
-        is_action = category == "Api"
 
         yaml_languages = yaml.get("languages")
         languages: Dict[str, Language] = {}
@@ -267,20 +318,24 @@ class Example:
 
 def parse_services(
     yaml: Any, errors: MetadataErrors, known_services: Dict[str, Service]
-) -> Dict[str, List[str]]:
+) -> Dict[str, Set[str]]:
     if yaml is None:
         return {}
-    services: Dict[str, List[str]] = {}
+    services: Dict[str, Set[str]] = {}
     for name in yaml:
         if name not in known_services:
             errors.append(metadata_errors.UnknownService(service=name))
         else:
-            service: Dict[str, None] | None = yaml.get(name)
+            service: Dict[str, None] | Set[str] | None = yaml.get(name)
             # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
             if service is None:
-                service = {}
-            # Make a copy of the dict
-            services[name] = [*service.keys()]
+                service = set()
+            if isinstance(service, dict):
+                service = set(service.keys())
+            if isinstance(service, set):
+                # Make a copy of the set for ourselves
+                service = set(service)
+            services[name] = set(service)
     return services
 
 

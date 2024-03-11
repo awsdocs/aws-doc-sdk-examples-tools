@@ -9,9 +9,9 @@ import re
 
 from aws_doc_sdk_examples_tools import validator_config
 
-from aws_doc_sdk_examples_tools.file_utils import get_files, clear
-from aws_doc_sdk_examples_tools.metadata import Example
-from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, MetadataError
+from .file_utils import get_files, clear
+from .metadata import Example
+from .metadata_errors import MetadataErrors, MetadataError
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -81,21 +81,21 @@ class MetadataUnicodeError(MetadataError):
         return f" unicode error: {str(self.err)}"
 
 
-def _tag_from_line(token: str, line: str) -> str:
+def _tag_from_line(token: str, line: str, prefix: str) -> str:
     tag_start = line.find(token) + len(token)
     tag_end = line.find("]", tag_start)
-    return line[tag_start:tag_end].strip()
+    return prefix + line[tag_start:tag_end].strip()
 
 
 def parse_snippets(
-    lines: List[str], file: Path
+    lines: List[str], file: Path, prefix: str
 ) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     open_tags: Set[str] = set()
     for line_idx, line in enumerate(lines):
         if SNIPPET_START in line:
-            tag = _tag_from_line(SNIPPET_START, line)
+            tag = _tag_from_line(SNIPPET_START, line, prefix)
             if tag in snippets:
                 errors.append(
                     DuplicateSnippetStartError(file=str(file), line=line_idx, tag=tag)
@@ -110,7 +110,7 @@ def parse_snippets(
                 )
                 open_tags.add(tag)
         elif SNIPPET_END in line:
-            tag = _tag_from_line(SNIPPET_END, line)
+            tag = _tag_from_line(SNIPPET_END, line, prefix)
             if tag not in snippets:
                 errors.append(
                     MissingSnippetStartError(file=str(file), line=line_idx, tag=tag)
@@ -135,23 +135,25 @@ def parse_snippets(
     return snippets, errors
 
 
-def find_snippets(file: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
     snippets: Dict[str, Snippet] = {}
     with open(file, encoding="utf-8") as snippet_file:
         try:
-            snippets, errs = parse_snippets(snippet_file.readlines(), file)
+            snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
             errors.extend(errs)
         except UnicodeDecodeError as err:
             errors.append(MetadataUnicodeError(file=str(file), err=err))
     return snippets, errors
 
 
-def collect_snippets(root: Path) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+def collect_snippets(
+    root: Path, prefix: str = ""
+) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     for file in get_files(root, validator_config.skip):
-        snips, errs = find_snippets(file)
+        snips, errs = find_snippets(file, prefix)
         snippets.update(snips)
         errors.extend(errs)
     return snippets, errors
@@ -207,32 +209,31 @@ def validate_snippets(
                                     tag=snippet_tag,
                                 )
                             )
-                    for snippet_file in excerpt.snippet_files:
-                        if not (root / snippet_file).exists():
-                            # Ensure all snippet_files exist
-                            errors.append(
-                                MissingSnippetFile(
-                                    file=example.file,
-                                    snippet_file=snippet_file,
-                                    id=f"{lang}:{version.sdk_version}",
-                                )
-                            )
-                        if re.search(win_unsafe_re, str(snippet_file)):
-                            errors.append(
-                                WindowsUnsafeSnippetFile(
-                                    file=example.file,
-                                    snippet_file=snippet_file,
-                                    id=f"{lang}:{version.sdk_version}",
-                                )
-                            )
-                        snippet_files.add(snippet_file)
+    for snippet_file in excerpt.snippet_files:
+        if not (root / snippet_file).exists():
+            # Ensure all snippet_files exist
+            errors.append(
+                MissingSnippetFile(
+                    file=example.file,
+                    snippet_file=snippet_file,
+                    id=f"{lang}:{version.sdk_version}",
+                )
+            )
+        if re.search(win_unsafe_re, str(snippet_file)):
+            errors.append(
+                WindowsUnsafeSnippetFile(
+                    file=example.file,
+                    snippet_file=snippet_file,
+                    id=f"{lang}:{version.sdk_version}",
+                )
+            )
 
 
-def write_snippets(root: Path, snippets: Dict[str, Snippet]):
+def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False):
     errors = MetadataErrors()
     for tag in snippets:
         name = root / f"{tag}.txt"
-        if name.exists():
+        if check and name.exists():
             errors.append(SnippetAlreadyWritten(file=str(name)))
         else:
             try:
@@ -246,8 +247,7 @@ def write_snippets(root: Path, snippets: Dict[str, Snippet]):
 def write_snippet_file(folder: Path, snippet_file: Path):
     name = str(snippet_file).replace("/", ".")
     dest = folder / f"{name}.txt"
-    if not dest.exists():
-        copyfile(folder / snippet_file, dest)
+    copyfile(folder / snippet_file, dest)
 
 
 def main():
