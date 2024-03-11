@@ -49,6 +49,7 @@ class Service:
         short = check_mapping(yaml.get("short"), "short")
         sort = yaml.get("sort")
         version = yaml.get("version")
+        api_ref = yaml.get("api_ref")
 
         if isinstance(long, metadata_errors.MetadataParseError):
             errors.append(long)
@@ -72,8 +73,9 @@ class Service:
         if version is None:
             errors.append(metadata_errors.MissingField(field="version"))
             version = "0"
+        if api_ref is None:
+            errors.append(metadata_errors.MissingField(field="api_ref"))
 
-        api_ref = yaml.get("api_ref")
         blurb = yaml.get("blurb")
         caveat = yaml.get("caveat")
         bundle = yaml.get("bundle")
