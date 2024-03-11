@@ -22,7 +22,7 @@ from aws_doc_sdk_examples_tools.metadata import (
 )
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.sdks import Sdk
-from aws_doc_sdk_examples_tools.services import Service
+from aws_doc_sdk_examples_tools.services import Service, ServiceExpanded
 
 
 def load(
@@ -36,12 +36,48 @@ def load(
 
 
 SERVICES = {
-    "ses": Service(long="&SESlong;", short="&SES;", sort="ses", version=1),
-    "sns": Service(long="&SNSlong;", short="&SNS;", sort="sns", version=1),
-    "sqs": Service(long="&SQSlong;", short="&SQS;", sort="sqs", version=1),
-    "s3": Service(long="&S3long;", short="&S3;", sort="s3", version=1),
+    "ses": Service(
+        long="&SESlong;",
+        short="&SES;",
+        expanded=ServiceExpanded(
+            long="Amazon Simple Email Service (Amazon SES)", short="Amazon SES"
+        ),
+        sort="ses",
+        version=1,
+    ),
+    "sns": Service(
+        long="&SNSlong;",
+        short="&SNS;",
+        expanded=ServiceExpanded(
+            long="Amazon Simple Notification Service (Amazon SNS)", short="Amazon SNS"
+        ),
+        sort="sns",
+        version=1,
+    ),
+    "sqs": Service(
+        long="&SQSlong;",
+        short="&SQS;",
+        expanded=ServiceExpanded(
+            long="Amazon Simple Queue Service (Amazon SQS)", short="Amazon SQS"
+        ),
+        sort="sqs",
+        version=1,
+    ),
+    "s3": Service(
+        long="&S3long;",
+        short="&S3;",
+        expanded=ServiceExpanded(
+            long="Amazon Simple Storage Service (Amazon S3)", short="Amazon S3"
+        ),
+        sort="s3",
+        version=1,
+    ),
     "autogluon": Service(
-        long="AutoGluon Test", short="AG Test", sort="autogluon", version=1
+        long="AutoGluon Test",
+        short="AG Test",
+        expanded=ServiceExpanded(long="AutoGluon Test", short="AutoGluon Test"),
+        sort="autogluon",
+        version=1,
     ),
 }
 SDKS = {

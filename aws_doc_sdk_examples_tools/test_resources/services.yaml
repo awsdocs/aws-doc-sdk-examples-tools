@@ -1,6 +1,9 @@
 s3:
   short: "&S3;"
   long: "&S3long;"
+  expanded:
+    long: Amazon Simple Storage Service (Amazon S3)
+    short: Amazon S3
   sort: "S3"
   version: s3-2006-03-01
   caveat: The examples in this section are pretty neat, and we recommend you print them out so you can
@@ -13,12 +16,18 @@ s3:
 sns:
   short: "&SNS;"
   long: "&SNSlong;"
+  expanded: 
+    long: Amazon Simple Notification Service (Amazon SNS)
+    short: Amazon SNS
   sort: "SNS"
   version: sns-2010-03-31
   bundle: sqs
 sqs:
   short: "&SQS;"
   long: "&SQSlong;"
+  expanded:
+    long: Amazon Simple Queue Service (Amazon SQS)
+    short: Amazon SQS
   sort: "SQS"
   tags:
     product_categories: {'Category 1', 'Category 2'}
@@ -27,6 +36,9 @@ sqs:
 textract:
   short: "&TEXTRACT;"
   long: "&TEXTRACTlong;"
+  expanded:
+    long: Amazon Textract
+    short: Amazon Textract
   sort: "Textract"
   tags:
     product_categories: {'Category 1'}

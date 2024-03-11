@@ -10,6 +10,12 @@ from aws_doc_sdk_examples_tools.metadata_errors import MetadataErrors, check_map
 
 
 @dataclass
+class ServiceExpanded:
+    long: str
+    short: str
+
+
+@dataclass
 class ServiceGuide:
     subtitle: str
     url: str
@@ -21,6 +27,7 @@ class Service:
     short: str
     sort: str
     version: Union[int, str]
+    expanded: Optional[ServiceExpanded] = field(default=None)
     api_ref: Optional[str] = field(default=None)
     blurb: Optional[str] = field(default=None)
     bundle: Optional[str] = field(default=None)
@@ -35,6 +42,7 @@ class Service:
         errors = MetadataErrors()
 
         long = check_mapping(yaml.get("long"), "long")
+        expanded = yaml.get("expanded")
         short = check_mapping(yaml.get("short"), "short")
         sort = yaml.get("sort")
         version = yaml.get("version")
@@ -45,6 +53,16 @@ class Service:
         if isinstance(short, metadata_errors.MetadataParseError):
             errors.append(short)
             short = ""
+        if expanded is None:
+            errors.append(metadata_errors.MissingField(field="expanded"))
+        else:
+            long_expanded = expanded.get("long")
+            short_expanded = expanded.get("short")
+            if not long_expanded:
+                errors.append(metadata_errors.MissingField(field="expanded.long"))
+            if not short_expanded:
+                errors.append(metadata_errors.MissingField(field="expanded.short"))
+            expanded = ServiceExpanded(long=long_expanded, short=short_expanded)
         if sort is None:
             errors.append(metadata_errors.MissingField(field="sort"))
             sort = ""
@@ -78,6 +96,7 @@ class Service:
             cls(
                 long=long,
                 short=short,
+                expanded=expanded,
                 sort=sort,
                 api_ref=api_ref,
                 blurb=blurb,
