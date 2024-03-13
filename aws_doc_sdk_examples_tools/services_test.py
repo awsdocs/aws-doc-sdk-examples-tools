@@ -44,6 +44,11 @@ def test_services_entity_usage():
             id="sns",
             field="version",
         ),
+        metadata_errors.MissingField(
+            file="entityusage_services.yaml",
+            id="sns",
+            field="api_ref",
+        ),
     ]
 
 
