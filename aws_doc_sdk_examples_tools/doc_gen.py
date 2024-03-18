@@ -197,11 +197,8 @@ class DocGen:
             "sdks": len(self.sdks),
             "services": len(self.services),
             "examples": len(self.examples),
-            "excerpts": sum(
-                sum(
-                    sum(len(v.excerpts) for v in lang.versions)
-                    for lang in e.languages.values()
-                )
+            "versions": sum(
+                sum(len(lang.versions) for lang in e.languages.values())
                 for e in self.examples.values()
             ),
             "snippets": len(self.snippets) + len(self.snippet_files),
