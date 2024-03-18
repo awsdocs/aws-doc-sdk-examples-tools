@@ -15,7 +15,7 @@ def main(roots: List[str]):
         print(f"SDKs	{stats['sdks']}")
         print(f"Services	{stats['services']}")
         print(f"Examples	{stats['examples']}")
-        print(f"Excerpts	{stats['excerpts']}")
+        print(f"Version	{stats['versions']}")
         print(f"Snippets	{stats['snippets']}")
 
 
