@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from ast import literal_eval
 from pathlib import Path
 from sys import exit
 
 from .doc_gen import DocGen
+from .project_validator import check_files, verify_sample_files
 
 
 def main():
@@ -15,16 +17,11 @@ def main():
         default=f"{Path(__file__).parent.parent.parent}",
         help="The root path from which to search for files to check. The default is the root of the git repo (two up from this file).",
     )
-    # parser.add_argument(
-    #     "--doc-gen",
-    #     default=f"{Path(__file__).parent.parent.parent / '.doc_gen'}",
-    #     help="The folder that contains schema and metadata files. The default is .doc_gen in the root of this repo.",
-    #     required=False,
-    # )
     parser.add_argument(
-        "--check-spdx",
+        "--doc_gen_only",
+        type=literal_eval,
         default=True,
-        help="Verify all files start with SPDX header",
+        help="Only perform extended validation on snippet contents",
         required=False,
     )
     args = parser.parse_args()
@@ -32,7 +29,10 @@ def main():
 
     doc_gen = DocGen.from_root(root=root_path)
     doc_gen.collect_snippets(snippets_root=root_path)
-    doc_gen.validate(args.check_spdx)
+    doc_gen.validate()
+    if not args.doc_gen_only:
+        check_files(doc_gen.root, doc_gen.validation, doc_gen.errors)
+        verify_sample_files(doc_gen.root, doc_gen.validation, doc_gen.errors)
 
     error_count = len(doc_gen.errors)
     if error_count > 0:

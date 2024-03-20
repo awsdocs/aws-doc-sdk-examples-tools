@@ -5,19 +5,24 @@ import yaml
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set
+from typing import Dict, Iterable, Optional, Set
 
 # from os import glob
 
-from .metadata import Example, parse as parse_examples
+from .metadata import (
+    Example,
+    parse as parse_examples,
+    validate_no_duplicate_api_examples,
+)
 from .metadata_errors import MetadataErrors, MetadataError
 from .metadata_validator import validate_metadata
-from .project_validator import check_files, verify_sample_files, ValidationConfig
+from .project_validator import ValidationConfig
 from .sdks import Sdk, parse as parse_sdks
 from .services import Service, parse as parse_services
 from .snippets import (
     Snippet,
     collect_snippets,
+    collect_snippet_files,
     validate_snippets,
 )
 
@@ -49,6 +54,9 @@ class DocGen:
         if snippets_root is None:
             snippets_root = self.root
         snippets, errs = collect_snippets(snippets_root, prefix)
+        collect_snippet_files(
+            self.examples.values(), snippets=snippets, errors=errs, root=self.root
+        )
         self.snippets = snippets
         self.errors.extend(errs)
 
@@ -123,34 +131,47 @@ class DocGen:
 
     def for_root(self, root: Path, config: Optional[Path] = None) -> "DocGen":
         self.root = root
-        metadata = root / ".doc_gen/metadata"
 
         if config is None:
             config = Path(__file__).parent / "config"
 
-        with open(root / ".doc_gen" / "validation.yaml") as file:
-            validation = yaml.safe_load(file)
-            self.validation.allow_list.update(validation.get("allow_list", []))
-            self.validation.sample_files.update(validation.get("sample_files", []))
+        try:
+            with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
+                validation = yaml.safe_load(file)
+                validation = {} if validation is None else validation
+                self.validation.allow_list.update(validation.get("allow_list", []))
+                self.validation.sample_files.update(validation.get("sample_files", []))
+        except Exception:
+            pass
 
-        with open(config / "sdks.yaml", encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            sdks, errs = parse_sdks("sdks.yaml", meta)
-            self.errors.extend(errs)
+        try:
+            with open(config / "sdks.yaml", encoding="utf-8") as file:
+                meta = yaml.safe_load(file)
+                sdks, errs = parse_sdks("sdks.yaml", meta)
+                self.sdks = sdks
+                self.errors.extend(errs)
+        except Exception:
+            pass
 
-        with open(config / "services.yaml", encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            services, service_errors = parse_services("services.yaml", meta)
-            self.errors.extend(service_errors)
+        try:
+            with open(config / "services.yaml", encoding="utf-8") as file:
+                meta = yaml.safe_load(file)
+                services, service_errors = parse_services("services.yaml", meta)
+                self.services = services
+                self.errors.extend(service_errors)
+        except Exception:
+            pass
 
-        cross = set(
-            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
-        )
-
-        self.root = root
-        self.sdks = sdks
-        self.services = services
-        self.cross_blocks = cross
+        metadata = root / ".doc_gen/metadata"
+        try:
+            self.cross_blocks = set(
+                [
+                    path.name
+                    for path in (metadata.parent / "cross-content").glob("*.xml")
+                ]
+            )
+        except Exception:
+            pass
 
         for path in metadata.glob("*_metadata.yaml"):
             with open(path) as file:
@@ -176,18 +197,17 @@ class DocGen:
     def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
         return DocGen.empty().for_root(root, config)
 
-    def validate(self, check_spdx: bool):
+    def validate(self):
         for sdk in self.sdks.values():
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
-        check_files(self.root, check_spdx, self.validation, self.errors)
-        verify_sample_files(self.root, self.validation, self.errors)
         validate_metadata(self.root, self.errors)
+        validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(
             [*self.examples.values()],
             self.snippets,
-            self.snippet_files,
+            self.validation,
             self.errors,
             self.root,
         )

@@ -163,6 +163,7 @@ CROSS_META = """
 cross_DeleteTopic:
   title: Delete Topic
   title_abbrev: delete topic
+  category: Cross-service examples
   languages:
      Java:
        versions:
@@ -187,7 +188,7 @@ def test_parse_cross():
     example = Example(
         file="cross.yaml",
         id="cross_DeleteTopic",
-        category="Api",
+        category="Cross-service examples",
         title="Delete Topic",
         title_abbrev="delete topic",
         synopsis="",
@@ -203,6 +204,7 @@ autogluon_tabular_with_sagemaker_pipelines:
   title_abbrev: AutoGluon Tabular with SageMaker Pipelines
   synopsis: use AutoGluon with SageMaker Pipelines.
   source_key: amazon-sagemaker-examples
+  category: Curated examples
   languages:
      Java:
        versions:
@@ -225,7 +227,7 @@ def test_parse_curated():
     example = Example(
         id="autogluon_tabular_with_sagemaker_pipelines",
         file="curated.yaml",
-        category="Api",
+        category="Curated examples",
         title="AutoGluon Tabular with SageMaker Pipelines",
         title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
         source_key="amazon-sagemaker-examples",
@@ -330,16 +332,6 @@ def test_verify_load_successful():
             "empty_metadata.yaml",
             [
                 metadata_errors.MissingField(
-                    field="title",
-                    file="empty_metadata.yaml",
-                    id="sns_EmptyExample",
-                ),
-                metadata_errors.MissingField(
-                    field="title_abbrev",
-                    file="empty_metadata.yaml",
-                    id="sns_EmptyExample",
-                ),
-                metadata_errors.MissingField(
                     field="languages",
                     file="empty_metadata.yaml",
                     id="sns_EmptyExample",
@@ -349,6 +341,11 @@ def test_verify_load_successful():
         (
             "errors_metadata.yaml",
             [
+                metadata_errors.APIMustHaveOneServiceOneAction(
+                    file="errors_metadata.yaml",
+                    id="sqs_WrongServiceSlug",
+                    svc_actions="",
+                ),
                 metadata_errors.UnknownLanguage(
                     language="Perl",
                     file="errors_metadata.yaml",
@@ -408,11 +405,6 @@ def test_verify_load_successful():
                     id="cross_TestExample_Versions",
                     language="Java",
                     sdk_version=None,
-                ),
-                metadata_errors.APIExampleCannotAddService(
-                    language="Java",
-                    file="errors_metadata.yaml",
-                    id="cross_TestExample_Versions",
                 ),
                 metadata_errors.MissingCrossContent(
                     file="errors_metadata.yaml",
