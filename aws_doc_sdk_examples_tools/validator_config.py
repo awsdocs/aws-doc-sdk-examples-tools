@@ -365,6 +365,7 @@ ALLOW_LIST = {
     "videoMetaData=celebrityRecognitionResult",
     "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     "https://docs.aws.amazon.com/ivs/latest/userguide//private-channels.html",
+    "s3/src/main/java/com/example/s3/ParseUri",
 }
 
 
