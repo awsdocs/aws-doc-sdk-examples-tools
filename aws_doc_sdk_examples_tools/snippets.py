@@ -7,8 +7,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from shutil import copyfile
 import re
 
-from aws_doc_sdk_examples_tools import validator_config
-
+from .validator_config import skip
 from .file_utils import get_files, clear
 from .metadata import Example
 from .metadata_errors import MetadataErrors, MetadataError
@@ -81,6 +80,14 @@ class MetadataUnicodeError(MetadataError):
         return f" unicode error: {str(self.err)}"
 
 
+@dataclass
+class FileReadError(MetadataError):
+    err: Optional[Exception] = None
+
+    def message(self):
+        return f" exception: {str(self.err)}"
+
+
 def _tag_from_line(token: str, line: str, prefix: str) -> str:
     tag_start = line.find(token) + len(token)
     tag_end = line.find("]", tag_start)
@@ -138,12 +145,17 @@ def parse_snippets(
 def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
     snippets: Dict[str, Snippet] = {}
-    with open(file, encoding="utf-8") as snippet_file:
-        try:
-            snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
-            errors.extend(errs)
-        except UnicodeDecodeError as err:
-            errors.append(MetadataUnicodeError(file=str(file), err=err))
+    try:
+        with open(file, encoding="utf-8") as snippet_file:
+            try:
+                snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
+                errors.extend(errs)
+            except UnicodeDecodeError as err:
+                errors.append(MetadataUnicodeError(file=str(file), err=err))
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        errors.append(FileReadError(file=str(file), err=e))
     return snippets, errors
 
 
@@ -152,7 +164,7 @@ def collect_snippets(
 ) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
-    for file in get_files(root, validator_config.skip):
+    for file in get_files(root, skip):
         snips, errs = find_snippets(file, prefix)
         snippets.update(snips)
         errors.extend(errs)
@@ -251,7 +263,16 @@ def write_snippet_file(folder: Path, snippet_file: Path):
 
 
 def main():
-    root = Path(__file__).parent.parent.parent
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--root",
+        default=f"{Path(__file__).parent.parent}",
+        help="The root path from which to search for files to check. The default is the root of the git repo (two up from this file).",
+    )
+    args = parser.parse_args()
+    root = Path(args.root).resolve()
     snippets, errors = collect_snippets(root)
     print(f"Found {len(snippets)} snippets")
     out = root / ".snippets"
@@ -259,6 +280,7 @@ def main():
     errors.maybe_extend(write_snippets(out, snippets))
     if len(errors) > 0:
         print(errors)
+    print(f"Wrote snippets to {out}")
 
 
 if __name__ == "__main__":
