@@ -62,10 +62,12 @@ IGNORE_FILES = {
 }
 
 IGNORE_SPDX_SUFFIXES = {
+    ".css",
     ".csv",
     ".html",
     ".json",
     ".md",
+    ".toml",
     ".txt",
     ".yaml",
     ".yml",
