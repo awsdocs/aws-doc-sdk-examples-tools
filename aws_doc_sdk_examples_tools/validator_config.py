@@ -115,6 +115,8 @@ ALLOW_LIST = {
     "APKAEIVFHP46CEXAMPLE",
     "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     "je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY",
+    # Commit SHAs
+    "31c3650d70c243ca7141bb08705102cad89bd0e8",  # Fist commit of this repo
     # Safe look-alikes, mostly tokens and paths that happen to be 40 characters.
     "/AmazonEventBridgeServiceIntegrationTest",
     "/ListOrganizationalUnitsForParentExample",

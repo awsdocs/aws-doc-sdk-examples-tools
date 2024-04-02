@@ -55,6 +55,10 @@ def test_verify_no_deny_list_words(file_contents: str, expected_error_count: int
         ("This sentence has a hidAKIAIOSFO" + "DNN7EXAMPLEden example key.", 0),
         ("This sentence has nothing interesting about it at all.", 0),
         (
+            "This sentence has a git commit sha 31c3650d70c243ca7141bb08705102cad89bd0e8.",
+            0,
+        ),
+        (
             "This could be a secret key, I guess: aws/monitoring/mo"
             "del/DeleteAlarmsRequbbb\n"
             "And so could this: TargetTrackingScalingP" + "olicy1234567891234\n"
