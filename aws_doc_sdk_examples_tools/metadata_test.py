@@ -22,6 +22,7 @@ from .metadata import (
     idFormat,
 )
 from .doc_gen import DocGen
+from .project_validator import ValidationConfig
 from .sdks import Sdk
 from .services import Service, ServiceExpanded
 
@@ -88,7 +89,11 @@ SDKS = {
     "PHP": Sdk(name="PHP", versions=[], guide="", property=""),
 }
 DOC_GEN = DocGen(
-    root=Path(), errors=metadata_errors.MetadataErrors(), services=SERVICES, sdks=SDKS
+    root=Path(),
+    errors=metadata_errors.MetadataErrors(),
+    validation=ValidationConfig(),
+    services=SERVICES,
+    sdks=SDKS,
 )
 
 GOOD_SINGLE_CPP = """

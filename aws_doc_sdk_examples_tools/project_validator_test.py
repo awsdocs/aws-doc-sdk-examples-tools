@@ -74,7 +74,15 @@ def test_verify_no_secret_keys(file_contents: str, expected_error_count: int):
     """Test that file contents that contain 20- or 40-character strings and are
     not in the allowed list are counted as errors."""
     errors = MetadataErrors()
-    project_validator.verify_no_secret_keys(file_contents, Path("location"), errors)
+    project_validator.verify_no_secret_keys(
+        file_contents,
+        Path("location"),
+        project_validator.ValidationConfig(
+            allow_list=set(["AppStreamUsageReportsCFNGl" + "ueAthenaAccess"]),
+            sample_files=set(),
+        ),
+        errors,
+    )
     error_count = len(errors)
     assert error_count == expected_error_count
 

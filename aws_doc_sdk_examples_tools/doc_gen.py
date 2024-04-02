@@ -5,17 +5,14 @@ import yaml
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Set
+from typing import Dict, Iterable, List, Optional, Set
 
 # from os import glob
 
 from .metadata import Example, parse as parse_examples
 from .metadata_errors import MetadataErrors, MetadataError
 from .metadata_validator import validate_metadata
-from .project_validator import (
-    check_files,
-    verify_sample_files,
-)
+from .project_validator import check_files, verify_sample_files, ValidationConfig
 from .sdks import Sdk, parse as parse_sdks
 from .services import Service, parse as parse_services
 from .snippets import (
@@ -34,6 +31,7 @@ class DocGenMergeWarning(MetadataError):
 class DocGen:
     root: Path
     errors: MetadataErrors
+    validation: ValidationConfig = field(default_factory=ValidationConfig)
     sdks: Dict[str, Sdk] = field(default_factory=dict)
     services: Dict[str, Service] = field(default_factory=dict)
     snippets: Dict[str, Snippet] = field(default_factory=dict)
@@ -106,12 +104,15 @@ class DocGen:
 
     @classmethod
     def empty(cls) -> "DocGen":
-        return DocGen(root=Path("/"), errors=MetadataErrors())
+        return DocGen(
+            root=Path("/"), errors=MetadataErrors(), validation=ValidationConfig()
+        )
 
     def clone(self) -> "DocGen":
         return DocGen(
             root=self.root,
             errors=MetadataErrors(),
+            validation=self.validation.clone(),
             sdks={**self.sdks},
             services={**self.services},
             snippets={},
@@ -126,6 +127,11 @@ class DocGen:
 
         if config is None:
             config = Path(__file__).parent / "config"
+
+        with open(root / ".doc_gen" / "validation.yaml") as file:
+            validation = yaml.safe_load(file)
+            self.validation.allow_list.update(validation.get("allow_list", []))
+            self.validation.sample_files.update(validation.get("sample_files", []))
 
         with open(config / "sdks.yaml", encoding="utf-8") as file:
             meta = yaml.safe_load(file)
@@ -175,8 +181,8 @@ class DocGen:
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
-        check_files(self.root, self.errors, check_spdx)
-        verify_sample_files(self.root, self.errors)
+        check_files(self.root, check_spdx, self.validation, self.errors)
+        verify_sample_files(self.root, self.validation, self.errors)
         validate_metadata(self.root, self.errors)
         validate_snippets(
             [*self.examples.values()],
