@@ -22,10 +22,9 @@ The script scans code files and does the following:
 import os
 import re
 import logging
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import List, Set
 
 from .file_utils import get_files
 from .metadata_errors import (
@@ -40,7 +39,23 @@ from aws_doc_sdk_examples_tools import validator_config
 logger = logging.getLogger(__name__)
 
 
-def check_files(root: Path, errors: MetadataErrors, do_check_spdx: bool):
+@dataclass
+class ValidationConfig:
+    allow_list: Set[str] = field(default_factory=set)
+    sample_files: Set[str] = field(default_factory=set)
+
+    def clone(self):
+        return ValidationConfig(
+            allow_list={*self.allow_list}, sample_files={*self.sample_files}
+        )
+
+
+def check_files(
+    root: Path,
+    do_check_spdx: bool,
+    validation: ValidationConfig,
+    errors: MetadataErrors,
+):
     """
     Walk a folder system, scanning all files with specified extensions.
     Errors are logged and counted and the count of errors is returned.
@@ -57,7 +72,7 @@ def check_files(root: Path, errors: MetadataErrors, do_check_spdx: bool):
             file_contents = f.read()
 
         verify_no_deny_list_words(file_contents, file_path, errors)
-        verify_no_secret_keys(file_contents, file_path, errors)
+        verify_no_secret_keys(file_contents, file_path, validation, errors)
         if do_check_spdx:
             verify_spdx(file_contents, file_path, errors)
 
@@ -126,7 +141,9 @@ class MissingSampleFile(MetadataError):
         return f"Expected sample file was not found in '{self.samples_dir}'. If this file was intentionally removed, remove it from the EXPECTED_SAMPLE_FILES list in {__package__}.{__file__}."
 
 
-def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
+def verify_sample_files(
+    root_path: Path, validation: ValidationConfig, errors: MetadataErrors
+) -> None:
     """Verify sample files meet the requirements and have not moved."""
     sample_files_folder = root_path / "resources/sample_files"
     if not sample_files_folder.exists():
@@ -137,7 +154,7 @@ def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
     for path in get_files(sample_files_folder):
         file_list.append(path.name)
         ext = path.suffix
-        if path.name not in validator_config.EXPECTED_SAMPLE_FILES:
+        if path.name not in validation.sample_files:
             errors.append(UnknownSampleFile(file=str(path)))
         if ext.lower() in validator_config.MEDIA_FILE_TYPES:
             if media_folder not in str(path):
@@ -146,7 +163,7 @@ def verify_sample_files(root_path: Path, errors: MetadataErrors) -> None:
         if size_in_mb > MAX_FILE_SIZE_MB:
             errors.append(SampleFileTooLarge(file=str(path), size_in_mb=size_in_mb))
 
-    for sample_file in validator_config.EXPECTED_SAMPLE_FILES:
+    for sample_file in validation.sample_files:
         if sample_file not in file_list:
             errors.append(
                 MissingSampleFile(
@@ -160,7 +177,7 @@ class PossibleSecretKey(MetadataError):
     word: str = field(default="")
 
     def message(self):
-        return f"{len(self.word)} character string '{self.word}' might be a secret access key. If not, add it to ALLOW_LIST in validator_config.py"
+        return f"{len(self.word)} character string '{self.word}' might be a secret access key. If not, add it to allow_list in your project's .doc_gen/validation.yaml"
 
 
 TWENTY_LONG_KEY_REGEX = "(?<=[^A-Z0-9])[A][ACGIKNPRS][A-Z]{2}[A-Z0-9]{16}(?=[^A-Z0-9])"
@@ -168,7 +185,10 @@ FORTY_LONG_KEY_REGEX = "(?<=[^a-zA-Z0-9/+=])[a-zA-Z0-9/+=]{40}(?=[^a-zA-Z0-9/+=]
 
 
 def verify_no_secret_keys(
-    file_contents: str, file_location: Path, errors: MetadataErrors
+    file_contents: str,
+    file_location: Path,
+    validation: ValidationConfig,
+    errors: MetadataErrors,
 ):
     """Verify the file does not contain 20- or 40- length character strings,
     which might be secret keys. Allow strings in the allowlist in
@@ -179,25 +199,6 @@ def verify_no_secret_keys(
         + re.findall(FORTY_LONG_KEY_REGEX, file_contents)
     )
     keys -= validator_config.ALLOW_LIST
+    keys -= validation.allow_list
     for word in keys:
         errors.append(PossibleSecretKey(file=str(file_location), word=word))
-
-
-def main():
-    root_path = Path(__file__).parent.parent.parent
-    print("----------\n\nRun Tests\n")
-    errors = MetadataErrors()
-    check_files(root_path, errors, True)
-    verify_sample_files(root_path, errors)
-    error_count = len(errors)
-    if error_count > 0:
-        print(errors)
-        print(f"{error_count} errors found, please fix them.")
-    else:
-        print("All checks passed, you are cleared to check in.")
-    # Travis CI reports an error if the script exits with a non-zero code.
-    sys.exit(error_count)
-
-
-if __name__ == "__main__":
-    main()

@@ -38,6 +38,13 @@ the following issues.
 A count of errors found is returned. When CI receives a non-zero return code,
 it treats the checks as failed and displays a message in the pull request.
 
+## Validation Extensions
+
+Some validation options can be extended by creating `.doc_gen/validation.yaml`.
+
+- `allow_list`: The 40-character check is _very_ sensitive. To allow certain patterns, add them as a string to the `allow_list` key, which will be loaded as a set of strings to allow.
+- `sample_files`: Sample files are only allowed with certain names. To allow additional sample files, add their file name (with extension, but not path) to this list.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
