@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os.path
 import re
 from dataclasses import dataclass
 from typing import Optional, Iterator, Iterable, List, TypeVar
@@ -22,7 +23,6 @@ class MetadataError:
 
     def __str__(self):
         return f"{self.prefix()} {self.message()}"
-
 
 @dataclass
 class MetadataParseError(MetadataError):
@@ -234,6 +234,17 @@ class APIExampleCannotAddService(SdkVersionError):
 
 
 @dataclass
+class APIMustHaveOneServiceOneAction(MetadataParseError):
+    svc_actions: str = ""
+
+    def message(self):
+        return (
+            f"is an API example but lists svc:actions as '{self.svc_actions}'. "
+            f"API examples must contain exactly one service and one action."
+        )
+
+
+@dataclass
 class MissingSnippetTag(SdkVersionError):
     tag: str = ""
 
@@ -256,13 +267,20 @@ class DuplicateService(MetadataParseError):
     def message(self):
         return f"service {self.services} listed more than once"
 
-
 @dataclass
 class DuplicateExample(MetadataParseError):
     other_file: str = ""
 
     def message(self):
         return f"also found in {self.other_file}"
+
+
+@dataclass
+class DuplicateAPIExample(MetadataError):
+    svc_action: str = ""
+
+    def message(self):
+        return f"multiple API examples found for service:action {self.svc_action}"
 
 
 @dataclass

@@ -9,7 +9,7 @@ WrongNameFormat:
           block_content: test/block
           github: javav2/example_code/sns
   services:
-    sns:
+    sns: {TestAction}
 cross_TestExample:
   title: Test title
   title_abbrev: Test title abbrev
@@ -22,4 +22,5 @@ cross_TestExample:
           add_services:
             garbage:
   services:
-    sns:
+    sns: {TestAction}
+    sqs: {TestAction}

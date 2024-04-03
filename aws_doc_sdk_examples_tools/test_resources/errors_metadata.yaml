@@ -35,7 +35,7 @@ sns_TestExample:
         - sdk_version: 2
           sdkguide: http://sdk/guide/url
   services:
-    sns:
+    sns: {TestAction}
 sns_TestExample2:
   title: Test title
   title_abbrev: Test title abbrev
@@ -50,13 +50,14 @@ sns_TestExample2:
             - snippet_tags:
                 - this.snippet.does.not.exist
   services:
-    garbled:
-    sns:
+    garbled: {TestAction}
+    sns: {TestAction}
 cross_TestExample_Versions:
   title: Test title
   title_abbrev: Test title abbrev
   synopsis: |-
     This synopsis is okay.
+  category: Cross-service examples
   languages:
     Java:
       versions:
@@ -82,6 +83,7 @@ cross_TestExample_Missing:
           block_content: missing_block_content.xml
   services:
     sns:
+    sqs:
 snsBadFormat:
   title: Test title
   title_abbrev: Test title abbrev
@@ -93,4 +95,4 @@ snsBadFormat:
         - sdk_version: 2
           github: github/link
   services:
-    sns:
+    sns: {TestAction}
