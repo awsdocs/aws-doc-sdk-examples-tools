@@ -9,7 +9,11 @@ from typing import Dict, Iterable, List, Optional, Set
 
 # from os import glob
 
-from .metadata import Example, parse as parse_examples, validate_no_duplicate_api_examples
+from .metadata import (
+    Example,
+    parse as parse_examples,
+    validate_no_duplicate_api_examples,
+)
 from .metadata_errors import MetadataErrors, MetadataError
 from .metadata_validator import validate_metadata
 from .project_validator import check_files, verify_sample_files, ValidationConfig

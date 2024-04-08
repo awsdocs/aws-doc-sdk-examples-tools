@@ -24,6 +24,7 @@ class MetadataError:
     def __str__(self):
         return f"{self.prefix()} {self.message()}"
 
+
 @dataclass
 class MetadataParseError(MetadataError):
     id: Optional[str] = None
@@ -266,6 +267,7 @@ class DuplicateService(MetadataParseError):
 
     def message(self):
         return f"service {self.services} listed more than once"
+
 
 @dataclass
 class DuplicateExample(MetadataParseError):

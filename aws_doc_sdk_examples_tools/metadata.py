@@ -285,7 +285,11 @@ class Example:
                 for action in actions:
                     svc_actions.append(f"{svc}:{action}")
             if len(svc_actions) != 1:
-                errors.append(metadata_errors.APIMustHaveOneServiceOneAction(svc_actions=", ".join(svc_actions)))
+                errors.append(
+                    metadata_errors.APIMustHaveOneServiceOneAction(
+                        svc_actions=", ".join(svc_actions)
+                    )
+                )
 
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
@@ -411,10 +415,13 @@ def validate_no_duplicate_api_examples(examples: List[Example], errors: Metadata
                 svc_action_map[f"{service}:{action}"].append(example)
     for svc_action, ex_items in svc_action_map.items():
         if len(ex_items) > 1:
-            errors.append(metadata_errors.DuplicateAPIExample(
-                id=", ".join({ex_item.id for ex_item in ex_items}),
-                file=", ".join({ex_item.file for ex_item in ex_items}),
-                svc_action=svc_action))
+            errors.append(
+                metadata_errors.DuplicateAPIExample(
+                    id=", ".join({ex_item.id for ex_item in ex_items}),
+                    file=", ".join({ex_item.file for ex_item in ex_items}),
+                    svc_action=svc_action,
+                )
+            )
 
 
 def main():
