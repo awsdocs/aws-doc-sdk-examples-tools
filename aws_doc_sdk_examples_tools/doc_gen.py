@@ -5,7 +5,7 @@ import yaml
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set
+from typing import Dict, Iterable, Optional, Set
 
 # from os import glob
 
@@ -123,34 +123,47 @@ class DocGen:
 
     def for_root(self, root: Path, config: Optional[Path] = None) -> "DocGen":
         self.root = root
-        metadata = root / ".doc_gen/metadata"
 
         if config is None:
             config = Path(__file__).parent / "config"
 
-        with open(root / ".doc_gen" / "validation.yaml") as file:
-            validation = yaml.safe_load(file)
-            self.validation.allow_list.update(validation.get("allow_list", []))
-            self.validation.sample_files.update(validation.get("sample_files", []))
+        try:
+            with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
+                validation = yaml.safe_load(file)
+                validation = {} if validation is None else validation
+                self.validation.allow_list.update(validation.get("allow_list", []))
+                self.validation.sample_files.update(validation.get("sample_files", []))
+        except Exception:
+            pass
 
-        with open(config / "sdks.yaml", encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            sdks, errs = parse_sdks("sdks.yaml", meta)
-            self.errors.extend(errs)
+        try:
+            with open(config / "sdks.yaml", encoding="utf-8") as file:
+                meta = yaml.safe_load(file)
+                sdks, errs = parse_sdks("sdks.yaml", meta)
+                self.sdks = sdks
+                self.errors.extend(errs)
+        except Exception:
+            pass
 
-        with open(config / "services.yaml", encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            services, service_errors = parse_services("services.yaml", meta)
-            self.errors.extend(service_errors)
+        try:
+            with open(config / "services.yaml", encoding="utf-8") as file:
+                meta = yaml.safe_load(file)
+                services, service_errors = parse_services("services.yaml", meta)
+                self.services = services
+                self.errors.extend(service_errors)
+        except Exception:
+            pass
 
-        cross = set(
-            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
-        )
-
-        self.root = root
-        self.sdks = sdks
-        self.services = services
-        self.cross_blocks = cross
+        metadata = root / ".doc_gen/metadata"
+        try:
+            self.cross_blocks = set(
+                [
+                    path.name
+                    for path in (metadata.parent / "cross-content").glob("*.xml")
+                ]
+            )
+        except Exception:
+            pass
 
         for path in metadata.glob("*_metadata.yaml"):
             with open(path) as file:
