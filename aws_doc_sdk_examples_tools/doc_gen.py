@@ -188,7 +188,7 @@ class DocGen:
         check_files(self.root, check_spdx, self.validation, self.errors)
         verify_sample_files(self.root, self.validation, self.errors)
         validate_metadata(self.root, self.errors)
-        validate_no_duplicate_api_examples([*self.examples.values()], self.errors)
+        validate_no_duplicate_api_examples(*self.examples.values(), self.errors)
         validate_snippets(
             [*self.examples.values()],
             self.snippets,
