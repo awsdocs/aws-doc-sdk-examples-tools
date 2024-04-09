@@ -406,7 +406,9 @@ def parse(
     return examples, errors
 
 
-def validate_no_duplicate_api_examples(examples: Iterable[Example], errors: MetadataErrors):
+def validate_no_duplicate_api_examples(
+    examples: Iterable[Example], errors: MetadataErrors
+):
     """Call this on a full set of examples to verify that there are no duplicate API examples."""
     svc_action_map = defaultdict(set)
     for example in [ex for ex in examples if ex.category == "Api"]:
