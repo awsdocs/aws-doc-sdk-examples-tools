@@ -410,11 +410,11 @@ def validate_no_duplicate_api_examples(
     examples: Iterable[Example], errors: MetadataErrors
 ):
     """Call this on a full set of examples to verify that there are no duplicate API examples."""
-    svc_action_map = defaultdict(list)
+    svc_action_map: Dict[str, List] = defaultdict(list)
     for example in [ex for ex in examples if ex.category == "Api"]:
         for service, actions in example.services.items():
             for action in actions:
-                svc_action_map[f"{service}:{action}"].add(example)
+                svc_action_map[f"{service}:{action}"].append(example)
     for svc_action, ex_items in svc_action_map.items():
         if len(ex_items) > 1:
             errors.append(
