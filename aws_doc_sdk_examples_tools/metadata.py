@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union, Iterable
 from os.path import splitext
 
 from aws_doc_sdk_examples_tools import metadata_errors
@@ -278,6 +279,18 @@ class Example:
             category = "Api" if len(parsed_services) == 1 else "Cross"
         is_action = category == "Api"
 
+        if is_action:
+            svc_actions = []
+            for svc, actions in parsed_services.items():
+                for action in actions:
+                    svc_actions.append(f"{svc}:{action}")
+            if len(svc_actions) != 1:
+                errors.append(
+                    metadata_errors.APIMustHaveOneServiceOneAction(
+                        svc_actions=", ".join(svc_actions)
+                    )
+                )
+
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
             try:
@@ -391,6 +404,26 @@ def parse(
         examples.append(example)
 
     return examples, errors
+
+
+def validate_no_duplicate_api_examples(
+    examples: Iterable[Example], errors: MetadataErrors
+):
+    """Call this on a full set of examples to verify that there are no duplicate API examples."""
+    svc_action_map = defaultdict(set)
+    for example in [ex for ex in examples if ex.category == "Api"]:
+        for service, actions in example.services.items():
+            for action in actions:
+                svc_action_map[f"{service}:{action}"].add(example)
+    for svc_action, ex_items in svc_action_map.items():
+        if len(ex_items) > 1:
+            errors.append(
+                metadata_errors.DuplicateAPIExample(
+                    id=", ".join({ex_item.id for ex_item in ex_items}),
+                    file=", ".join({ex_item.file for ex_item in ex_items}),
+                    svc_action=svc_action,
+                )
+            )
 
 
 def main():
