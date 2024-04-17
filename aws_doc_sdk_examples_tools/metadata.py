@@ -206,9 +206,9 @@ class Example:
     id: str
     file: str
     # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
-    title: str
+    title: Optional[str]
     # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
-    title_abbrev: str
+    title_abbrev: Optional[str]
     synopsis: str
     languages: Dict[str, Language]
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
@@ -262,8 +262,8 @@ class Example:
     ) -> tuple[Example, MetadataErrors]:
         errors = MetadataErrors()
 
-        title = get_with_valid_entities("title", yaml, errors)
-        title_abbrev = get_with_valid_entities("title_abbrev", yaml, errors)
+        title = get_with_valid_entities("title", yaml, errors, True)
+        title_abbrev = get_with_valid_entities("title_abbrev", yaml, errors, True)
         synopsis = get_with_valid_entities("synopsis", yaml, errors, opt=True)
         synopsis_list = [str(syn) for syn in yaml.get("synopsis_list", [])]
 

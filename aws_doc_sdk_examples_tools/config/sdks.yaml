@@ -147,16 +147,17 @@ PowerShell:
   property: powershell
   sdk:
     4:
-      long: "&PowerShelllong;"
-      short: "&PowerShell;"
+      long: "&TWPALLlong;"
+      short: "&TWPALL;"
       expanded:
         long: "AWS Tools for PowerShell"
-        short: "AWS Tools for PowerShell"
+        short: "Tools for PowerShell"
       guide: "powershell/latest/userguide/pstools-welcome.html"
       api_ref:
-        uid: "ToolsForPowerShellV4"
-        name: "&guide-powershell-api;"
-  guide: "&guide-powershell-dev;"
+        uid: "ToolsForPowerShell4"
+        name: "&guide-twp-ref;"
+        link_template: "https://docs.aws.amazon.com/powershell/latest/reference"
+  guide: "&guide-twp-ug;"
 Python:
   property: python
   sdk:
