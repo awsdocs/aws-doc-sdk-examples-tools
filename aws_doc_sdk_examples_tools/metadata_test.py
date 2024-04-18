@@ -332,16 +332,6 @@ def test_verify_load_successful():
             "empty_metadata.yaml",
             [
                 metadata_errors.MissingField(
-                    field="title",
-                    file="empty_metadata.yaml",
-                    id="sns_EmptyExample",
-                ),
-                metadata_errors.MissingField(
-                    field="title_abbrev",
-                    file="empty_metadata.yaml",
-                    id="sns_EmptyExample",
-                ),
-                metadata_errors.MissingField(
                     field="languages",
                     file="empty_metadata.yaml",
                     id="sns_EmptyExample",
