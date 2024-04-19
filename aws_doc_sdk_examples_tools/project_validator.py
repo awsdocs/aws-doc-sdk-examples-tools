@@ -68,8 +68,13 @@ def check_files(
         file_count += 1
         logger.info("\nChecking File: %s", file_path)
 
-        with open(file_path, encoding="utf-8-sig") as f:
-            file_contents = f.read()
+        try:
+            with open(file_path, encoding="utf-8-sig") as f:
+                file_contents = f.read()
+        except Exception as e:
+            file_contents = ""
+            print(f"Could not verify {file_path}: {e}")
+            errors.append(MetadataError(file=str(file_path)))
 
         verify_no_deny_list_words(file_contents, file_path, errors)
         verify_no_secret_keys(file_contents, file_path, validation, errors)

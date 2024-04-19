@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from ast import literal_eval
 from pathlib import Path
 from sys import exit
 
@@ -23,7 +24,8 @@ def main():
     # )
     parser.add_argument(
         "--check-spdx",
-        default=True,
+        type=literal_eval,
+        default=False,
         help="Verify all files start with SPDX header",
         required=False,
     )
