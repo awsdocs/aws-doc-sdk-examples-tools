@@ -52,7 +52,6 @@ class ValidationConfig:
 
 def check_files(
     root: Path,
-    do_check_spdx: bool,
     validation: ValidationConfig,
     errors: MetadataErrors,
 ):
@@ -78,8 +77,7 @@ def check_files(
 
         verify_no_deny_list_words(file_contents, file_path, errors)
         verify_no_secret_keys(file_contents, file_path, validation, errors)
-        if do_check_spdx:
-            verify_spdx(file_contents, file_path, errors)
+        verify_spdx(file_contents, file_path, errors)
 
     print(f"{file_count} files scanned in {root}.\n")
 

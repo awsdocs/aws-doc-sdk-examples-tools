@@ -4,9 +4,9 @@ inputs:
   root:
     description: "Root of the repository checkout to validate metadata within"
     default: ${{ github.workspace }}
-  check_spdx:
-    description: "Check for two-line SDPX header conformance"
-    default: "False"
+  doc_gen_only:
+    description: "Only perform extended validation on doc_gen snippets"
+    default: "True"
 runs:
   using: "composite"
   steps:
@@ -18,5 +18,5 @@ runs:
       run: pip install -e "${{ github.action_path }}"
       shell: bash
     - name: Run validator
-      run: python3 -m "aws_doc_sdk_examples_tools.validate" --root "${{ inputs.root }}" --check-spdx "${{ inputs.check_spdx }}"
+      run: python3 -m "aws_doc_sdk_examples_tools.validate" --root "${{ inputs.root }}" --doc_gen_only "${{ inputs.doc_gen_only }}"
       shell: bash

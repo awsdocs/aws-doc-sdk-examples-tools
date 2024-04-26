@@ -16,12 +16,13 @@ from .metadata import (
 )
 from .metadata_errors import MetadataErrors, MetadataError
 from .metadata_validator import validate_metadata
-from .project_validator import check_files, verify_sample_files, ValidationConfig
+from .project_validator import ValidationConfig
 from .sdks import Sdk, parse as parse_sdks
 from .services import Service, parse as parse_services
 from .snippets import (
     Snippet,
     collect_snippets,
+    collect_snippet_files,
     validate_snippets,
 )
 
@@ -53,6 +54,9 @@ class DocGen:
         if snippets_root is None:
             snippets_root = self.root
         snippets, errs = collect_snippets(snippets_root, prefix)
+        collect_snippet_files(
+            self.examples.values(), snippets=snippets, errors=errs, root=self.root
+        )
         self.snippets = snippets
         self.errors.extend(errs)
 
@@ -193,19 +197,17 @@ class DocGen:
     def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
         return DocGen.empty().for_root(root, config)
 
-    def validate(self, check_spdx: bool):
+    def validate(self):
         for sdk in self.sdks.values():
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
-        check_files(self.root, check_spdx, self.validation, self.errors)
-        verify_sample_files(self.root, self.validation, self.errors)
         validate_metadata(self.root, self.errors)
         validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(
             [*self.examples.values()],
             self.snippets,
-            self.snippet_files,
+            self.validation,
             self.errors,
             self.root,
         )
