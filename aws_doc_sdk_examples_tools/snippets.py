@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from shutil import copyfile
 import re
 
@@ -11,6 +11,11 @@ from .validator_config import skip
 from .file_utils import get_files, clear
 from .metadata import Example
 from .metadata_errors import MetadataErrors, MetadataError
+from .project_validator import (
+    verify_no_deny_list_words,
+    verify_no_secret_keys,
+    ValidationConfig,
+)
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -171,6 +176,49 @@ def collect_snippets(
     return snippets, errors
 
 
+def collect_snippet_files(
+    examples: Iterable[Example],
+    snippets: Dict[str, Snippet],
+    errors: MetadataErrors,
+    root: Path,
+):
+    for example in examples:
+        for lang in example.languages:
+            language = example.languages[lang]
+            for version in language.versions:
+                for excerpt in version.excerpts:
+                    for snippet_file in excerpt.snippet_files:
+                        if not (root / snippet_file).exists():
+                            # Ensure all snippet_files exist
+                            errors.append(
+                                MissingSnippetFile(
+                                    file=example.file,
+                                    snippet_file=snippet_file,
+                                    id=f"{lang}:{version.sdk_version}",
+                                )
+                            )
+                            continue
+                        if re.search(win_unsafe_re, str(snippet_file)):
+                            errors.append(
+                                WindowsUnsafeSnippetFile(
+                                    file=example.file,
+                                    snippet_file=snippet_file,
+                                    id=f"{lang}:{version.sdk_version}",
+                                )
+                            )
+                            continue
+                        name = str(snippet_file).replace("/", ".")
+                        with open(root / snippet_file, encoding="utf8") as file:
+                            code = file.readlines()
+                            snippets[name] = Snippet(
+                                id=name,
+                                file=str(snippet_file),
+                                line_start=0,
+                                line_end=len(code),
+                                code="\n".join(file),
+                            )
+
+
 @dataclass
 class MissingSnippet(MetadataError):
     tag: Optional[str] = None
@@ -200,9 +248,9 @@ win_unsafe_re = r'[:*?"<>|]'
 
 
 def validate_snippets(
-    examples: List[Example],
+    examples: Iterable[Example],
     snippets: Dict[str, Snippet],
-    snippet_files: Set[str],
+    validation: ValidationConfig,
     errors: MetadataErrors,
     root: Path,
 ):
@@ -221,24 +269,10 @@ def validate_snippets(
                                     tag=snippet_tag,
                                 )
                             )
-    for snippet_file in excerpt.snippet_files:
-        if not (root / snippet_file).exists():
-            # Ensure all snippet_files exist
-            errors.append(
-                MissingSnippetFile(
-                    file=example.file,
-                    snippet_file=snippet_file,
-                    id=f"{lang}:{version.sdk_version}",
-                )
-            )
-        if re.search(win_unsafe_re, str(snippet_file)):
-            errors.append(
-                WindowsUnsafeSnippetFile(
-                    file=example.file,
-                    snippet_file=snippet_file,
-                    id=f"{lang}:{version.sdk_version}",
-                )
-            )
+
+    for snippet in snippets.values():
+        verify_no_deny_list_words(snippet.code, root / snippet.file, errors)
+        verify_no_secret_keys(snippet.code, root / snippet.file, validation, errors)
 
 
 def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False):
