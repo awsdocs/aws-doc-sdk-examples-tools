@@ -98,10 +98,6 @@ DOC_GEN = DocGen(
 
 GOOD_SINGLE_CPP = """
 sns_DeleteTopic:
-   title: Deleting an &SNS; topic
-   title_abbrev: Deleting a topic
-   synopsis: |-
-     Shows how to delete an &SNS; topic.
    languages:
      C++:
        versions:
@@ -146,9 +142,6 @@ def test_parse():
         file="test_cpp.yaml",
         id="sns_DeleteTopic",
         category="Cross",
-        title="Deleting an &SNS; topic",
-        title_abbrev="Deleting a topic",
-        synopsis="Shows how to delete an &SNS; topic.",
         services={
             "sns": set(["Operation1", "Operation2"]),
             "ses": set(["Operation1", "Operation2"]),

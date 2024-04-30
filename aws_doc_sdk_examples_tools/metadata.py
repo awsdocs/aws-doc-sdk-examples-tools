@@ -205,12 +205,12 @@ class ExampleMergeMismatchedId(MetadataError):
 class Example:
     id: str
     file: str
-    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
-    title: Optional[str]
-    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
-    title_abbrev: Optional[str]
-    synopsis: str
     languages: Dict[str, Language]
+    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
+    title: Optional[str] = field(default="")
+    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
+    title_abbrev: Optional[str] = field(default="")
+    synopsis: Optional[str] = field(default="")
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
     category: Optional[str] = field(default=None)
     # Link to additional topic places.
@@ -290,6 +290,11 @@ class Example:
                         svc_actions=", ".join(svc_actions)
                     )
                 )
+            if title or title_abbrev or synopsis:
+                errors.append(metadata_errors.APICannotHaveTitleFields())
+        else:
+            if not title or not title_abbrev or not synopsis:
+                errors.append(metadata_errors.NonAPIMustHaveTitleFields())
 
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
