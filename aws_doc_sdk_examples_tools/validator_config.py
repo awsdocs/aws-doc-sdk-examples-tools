@@ -15,6 +15,7 @@ EXT_LOOKUP = {
     ".cs": "C#",
     ".css": "CSS",
     ".go": "Go",
+    ".h": "C++",
     ".html": "JavaScript",
     ".java": "Java",
     ".js": "JavaScript",
