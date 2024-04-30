@@ -34,7 +34,7 @@ def load(
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, blocks)
+    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
 
 
 SERVICES = {
@@ -119,7 +119,7 @@ sns_DeleteTopic:
 
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
-    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set())
+    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), DOC_GEN.validation)
     assert len(errors) == 0
     assert len(parsed) == 1
     language = Language(
@@ -152,6 +152,134 @@ def test_parse():
     assert parsed[0] == example
 
 
+STRICT_TITLE_META = """
+sns_GoodOne:
+   languages:
+     C++:
+       versions:
+         - sdk_version: 1
+           github: cpp/example_code/sns
+           sdkguide: sdkguide/link
+           excerpts:
+             - description: test excerpt description
+               snippet_tags:
+                 - test.excerpt
+   services:
+     sns: {GoodOne}
+sns_GoodScenario:
+   title: Scenario title
+   title_abbrev: Scenario title abbrev
+   synopsis: scenario synopsis.
+   category: Scenarios
+   languages:
+     C++:
+       versions:
+         - sdk_version: 1
+           github: cpp/example_code/sns
+           sdkguide: sdkguide/link
+           excerpts:
+             - description: test excerpt description
+               snippet_tags:
+                 - test.excerpt
+   services:
+     sns: {GoodOne}
+"""
+
+def test_parse_strict_titles():
+    meta = yaml.safe_load(STRICT_TITLE_META)
+    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), ValidationConfig(strict_titles=True))
+    assert len(errors) == 0
+    assert len(parsed) == 2
+    language = Language(
+        name="C++",
+        versions=[
+            Version(
+                sdk_version=1,
+                github="cpp/example_code/sns",
+                sdkguide="sdkguide/link",
+                excerpts=[
+                    Excerpt(
+                        description="test excerpt description",
+                        snippet_tags=["test.excerpt"],
+                    )
+                ],
+            )
+        ],
+    )
+    example_action = Example(
+        file="test_cpp.yaml",
+        id="sns_GoodOne",
+        category="Api",
+        services={
+            "sns": {"GoodOne"},
+        },
+        languages={"C++": language},
+    )
+    example_scenario = Example(
+        file="test_cpp.yaml",
+        id="sns_GoodScenario",
+        title="Scenario title",
+        title_abbrev="Scenario title abbrev",
+        synopsis="scenario synopsis.",
+        category="Scenarios",
+        services={
+            "sns": {"GoodOne"},
+        },
+        languages={"C++": language},
+    )
+    assert parsed[0] == example_action
+    assert parsed[1] == example_scenario
+
+
+STRICT_TITLE_ERRORS = """
+sns_BadOne:
+   title: Disallowed title
+   title_abbrev: Disallowed title abbrev
+   synopsis: disallowed synopsis. 
+   languages:
+     C++:
+       versions:
+         - sdk_version: 1
+           github: cpp/example_code/sns
+           sdkguide: sdkguide/link
+           excerpts:
+             - description: test excerpt description
+               snippet_tags:
+                 - test.excerpt
+   services:
+     sns: {BadOne}
+sns_BadScenario:
+   category: Scenarios
+   languages:
+     C++:
+       versions:
+         - sdk_version: 1
+           github: cpp/example_code/sns
+           sdkguide: sdkguide/link
+           excerpts:
+             - description: test excerpt description
+               snippet_tags:
+                 - test.excerpt
+   services:
+     sns: {BadOne}
+"""
+
+
+def test_parse_strict_title_errors():
+    meta = yaml.safe_load(STRICT_TITLE_ERRORS)
+    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), ValidationConfig(strict_titles=True))
+    expected = [
+        metadata_errors.APICannotHaveTitleFields(
+            file="test_cpp.yaml",
+            id="sns_BadOne",
+        ),
+        metadata_errors.NonAPIMustHaveTitleFields(
+            file="test_cpp.yaml",
+            id="sns_BadScenario",
+        )]
+    assert expected == [*errors]
+
+
 CROSS_META = """
 cross_DeleteTopic:
   title: Delete Topic
@@ -170,7 +298,7 @@ cross_DeleteTopic:
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
     actual, errors = parse(
-        "cross.yaml", meta, SDKS, SERVICES, set(["cross_DeleteTopic_block.xml"])
+        "cross.yaml", meta, SDKS, SERVICES, set(["cross_DeleteTopic_block.xml"]), DOC_GEN.validation
     )
     assert len(errors) == 0
     assert len(actual) == 1
@@ -210,7 +338,8 @@ autogluon_tabular_with_sagemaker_pipelines:
 
 def test_parse_curated():
     meta = yaml.safe_load(CURATED)
-    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]))
+    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]), DOC_GEN.validation)
+    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]), DOC_GEN.validation)
     assert len(errors) == 0
     assert len(actual) == 1
     language = Language(

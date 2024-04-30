@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 class ValidationConfig:
     allow_list: Set[str] = field(default_factory=set)
     sample_files: Set[str] = field(default_factory=set)
+    strict_titles: bool = False
 
     def clone(self):
         return ValidationConfig(

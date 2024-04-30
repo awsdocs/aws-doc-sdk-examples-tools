@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
+from .project_validator import ValidationConfig
 from typing import Any, Dict, List, Optional, Set, Union, Iterable
 from os.path import splitext
 
@@ -259,6 +260,7 @@ class Example:
         sdks: Dict[str, Sdk],
         services: Dict[str, Service],
         blocks: Set[str],
+        validation: ValidationConfig,
     ) -> tuple[Example, MetadataErrors]:
         errors = MetadataErrors()
 
@@ -290,11 +292,14 @@ class Example:
                         svc_actions=", ".join(svc_actions)
                     )
                 )
-            if title or title_abbrev or synopsis:
-                errors.append(metadata_errors.APICannotHaveTitleFields())
-        else:
-            if not title or not title_abbrev or not synopsis:
-                errors.append(metadata_errors.NonAPIMustHaveTitleFields())
+
+        if validation.strict_titles:
+            if is_action:
+                if title or title_abbrev or synopsis:
+                    errors.append(metadata_errors.APICannotHaveTitleFields())
+            else:
+                if not title or not title_abbrev or not synopsis:
+                    errors.append(metadata_errors.NonAPIMustHaveTitleFields())
 
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
@@ -393,13 +398,14 @@ def parse(
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
     blocks: Set[str],
+    validation: ValidationConfig,
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
     for id in yaml:
         if not idFormat(id, services):
             errors.append(metadata_errors.NameFormat(file=file, id=id))
-        example, example_errors = Example.from_yaml(yaml[id], sdks, services, blocks)
+        example, example_errors = Example.from_yaml(yaml[id], sdks, services, blocks, validation)
         for error in example_errors:
             error.file = file
             error.id = id

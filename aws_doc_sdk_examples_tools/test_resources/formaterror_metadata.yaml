@@ -2,6 +2,7 @@ WrongNameFormat:
   title: Test title
   title_abbrev: Test title abbrev
   synopsis: Test synopsis
+  category: Test
   languages:
     Java:
       versions:

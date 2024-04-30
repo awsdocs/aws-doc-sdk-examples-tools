@@ -111,9 +111,9 @@ class DocGen:
                 self.examples[id] = example
 
     @classmethod
-    def empty(cls) -> "DocGen":
+    def empty(cls, validation: ValidationConfig = ValidationConfig()) -> "DocGen":
         return DocGen(
-            root=Path("/"), errors=MetadataErrors(), validation=ValidationConfig()
+            root=Path("/"), errors=MetadataErrors(), validation=validation
         )
 
     def clone(self) -> "DocGen":
@@ -194,8 +194,9 @@ class DocGen:
         return self
 
     @classmethod
-    def from_root(cls, root: Path, config: Optional[Path] = None) -> "DocGen":
-        return DocGen.empty().for_root(root, config)
+    def from_root(cls, root: Path, config: Optional[Path] = None, validation: ValidationConfig = ValidationConfig()
+                  ) -> "DocGen":
+        return DocGen.empty(validation=validation).for_root(root, config)
 
     def validate(self):
         for sdk in self.sdks.values():
