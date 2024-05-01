@@ -181,6 +181,7 @@ class DocGen:
                     self.sdks,
                     self.services,
                     self.cross_blocks,
+                    self.validation,
                 )
                 self.extend_examples(examples)
                 self.errors.extend(errs)
