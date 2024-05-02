@@ -28,7 +28,7 @@ def main():
         "--strict_titles",
         type=literal_eval,
         default=False,
-        help="Strict title requirements: Action examples must not have title/title_abbrev; non-Acton examples "
+        help="Strict title requirements: Action examples must not have title/title_abbrev; non-Action examples "
              "must have them.",
         required=False,
     )

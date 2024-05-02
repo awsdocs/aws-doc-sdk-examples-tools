@@ -125,6 +125,12 @@ class NameFormat(MetadataParseError):
 
 
 @dataclass
+class ActionNameFormat(MetadataParseError):
+    def message(self):
+        return "name of API example does not match the required format of 'svc_Action'"
+
+
+@dataclass
 class MissingCrossContent(MetadataParseError):
     block: str = ""
 
