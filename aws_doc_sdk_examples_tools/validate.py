@@ -29,13 +29,15 @@ def main():
         type=literal_eval,
         default=False,
         help="Strict title requirements: Action examples must not have title/title_abbrev; non-Action examples "
-             "must have them.",
+        "must have them.",
         required=False,
     )
     args = parser.parse_args()
     root_path = Path(args.root).resolve()
 
-    doc_gen = DocGen.from_root(root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles))
+    doc_gen = DocGen.from_root(
+        root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles)
+    )
     doc_gen.collect_snippets(snippets_root=root_path)
     doc_gen.validate()
     if not args.doc_gen_only:

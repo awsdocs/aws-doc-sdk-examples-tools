@@ -7,6 +7,9 @@ inputs:
   doc_gen_only:
     description: "Only perform extended validation on doc_gen snippets"
     default: "True"
+  strict_titles:
+    description: "Strict mode for titles: disallow title/title_abbrev/sysnopsis for Action examples, require otherwise."
+    default: "False"
 runs:
   using: "composite"
   steps:

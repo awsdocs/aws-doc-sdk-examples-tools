@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from .project_validator import ValidationConfig
 from typing import Any, Dict, List, Optional, Set, Union, Iterable
 from os.path import splitext
+from .project_validator import ValidationConfig
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
@@ -295,7 +295,7 @@ class Example:
 
         if validation.strict_titles:
             if is_action:
-                if title or title_abbrev or synopsis:
+                if title or title_abbrev or synopsis or synopsis_list:
                     errors.append(metadata_errors.APICannotHaveTitleFields())
             else:
                 if not (title and title_abbrev and (synopsis or synopsis_list)):
@@ -385,14 +385,22 @@ def get_with_valid_entities(
     return field
 
 
-def check_id_format(id: str, parsed_services: Dict[str, set[str]], check_action: bool, errors: MetadataErrors):
+def check_id_format(
+    id: str,
+    parsed_services: Dict[str, set[str]],
+    check_action: bool,
+    errors: MetadataErrors,
+):
     [service, *rest] = id.split("_")
     if len(rest) == 0:
         errors.append(metadata_errors.NameFormat(id=id))
     elif service not in parsed_services and service not in ["cross", "serverless"]:
         errors.append(metadata_errors.NameFormat(id=id))
-    elif check_action and (len(rest) > 1 or rest[0] not in parsed_services.get(service, {})):
+    elif check_action and (
+        len(rest) > 1 or rest[0] not in parsed_services.get(service, {})
+    ):
         errors.append(metadata_errors.ActionNameFormat(id=id))
+
 
 def parse(
     file: str,
@@ -405,12 +413,15 @@ def parse(
     examples: List[Example] = []
     errors = MetadataErrors()
     for id in yaml:
-        example, example_errors = Example.from_yaml(yaml[id], sdks, services, blocks, validation)
+        example, example_errors = Example.from_yaml(
+            yaml[id], sdks, services, blocks, validation
+        )
         check_id_format(
             id,
             example.services,
             validation.strict_titles and example.category == "Api",
-            example_errors)
+            example_errors,
+        )
         for error in example_errors:
             error.file = file
             error.id = id

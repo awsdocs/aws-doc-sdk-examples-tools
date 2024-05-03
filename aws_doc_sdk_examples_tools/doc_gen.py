@@ -112,9 +112,7 @@ class DocGen:
 
     @classmethod
     def empty(cls, validation: ValidationConfig = ValidationConfig()) -> "DocGen":
-        return DocGen(
-            root=Path("/"), errors=MetadataErrors(), validation=validation
-        )
+        return DocGen(root=Path("/"), errors=MetadataErrors(), validation=validation)
 
     def clone(self) -> "DocGen":
         return DocGen(
@@ -195,8 +193,12 @@ class DocGen:
         return self
 
     @classmethod
-    def from_root(cls, root: Path, config: Optional[Path] = None, validation: ValidationConfig = ValidationConfig()
-                  ) -> "DocGen":
+    def from_root(
+        cls,
+        root: Path,
+        config: Optional[Path] = None,
+        validation: ValidationConfig = ValidationConfig(),
+    ) -> "DocGen":
         return DocGen.empty(validation=validation).for_root(root, config)
 
     def validate(self):

@@ -34,7 +34,9 @@ def load(
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
+    return parse(
+        filename.name, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
+    )
 
 
 SERVICES = {
@@ -119,7 +121,9 @@ sns_DeleteTopic:
 
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
-    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), DOC_GEN.validation)
+    parsed, errors = parse(
+        "test_cpp.yaml", meta, SDKS, SERVICES, set(), DOC_GEN.validation
+    )
     assert len(errors) == 0
     assert len(parsed) == 1
     language = Language(
@@ -185,9 +189,17 @@ sns_GoodScenario:
      sns: {GoodOne}
 """
 
+
 def test_parse_strict_titles():
     meta = yaml.safe_load(STRICT_TITLE_META)
-    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), ValidationConfig(strict_titles=True))
+    parsed, errors = parse(
+        "test_cpp.yaml",
+        meta,
+        SDKS,
+        SERVICES,
+        set(),
+        ValidationConfig(strict_titles=True),
+    )
     assert len(errors) == 0
     assert len(parsed) == 2
     language = Language(
@@ -267,7 +279,14 @@ sns_BadScenario:
 
 def test_parse_strict_title_errors():
     meta = yaml.safe_load(STRICT_TITLE_ERRORS)
-    parsed, errors = parse("test_cpp.yaml", meta, SDKS, SERVICES, set(), ValidationConfig(strict_titles=True))
+    parsed, errors = parse(
+        "test_cpp.yaml",
+        meta,
+        SDKS,
+        SERVICES,
+        set(),
+        ValidationConfig(strict_titles=True),
+    )
     expected = [
         metadata_errors.APICannotHaveTitleFields(
             file="test_cpp.yaml",
@@ -280,7 +299,8 @@ def test_parse_strict_title_errors():
         metadata_errors.NonAPIMustHaveTitleFields(
             file="test_cpp.yaml",
             id="sns_BadScenario",
-        )]
+        ),
+    ]
     assert expected == [*errors]
 
 
@@ -302,7 +322,12 @@ cross_DeleteTopic:
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
     actual, errors = parse(
-        "cross.yaml", meta, SDKS, SERVICES, set(["cross_DeleteTopic_block.xml"]), DOC_GEN.validation
+        "cross.yaml",
+        meta,
+        SDKS,
+        SERVICES,
+        set(["cross_DeleteTopic_block.xml"]),
+        DOC_GEN.validation,
     )
     assert len(errors) == 0
     assert len(actual) == 1
@@ -342,7 +367,9 @@ s3_autogluon_tabular_with_sagemaker_pipelines:
 
 def test_parse_curated():
     meta = yaml.safe_load(CURATED)
-    actual, errors = parse("curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]), DOC_GEN.validation)
+    actual, errors = parse(
+        "curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]), DOC_GEN.validation
+    )
     assert len(errors) == 0
     assert len(actual) == 1
     language = Language(
@@ -584,16 +611,19 @@ def test_common_errors(
 TEST_SERVICES = {"test": {"Test", "Test2", "Test3", "1"}}
 
 
-@pytest.mark.parametrize("name,check_action,error_count", [
-    ("serverless_Snippet", False, 0),
-    ("test_Test", False, 0),
-    ("test_Test", True, 0),
-    ("test_Test_More", True, 1),
-    ("test_NotThere", True, 1),
-    ("cross_Cross", False, 0),
-    ("other_Other", False, 1),
-    ("test", False, 1),
-])
+@pytest.mark.parametrize(
+    "name,check_action,error_count",
+    [
+        ("serverless_Snippet", False, 0),
+        ("test_Test", False, 0),
+        ("test_Test", True, 0),
+        ("test_Test_More", True, 1),
+        ("test_NotThere", True, 1),
+        ("cross_Cross", False, 0),
+        ("other_Other", False, 1),
+        ("test", False, 1),
+    ],
+)
 def test_check_id_format(name, check_action, error_count):
     errors = MetadataErrors()
     check_id_format(name, TEST_SERVICES, check_action, errors)

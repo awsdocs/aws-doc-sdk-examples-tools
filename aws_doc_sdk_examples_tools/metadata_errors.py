@@ -250,19 +250,24 @@ class APIMustHaveOneServiceOneAction(MetadataParseError):
             f"API examples must contain exactly one service and one action."
         )
 
+
 @dataclass
 class APICannotHaveTitleFields(MetadataParseError):
     def message(self):
-        return(
+        return (
             f"is an API example and defines title, title_abbrev, or synopsis. "
-            f"API examples cannot define these fields because they are generated.")
+            f"API examples cannot define these fields because they are generated."
+        )
+
 
 @dataclass
 class NonAPIMustHaveTitleFields(MetadataParseError):
     def message(self):
-        return(
+        return (
             f"is not an API example and does not define title, title_abbrev, or synopsis. "
-            f"Non-API examples must define these fields.")
+            f"Non-API examples must define these fields."
+        )
+
 
 @dataclass
 class MissingSnippetTag(SdkVersionError):
