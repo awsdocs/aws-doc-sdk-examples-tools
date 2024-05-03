@@ -7,7 +7,7 @@ from pathlib import Path
 from sys import exit
 
 from .doc_gen import DocGen
-from .project_validator import check_files, verify_sample_files
+from .project_validator import check_files, verify_sample_files, ValidationConfig
 
 
 def main():
@@ -24,10 +24,20 @@ def main():
         help="Only perform extended validation on snippet contents",
         required=False,
     )
+    parser.add_argument(
+        "--strict_titles",
+        type=literal_eval,
+        default=False,
+        help="Strict title requirements: Action examples must not have title/title_abbrev; non-Action examples "
+        "must have them.",
+        required=False,
+    )
     args = parser.parse_args()
     root_path = Path(args.root).resolve()
 
-    doc_gen = DocGen.from_root(root=root_path)
+    doc_gen = DocGen.from_root(
+        root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles)
+    )
     doc_gen.collect_snippets(snippets_root=root_path)
     doc_gen.validate()
     if not args.doc_gen_only:

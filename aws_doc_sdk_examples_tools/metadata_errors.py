@@ -125,6 +125,12 @@ class NameFormat(MetadataParseError):
 
 
 @dataclass
+class ActionNameFormat(MetadataParseError):
+    def message(self):
+        return "name of API example does not match the required format of 'svc_Action'"
+
+
+@dataclass
 class MissingCrossContent(MetadataParseError):
     block: str = ""
 
@@ -242,6 +248,24 @@ class APIMustHaveOneServiceOneAction(MetadataParseError):
         return (
             f"is an API example but lists svc:actions as '{self.svc_actions}'. "
             f"API examples must contain exactly one service and one action."
+        )
+
+
+@dataclass
+class APICannotHaveTitleFields(MetadataParseError):
+    def message(self):
+        return (
+            f"is an API example and defines title, title_abbrev, or synopsis. "
+            f"API examples cannot define these fields because they are generated."
+        )
+
+
+@dataclass
+class NonAPIMustHaveTitleFields(MetadataParseError):
+    def message(self):
+        return (
+            f"is not an API example and does not define title, title_abbrev, or synopsis. "
+            f"Non-API examples must define these fields."
         )
 
 

@@ -8,6 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set, Union, Iterable
 from os.path import splitext
+from .project_validator import ValidationConfig
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
@@ -205,12 +206,12 @@ class ExampleMergeMismatchedId(MetadataError):
 class Example:
     id: str
     file: str
-    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
-    title: Optional[str]
-    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
-    title_abbrev: Optional[str]
-    synopsis: str
     languages: Dict[str, Language]
+    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
+    title: Optional[str] = field(default="")
+    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
+    title_abbrev: Optional[str] = field(default="")
+    synopsis: Optional[str] = field(default="")
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
     category: Optional[str] = field(default=None)
     # Link to additional topic places.
@@ -259,6 +260,7 @@ class Example:
         sdks: Dict[str, Sdk],
         services: Dict[str, Service],
         blocks: Set[str],
+        validation: ValidationConfig,
     ) -> tuple[Example, MetadataErrors]:
         errors = MetadataErrors()
 
@@ -290,6 +292,14 @@ class Example:
                         svc_actions=", ".join(svc_actions)
                     )
                 )
+
+        if validation.strict_titles:
+            if is_action:
+                if title or title_abbrev or synopsis or synopsis_list:
+                    errors.append(metadata_errors.APICannotHaveTitleFields())
+            else:
+                if not (title and title_abbrev and (synopsis or synopsis_list)):
+                    errors.append(metadata_errors.NonAPIMustHaveTitleFields())
 
         service_main = yaml.get("service_main", None)
         if service_main is not None and service_main not in services:
@@ -375,11 +385,21 @@ def get_with_valid_entities(
     return field
 
 
-def idFormat(id: str, services: Dict[str, Service]) -> bool:
+def check_id_format(
+    id: str,
+    parsed_services: Dict[str, set[str]],
+    check_action: bool,
+    errors: MetadataErrors,
+):
     [service, *rest] = id.split("_")
     if len(rest) == 0:
-        return False
-    return service in services or service in ["cross", "serverless"]
+        errors.append(metadata_errors.NameFormat(id=id))
+    elif service not in parsed_services and service not in ["cross", "serverless"]:
+        errors.append(metadata_errors.NameFormat(id=id))
+    elif check_action and (
+        len(rest) > 1 or rest[0] not in parsed_services.get(service, {})
+    ):
+        errors.append(metadata_errors.ActionNameFormat(id=id))
 
 
 def parse(
@@ -388,13 +408,20 @@ def parse(
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
     blocks: Set[str],
+    validation: ValidationConfig,
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
     for id in yaml:
-        if not idFormat(id, services):
-            errors.append(metadata_errors.NameFormat(file=file, id=id))
-        example, example_errors = Example.from_yaml(yaml[id], sdks, services, blocks)
+        example, example_errors = Example.from_yaml(
+            yaml[id], sdks, services, blocks, validation
+        )
+        check_id_format(
+            id,
+            example.services,
+            validation.strict_titles and example.category == "Api",
+            example_errors,
+        )
         for error in example_errors:
             error.file = file
             error.id = id

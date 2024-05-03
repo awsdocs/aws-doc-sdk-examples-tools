@@ -7,6 +7,9 @@ inputs:
   doc_gen_only:
     description: "Only perform extended validation on doc_gen snippets"
     default: "True"
+  strict_titles:
+    description: "Strict mode for titles: disallow title/title_abbrev/sysnopsis for Action examples, require otherwise."
+    default: "False"
 runs:
   using: "composite"
   steps:
@@ -18,5 +21,5 @@ runs:
       run: pip install -e "${{ github.action_path }}"
       shell: bash
     - name: Run validator
-      run: python3 -m "aws_doc_sdk_examples_tools.validate" --root "${{ inputs.root }}" --doc_gen_only "${{ inputs.doc_gen_only }}"
+      run: python3 -m "aws_doc_sdk_examples_tools.validate" --root "${{ inputs.root }}" --doc_gen_only "${{ inputs.doc_gen_only }}" --strict-titles "${{ inputs.strict_titles }}"
       shell: bash
