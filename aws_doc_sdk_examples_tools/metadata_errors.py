@@ -3,9 +3,8 @@
 
 from __future__ import annotations
 
-import os.path
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, Iterator, Iterable, List, TypeVar
 
 
@@ -122,6 +121,18 @@ class NamePrefixMismatch(MetadataParseError):
 class NameFormat(MetadataParseError):
     def message(self):
         return "name does not match the required format of 'svc_Operation', 'svc_Operation_Specialization', or 'cross_Title'"
+
+
+@dataclass
+class ServiceNameFormat(NameFormat):
+    svc: str = ""
+    svcs: list[str] = field(default_factory=list)
+
+    def message(self):
+        return (
+            NameFormat.message(self)
+            + f" (service {self.svc}, services {', '.join(self.svcs)})"
+        )
 
 
 @dataclass
