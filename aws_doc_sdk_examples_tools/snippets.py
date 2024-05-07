@@ -179,6 +179,7 @@ def collect_snippets(
 def collect_snippet_files(
     examples: Iterable[Example],
     snippets: Dict[str, Snippet],
+    prefix: str,
     errors: MetadataErrors,
     root: Path,
 ):
@@ -207,7 +208,7 @@ def collect_snippet_files(
                                 )
                             )
                             continue
-                        name = str(snippet_file).replace("/", ".")
+                        name = prefix + str(snippet_file).replace("/", ".")
                         with open(root / snippet_file, encoding="utf8") as file:
                             code = file.readlines()
                             snippets[name] = Snippet(
@@ -215,7 +216,7 @@ def collect_snippet_files(
                                 file=str(snippet_file),
                                 line_start=0,
                                 line_end=len(code),
-                                code="\n".join(file),
+                                code="\n".join(code),
                             )
 
 
@@ -288,12 +289,6 @@ def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False
             except Exception as error:
                 errors.append(SnippetWriteError(file=str(name), error=error))
     return errors
-
-
-def write_snippet_file(folder: Path, snippet_file: Path):
-    name = str(snippet_file).replace("/", ".")
-    dest = folder / f"{name}.txt"
-    copyfile(folder / snippet_file, dest)
 
 
 def main():

@@ -36,6 +36,7 @@ class DocGenMergeWarning(MetadataError):
 class DocGen:
     root: Path
     errors: MetadataErrors
+    prefix: Optional[str] = None
     validation: ValidationConfig = field(default_factory=ValidationConfig)
     sdks: Dict[str, Sdk] = field(default_factory=dict)
     services: Dict[str, Service] = field(default_factory=dict)
@@ -55,7 +56,11 @@ class DocGen:
             snippets_root = self.root
         snippets, errs = collect_snippets(snippets_root, prefix)
         collect_snippet_files(
-            self.examples.values(), snippets=snippets, errors=errs, root=self.root
+            self.examples.values(),
+            prefix=prefix,
+            snippets=snippets,
+            errors=errs,
+            root=self.root,
         )
         self.snippets = snippets
         self.errors.extend(errs)
@@ -113,6 +118,10 @@ class DocGen:
     @classmethod
     def empty(cls, validation: ValidationConfig = ValidationConfig()) -> "DocGen":
         return DocGen(root=Path("/"), errors=MetadataErrors(), validation=validation)
+
+    @classmethod
+    def default(cls) -> "DocGen":
+        return DocGen.empty().for_root(Path(__file__).parent)
 
     def clone(self) -> "DocGen":
         return DocGen(

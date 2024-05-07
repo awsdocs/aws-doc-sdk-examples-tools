@@ -488,9 +488,11 @@ def test_verify_load_successful():
                     file="empty_metadata.yaml",
                     id="sns_EmptyExample",
                 ),
-                metadata_errors.NameFormat(
+                metadata_errors.ServiceNameFormat(
                     file="empty_metadata.yaml",
                     id="sns_EmptyExample",
+                    svc="sns",
+                    svcs=[],
                 ),
             ],
         ),
@@ -525,9 +527,11 @@ def test_verify_load_successful():
                     language="Perl",
                     sdk_version=None,
                 ),
-                metadata_errors.NameFormat(
+                metadata_errors.ServiceNameFormat(
                     file="errors_metadata.yaml",
                     id="sqs_WrongServiceSlug",
+                    svc="sqs",
+                    svcs=["sns"],
                 ),
                 metadata_errors.MissingField(
                     field="versions",

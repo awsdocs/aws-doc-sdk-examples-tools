@@ -395,7 +395,11 @@ def check_id_format(
     if len(rest) == 0:
         errors.append(metadata_errors.NameFormat(id=id))
     elif service not in parsed_services and service not in ["cross", "serverless"]:
-        errors.append(metadata_errors.NameFormat(id=id))
+        errors.append(
+            metadata_errors.ServiceNameFormat(
+                id=id, svc=service, svcs=[*parsed_services.keys()]
+            )
+        )
     elif check_action and (
         len(rest) > 1 or rest[0] not in parsed_services.get(service, {})
     ):
