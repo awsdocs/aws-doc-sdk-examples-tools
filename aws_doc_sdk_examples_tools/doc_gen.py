@@ -48,13 +48,11 @@ class DocGen:
     def collect_snippets(
         self, snippets_root: Optional[Path] = None, prefix: Optional[str] = None
     ):
-        if prefix is not None:
-            prefix = f"{prefix}_"
         if prefix is None:
             prefix = ""
         if snippets_root is None:
             snippets_root = self.root
-        snippets, errs = collect_snippets(snippets_root, prefix)
+        snippets, errs = collect_snippets(snippets_root)
         collect_snippet_files(
             self.examples.values(),
             prefix=prefix,
