@@ -1799,6 +1799,21 @@ keyspaces:
   tags:
     product_categories: {'Databases'}
   version: keyspaces-2022-02-10
+kendra:
+  long: '&KENlong;'
+  short: '&KEN;'
+  sort: Kendra
+  expanded:
+    long: Amazon Kendra
+    short: Amazon Kendra
+  blurb: is a search service, powered by machine learning, that helps users to search unstructured text using natural language.
+  guide:
+    subtitle: Developer Guide
+    url: kendra/latest/dg/what-is-kendra.html
+  api_ref: kendra/latest/APIReference/welcome.html
+  tags:
+    product_categories: {'Machine Learning &amp; AI'}
+  version: kendra-2019-02-03
 kinesis:
   long: '&AKlong;'
   short: '&AK;'
@@ -1947,8 +1962,8 @@ machine-learning:
   short: '&ML;'
   sort: Machine Learning
   tags:
-    product_categories: {'Machine Learning'}
-  version: '2014-12-12'
+    product_categories: {'Machine Learning &amp; AI'}
+  version: 'machinelearning-2014-12-12'
 macie2:
   api_ref: macie/latest/APIReference/welcome.html
   blurb: ''
@@ -2144,6 +2159,21 @@ networkmanager:
   tags:
     product_categories: {}
   version: '2019-07-05'
+networkmonitor:
+  api_ref: networkmonitor/latest/APIReference/Welcome.html
+  blurb: is an AWS active network monitoring service that identifies if a network issues exists within the AWS network or your own company network.
+  expanded:
+    long: Amazon CloudWatch Network Monitoring
+    short: CloudWatch Network Monitoring
+  guide:
+    subtitle: User Guide
+    url: AmazonCloudWatch/latest/monitoring/CloudWatch-Network-Monitoring-Sections.html
+  long: '&cloudwatch-netmon-long;'
+  short: '&cloudwatch-netmon;'
+  sort: CloudWatch Network Monitoring
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: networkmonitor-2023-08-01
 nimble:
   api_ref: nimble-studio/latest/APIReference/Welcome.html
   blurb: ''
