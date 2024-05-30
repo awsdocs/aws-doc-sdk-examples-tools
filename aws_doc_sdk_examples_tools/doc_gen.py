@@ -71,7 +71,7 @@ class DocGen:
         return languages
 
     def merge(self, other: "DocGen") -> MetadataErrors:
-        """Merge fields from other into self, prioritizing self fields"""
+        """Merge fields from other into self, prioritizing self fields."""
         warnings = MetadataErrors()
         for name, sdk in other.sdks.items():
             if name not in self.sdks:
@@ -101,15 +101,15 @@ class DocGen:
 
         self.snippet_files.update(other.snippet_files)
         self.cross_blocks.update(other.cross_blocks)
-        self.extend_examples(other.examples.values())
+        self.extend_examples(other.examples.values(), warnings)
 
         return warnings
 
-    def extend_examples(self, examples: Iterable[Example]):
+    def extend_examples(self, examples: Iterable[Example], errors: MetadataErrors):
         for example in examples:
             id = example.id
             if id in self.examples:
-                self.examples[id].merge(example, self.errors)
+                self.examples[id].merge(example, errors)
             else:
                 self.examples[id] = example
 
@@ -188,7 +188,7 @@ class DocGen:
                     self.cross_blocks,
                     self.validation,
                 )
-                self.extend_examples(examples)
+                self.extend_examples(examples, self.errors)
                 self.errors.extend(errs)
                 for example in examples:
                     for lang in example.languages:
