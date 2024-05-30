@@ -13,6 +13,7 @@ EXT_LOOKUP = {
     ".cmd": "AWS-CLI",
     ".cpp": "C++",
     ".cs": "C#",
+    ".csx": "C#",
     ".css": "CSS",
     ".go": "Go",
     ".h": "C++",
