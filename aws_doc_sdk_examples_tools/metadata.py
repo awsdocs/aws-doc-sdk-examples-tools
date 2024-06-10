@@ -24,8 +24,6 @@ from .metadata_validator import StringExtension
 from .services import Service
 from .sdks import Sdk
 
-logger = logging.getLogger(__name__)
-
 
 @dataclass
 class Url:
