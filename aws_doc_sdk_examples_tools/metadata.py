@@ -6,16 +6,19 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
+import logging
 from typing import Any, Dict, List, Optional, Set, Union, Iterable
 from os.path import splitext
 from .project_validator import ValidationConfig
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
-    MetadataError,
     MetadataErrors,
     MetadataParseError,
     DuplicateItemException,
+    ExampleMergeMismatchedId,
+    ExampleMergeMismatchedLanguage,
+    ExampleMergeConflict,
 )
 from .metadata_validator import StringExtension
 from .services import Service
@@ -148,14 +151,22 @@ class Language:
 
     def merge(self, other: "Language", errors: MetadataErrors):
         """Add new versions from `other`"""
-        # TODO Error for mismatched names?
         if self.name != other.name:
-            return
-        for other_version in other.versions:
-            self_version = filter(
-                lambda v: v.sdk_version == other_version.sdk_version, self.versions
+            errors.append(
+                ExampleMergeMismatchedLanguage(
+                    language=self.name, other_lang=other.name
+                )
             )
-            if self_version is None:
+            return
+        self_versions = {v.sdk_version for v in self.versions}
+        for other_version in other.versions:
+            if other_version.sdk_version in self_versions:
+                errors.append(
+                    ExampleMergeConflict(
+                        language=self.name, sdk_version=other_version.sdk_version
+                    )
+                )
+            else:
                 self.versions.append(other_version)
             # Merge down to the SDK Version level, so later guides can add new
             # excerpts to existing examples, but don't try to merge the excerpts
@@ -194,12 +205,6 @@ class Language:
                 error.language = name
 
         return cls(name, versions), errors
-
-
-@dataclass
-class ExampleMergeMismatchedId(MetadataError):
-    other_id: str = ""
-    other_file: str = ""
 
 
 @dataclass
@@ -251,7 +256,14 @@ class Example:
             if name not in self.languages:
                 self.languages[name] = language
             else:
-                self.languages[name].merge(language, errors)
+                merge_errs = MetadataErrors()
+                self.languages[name].merge(language, merge_errs)
+                for err in merge_errs:
+                    err.id = self.id
+                    err.file = self.file
+                    if hasattr(err, "other_file"):
+                        err.other_file = other.file
+                errors.extend(merge_errs)
 
     @classmethod
     def from_yaml(

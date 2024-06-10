@@ -209,14 +209,14 @@ def collect_snippet_files(
                             )
                             continue
                         name = prefix + str(snippet_file).replace("/", ".")
-                        with open(root / snippet_file, encoding="utf8") as file:
+                        with open(root / snippet_file, encoding="utf-8") as file:
                             code = file.readlines()
                             snippets[name] = Snippet(
                                 id=name,
                                 file=str(snippet_file),
                                 line_start=0,
                                 line_end=len(code),
-                                code="\n".join(code),
+                                code="".join(code),
                             )
 
 

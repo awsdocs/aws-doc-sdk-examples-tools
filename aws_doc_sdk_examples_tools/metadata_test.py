@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 from . import metadata_errors
-from .metadata_errors import MetadataErrors
+from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
     parse,
     Example,
@@ -638,34 +638,143 @@ def test_check_id_format(name, check_action, error_count):
     ["a", "b", "d"],
     [
         (
-            DocGen(
-                root=Path("/a"),
-                errors=MetadataErrors(),
-                sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+            Example(
+                id="ex_a",
+                file="file_a",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("a_v1", ["a1_snippet"])],
+                            )
+                        ],
+                    )
+                },
+                services={"a_svc": {"ActionA"}},
+            ),
+            Example(
+                id="ex_a",
+                file="file_b",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=2,
+                                excerpts=[Excerpt("a_v2", ["a2_snippet"])],
+                            )
+                        ],
+                    ),
+                    "b": Language(
+                        name="b",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("b_v1", ["b1_snippet"])],
+                            )
+                        ],
+                    ),
+                },
+                services={"b_svc": {"ActionB"}},
+            ),
+            Example(
+                id="ex_a",
+                file="file_a",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("a_v1", ["a1_snippet"])],
+                            ),
+                            Version(
+                                sdk_version=2,
+                                excerpts=[Excerpt("a_v2", ["a2_snippet"])],
+                            ),
+                        ],
+                    ),
+                    "b": Language(
+                        name="b",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("b_v1", ["b1_snippet"])],
+                            )
+                        ],
+                    ),
+                },
+                services={"a_svc": {"ActionA"}, "b_svc": {"ActionB"}},
+            ),
+        )
+    ],
+)
+def test_merge(a: Language, b: Language, d: Language):
+    a.merge(b, MetadataErrors())
+    assert a == d
+
+
+@pytest.mark.parametrize(
+    ["a", "b", "d"],
+    [
+        (
+            Example(
+                id="ex_a",
+                file="file_a",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("a_v1", ["a1_snippet"])],
+                            )
+                        ],
+                    )
                 },
             ),
-            DocGen(
-                root=Path("/b"),
-                errors=MetadataErrors(),
-                sdks={
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+            Example(
+                id="ex_a",
+                file="file_b",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("a2_v1", ["a2_snippet"])],
+                            )
+                        ],
+                    )
                 },
             ),
-            DocGen(
-                root=Path("/a"),
-                errors=MetadataErrors(),
-                sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+            Example(
+                id="ex_a",
+                file="file_a",
+                languages={
+                    "a": Language(
+                        name="a",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[Excerpt("a_v1", ["a1_snippet"])],
+                            )
+                        ],
+                    ),
                 },
             ),
         )
     ],
 )
-def test_merge(a: DocGen, b: DocGen, d: DocGen):
-    a.merge(b)
+def test_merge_conflict(a: Example, b: Example, d: Example):
+    errors = MetadataErrors()
+    a.merge(b, errors)
     assert a == d
+    assert errors[0] == ExampleMergeConflict(
+        id=a.id, file=a.file, language="a", sdk_version=1, other_file="file_b"
+    )
 
 
 if __name__ == "__main__":

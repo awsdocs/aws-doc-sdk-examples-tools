@@ -328,6 +328,31 @@ class URLMissingTitle(SdkVersionError):
         return f"URL {self.url} is missing a title"
 
 
+@dataclass
+class ExampleMergeMismatchedId(MetadataError):
+    other_id: str = ""
+    other_file: str = ""
+
+    def message(self) -> str:
+        return f"mismatched other ID: {self.other_id} in {self.other_file}"
+
+
+@dataclass
+class ExampleMergeMismatchedLanguage(LanguageError):
+    other_lang: str = ""
+
+    def message(self) -> str:
+        return f"mismatched other language: {self.other_lang}"
+
+
+@dataclass
+class ExampleMergeConflict(LanguageError):
+    other_file: str = ""
+
+    def message(self) -> str:
+        return f"conflict from {self.other_file}: example already exists for this language and SDK version"
+
+
 def check_mapping(mapping: str | None, field: str) -> str | MetadataParseError:
     if not mapping:
         return MissingField(field=field)
