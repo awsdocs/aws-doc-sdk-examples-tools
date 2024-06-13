@@ -85,10 +85,10 @@ SERVICES = {
     ),
 }
 SDKS = {
-    "C++": Sdk(name="C++", versions=[], guide="", property=""),
-    "Java": Sdk(name="Java", versions=[], guide="", property=""),
-    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property=""),
-    "PHP": Sdk(name="PHP", versions=[], guide="", property=""),
+    "C++": Sdk(name="C++", versions=[], guide="", property="cpp"),
+    "Java": Sdk(name="Java", versions=[], guide="", property="java"),
+    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript"),
+    "PHP": Sdk(name="PHP", versions=[], guide="", property="php"),
 }
 DOC_GEN = DocGen(
     root=Path(),
@@ -128,6 +128,7 @@ def test_parse():
     assert len(parsed) == 1
     language = Language(
         name="C++",
+        property="cpp",
         versions=[
             Version(
                 sdk_version=1,
@@ -150,6 +151,10 @@ def test_parse():
             "sns": set(["Operation1", "Operation2"]),
             "ses": set(["Operation1", "Operation2"]),
             "sqs": set(),
+        },
+        doc_filenames={
+            "sdk_pages": ["sns_DeleteTopic_cpp_1_topic"],
+            "service_page": None,
         },
         languages={"C++": language},
     )
@@ -204,6 +209,7 @@ def test_parse_strict_titles():
     assert len(parsed) == 2
     language = Language(
         name="C++",
+        property="cpp",
         versions=[
             Version(
                 sdk_version=1,
@@ -225,6 +231,10 @@ def test_parse_strict_titles():
         services={
             "sns": {"GoodOne"},
         },
+        doc_filenames={
+            "sdk_pages": ["cpp_1_sns_code_examples"],
+            "service_page": "sns_example_sns_GoodOne_section",
+        },
         languages={"C++": language},
     )
     example_scenario = Example(
@@ -234,6 +244,10 @@ def test_parse_strict_titles():
         title_abbrev="Scenario title abbrev",
         synopsis="scenario synopsis.",
         category="Scenarios",
+        doc_filenames={
+            "sdk_pages": ["cpp_1_sns_code_examples"],
+            "service_page": "sns_example_sns_GoodScenario_section",
+        },
         services={
             "sns": {"GoodOne"},
         },
@@ -316,6 +330,7 @@ cross_DeleteTopic:
            block_content: cross_DeleteTopic_block.xml
   services:
      sns:
+     ses:
 """
 
 
@@ -333,6 +348,7 @@ def test_parse_cross():
     assert len(actual) == 1
     language = Language(
         name="Java",
+        property="java",
         versions=[Version(sdk_version=3, block_content="cross_DeleteTopic_block.xml")],
     )
     example = Example(
@@ -342,7 +358,13 @@ def test_parse_cross():
         title="Delete Topic",
         title_abbrev="delete topic",
         synopsis="",
-        services={"sns": set()},
+        services={"ses": set(), "sns": set()},
+        doc_filenames={
+            "sdk_pages": [
+                "cross_DeleteTopic_java_3_topic",
+            ],
+            "service_page": None,
+        },
         languages={"Java": language},
     )
     assert actual[0] == example
@@ -374,6 +396,7 @@ def test_parse_curated():
     assert len(actual) == 1
     language = Language(
         name="Java",
+        property="java",
         versions=[Version(sdk_version=2, block_content="block.xml")],
     )
     example = Example(
@@ -385,6 +408,12 @@ def test_parse_curated():
         source_key="amazon-sagemaker-examples",
         languages={"Java": language},
         services={"s3": set()},
+        doc_filenames={
+            "sdk_pages": [
+                "java_2_s3_code_examples",
+            ],
+            "service_page": "s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section",
+        },
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
 
@@ -397,6 +426,7 @@ def test_verify_load_successful():
     assert len(actual) == 1
     java = Language(
         name="Java",
+        property="java",
         versions=[
             Version(
                 sdk_version=2,
@@ -412,6 +442,7 @@ def test_verify_load_successful():
 
     javascript = Language(
         name="JavaScript",
+        property="javascript",
         versions=[
             Version(
                 sdk_version=3,
@@ -433,6 +464,7 @@ def test_verify_load_successful():
 
     php = Language(
         name="PHP",
+        property="php",
         versions=[
             Version(
                 sdk_version=3,
@@ -472,6 +504,14 @@ def test_verify_load_successful():
         category="Usage",
         service_main=None,
         languages=languages,
+        doc_filenames={
+            "sdk_pages": [
+                "sns_TestExample_java_2_topic",
+                "sns_TestExample_javascript_3_topic",
+                "sns_TestExample_php_3_topic",
+            ],
+            "service_page": None,
+        },
         services={"sns": set(), "sqs": set()},
     )
     assert actual[0] == example
@@ -644,6 +684,7 @@ def test_check_id_format(name, check_action, error_count):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -660,6 +701,7 @@ def test_check_id_format(name, check_action, error_count):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=2,
@@ -669,6 +711,7 @@ def test_check_id_format(name, check_action, error_count):
                     ),
                     "b": Language(
                         name="b",
+                        property="b",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -685,6 +728,7 @@ def test_check_id_format(name, check_action, error_count):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -698,6 +742,7 @@ def test_check_id_format(name, check_action, error_count):
                     ),
                     "b": Language(
                         name="b",
+                        property="b",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -711,7 +756,7 @@ def test_check_id_format(name, check_action, error_count):
         )
     ],
 )
-def test_merge(a: Language, b: Language, d: Language):
+def test_merge(a: Example, b: Example, d: Example):
     a.merge(b, MetadataErrors())
     assert a == d
 
@@ -726,6 +771,7 @@ def test_merge(a: Language, b: Language, d: Language):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -741,6 +787,7 @@ def test_merge(a: Language, b: Language, d: Language):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=1,
@@ -756,6 +803,7 @@ def test_merge(a: Language, b: Language, d: Language):
                 languages={
                     "a": Language(
                         name="a",
+                        property="a",
                         versions=[
                             Version(
                                 sdk_version=1,

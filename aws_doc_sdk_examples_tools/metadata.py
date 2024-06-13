@@ -6,8 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-import logging
-from typing import Any, Dict, List, Optional, Set, Union, Iterable
+from typing import Any, Dict, List, Optional, Set, Union, Iterable, TypedDict
 from os.path import splitext
 from .project_validator import ValidationConfig
 
@@ -147,6 +146,8 @@ class Version:
 @dataclass
 class Language:
     name: str
+    # A downcased, special-character-free version of the name. Matches a key of the same name in sdks.yaml.
+    property: str
     versions: List[Version]
 
     def merge(self, other: "Language", errors: MetadataErrors):
@@ -187,6 +188,9 @@ class Language:
         if name not in sdks:
             errors.append(metadata_errors.UnknownLanguage(language=name))
 
+        sdk = sdks.get(name)
+        property = sdk.property if sdk else ""
+
         yaml_versions: List[Dict[str, Any]] | None = yaml.get("versions")
         if yaml_versions is None or len(yaml_versions) == 0:
             errors.append(metadata_errors.MissingField(field="versions"))
@@ -204,7 +208,14 @@ class Language:
             if isinstance(error, MetadataParseError):
                 error.language = name
 
-        return cls(name, versions), errors
+        return cls(name, property, versions), errors
+
+
+class DocFilenames(TypedDict):
+    # Names that match Code Library entries.
+    # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
+    service_page: Optional[str]
+    sdk_pages: Optional[List[str]]
 
 
 @dataclass
@@ -226,6 +237,8 @@ class Example:
     # List of services used by the examples. Lines up with those in services.yaml.
     service_main: Optional[str] = field(default=None)
     services: Dict[str, Set[str]] = field(default_factory=dict)
+    # HTML file names corresponding to the documentation pages in the Code Library
+    doc_filenames: Optional[DocFilenames] = field(default=None)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
 
@@ -377,6 +390,32 @@ def parse_services(
 ALLOWED = ["&AWS;", "&AWS-Region;", "&AWS-Regions;" "AWSJavaScriptSDK"]
 
 
+def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilenames]:
+    # API examples
+    if len(example.services) == 1:
+        service_id = next(iter(example.services))
+        return {
+            "service_page": f"{service_id}_example_{example_id}_section",
+            "sdk_pages": [
+                f"{language.property}_{language_ver.sdk_version}_{service_id}_code_examples"
+                for _, language in example.languages.items()
+                for language_ver in language.versions
+            ],
+        }
+    # Multi-service examples
+    elif len(example.services) > 1:
+        return {
+            "service_page": None,
+            "sdk_pages": [
+                f"{example_id}_{language.property}_{language_ver.sdk_version}_topic"
+                for _, language in example.languages.items()
+                for language_ver in language.versions
+            ],
+        }
+    else:
+        return None
+
+
 def get_with_valid_entities(
     name: str, d: Dict[str, str], errors: MetadataErrors, opt: bool = False
 ) -> str:
@@ -444,6 +483,7 @@ def parse(
         errors.extend(example_errors)
         example.file = file
         example.id = id
+        example.doc_filenames = get_doc_filenames(id, example)
         examples.append(example)
 
     return examples, errors
