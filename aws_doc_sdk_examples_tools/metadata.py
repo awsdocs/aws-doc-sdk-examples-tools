@@ -238,7 +238,7 @@ class Example:
     service_main: Optional[str] = field(default=None)
     services: Dict[str, Set[str]] = field(default_factory=dict)
     # HTML file names corresponding to the documentation pages in the Code Library
-    doc_filenames: Optional[DocFilenames] = field(default_factory=dict)
+    doc_filenames: Optional[DocFilenames] = field(default=None)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
 
@@ -390,7 +390,7 @@ def parse_services(
 ALLOWED = ["&AWS;", "&AWS-Region;", "&AWS-Regions;" "AWSJavaScriptSDK"]
 
 
-def get_doc_filenames(example_id: str, example: Example) -> DocFilenames:
+def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilenames]:
     # API examples
     if len(example.services) == 1:
         service_id = next(iter(example.services))
@@ -405,11 +405,12 @@ def get_doc_filenames(example_id: str, example: Example) -> DocFilenames:
     # Multi-service examples
     elif len(example.services) > 1:
         return {
+            "service_page": None,
             "sdk_pages": [
                 f"{example_id}_{language.property}_{language_ver.sdk_version}_topic"
                 for _, language in example.languages.items()
                 for language_ver in language.versions
-            ]
+            ],
         }
     else:
         return None

@@ -152,7 +152,10 @@ def test_parse():
             "ses": set(["Operation1", "Operation2"]),
             "sqs": set(),
         },
-        doc_filenames={"sdk_pages": ["sns_DeleteTopic_cpp_1_topic"]},
+        doc_filenames={
+            "sdk_pages": ["sns_DeleteTopic_cpp_1_topic"],
+            "service_page": None,
+        },
         languages={"C++": language},
     )
     assert parsed[0] == example
@@ -360,6 +363,7 @@ def test_parse_cross():
             "sdk_pages": [
                 "cross_DeleteTopic_java_3_topic",
             ],
+            "service_page": None,
         },
         languages={"Java": language},
     )
@@ -506,6 +510,7 @@ def test_verify_load_successful():
                 "sns_TestExample_javascript_3_topic",
                 "sns_TestExample_php_3_topic",
             ],
+            "service_page": None,
         },
         services={"sns": set(), "sqs": set()},
     )
