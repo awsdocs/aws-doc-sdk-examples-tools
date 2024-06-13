@@ -146,6 +146,7 @@ class Version:
 @dataclass
 class Language:
     name: str
+    # A downcased, special-character-free version of the name. Matches a key of the same name in sdks.yaml.
     property: str
     versions: List[Version]
 
