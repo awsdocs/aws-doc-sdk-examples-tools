@@ -212,6 +212,8 @@ class Language:
 
 
 class DocFilenames(TypedDict):
+    # Names that match Code Library entries.
+    # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
     service_page: Optional[str]
     sdk_pages: Optional[List[str]]
 
