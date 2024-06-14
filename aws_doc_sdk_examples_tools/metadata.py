@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Union, Iterable, TypedDict
+from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable, TypedDict
 from os.path import splitext
 from .project_validator import ValidationConfig
 
@@ -51,13 +51,26 @@ class Excerpt:
     snippet_tags: List[str]
     # A path within the repo to extract the entire file as a snippet.
     snippet_files: List[str] = field(default_factory=list)
+    # The amount to which generative AI was used to create this content.
+    #
+    # none: No GenAI generated content is included in this excerpt, but it may have been consulted for reference.
+    # some: A human wrote this content, though some portions may be copied or inserted from a GenAI tool.
+    # most: The bulk of this content was written by a GenAI tool, though a human has edited and reviewed it for accuracy.
+    # all: This content was entirely written by GenAI, and has not been reviewed by a human.
+    genai: Literal["none", "some", "most", "all"] = "none"
 
     @classmethod
-    def from_yaml(cls, yaml: Any) -> "Excerpt":
+    def from_yaml(cls, yaml: Any) -> tuple["Excerpt", MetadataErrors]:
         description = yaml.get("description")
         snippet_files = [str(file) for file in yaml.get("snippet_files", [])]
         snippet_tags = [str(tag) for tag in yaml.get("snippet_tags", [])]
-        return cls(description, snippet_tags, snippet_files)
+        genai = yaml.get("genai", "none")
+
+        errors = MetadataErrors()
+        if genai not in {"none", "some", "most", "all"}:
+            errors.append(metadata_errors.FieldError(field="genai", value=genai))
+
+        return (cls(description, snippet_tags, snippet_files, genai), errors)
 
 
 @dataclass
@@ -106,7 +119,11 @@ class Version:
                     )
                 )
 
-        excerpts = [Excerpt.from_yaml(excerpt) for excerpt in yaml.get("excerpts", [])]
+        excerpts = []
+        for excerpt in yaml.get("excerpts", []):
+            parsed, parse_errors = Excerpt.from_yaml(excerpt)
+            excerpts.append(parsed)
+            errors.extend(parse_errors)
 
         if len(excerpts) == 0 and block_content is None:
             errors.append(metadata_errors.MissingBlockContentAndExcerpt())
@@ -128,6 +145,10 @@ class Version:
 
         if block_content is not None and block_content not in cross_content_blocks:
             errors.append(metadata_errors.MissingCrossContent(block=block_content))
+
+        for error in errors:
+            if hasattr(error, "sdk_version"):
+                error.sdk_version = sdk_version
 
         return (
             cls(
@@ -463,10 +484,11 @@ def parse(
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
     blocks: Set[str],
-    validation: ValidationConfig,
+    validation: Optional[ValidationConfig],
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
+    validation = ValidationConfig() if validation is None else validation
     for id in yaml:
         example, example_errors = Example.from_yaml(
             yaml[id], sdks, services, blocks, validation
@@ -521,7 +543,7 @@ def main():
     )
     with open(path) as file:
         meta = yaml.safe_load(file)
-    (examples, errors) = parse(path.name, meta, {}, {}, set())
+    (examples, errors) = parse(path.name, meta, {}, {}, set(), ValidationConfig())
     if len(errors) > 0:
         print(f"{errors}")
     else:

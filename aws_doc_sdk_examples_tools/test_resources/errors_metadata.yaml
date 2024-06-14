@@ -35,7 +35,7 @@ sns_TestExample:
         - sdk_version: 2
           sdkguide: http://sdk/guide/url
   services:
-    sns: {TestAction}
+    sns: { TestAction }
 sns_TestExample2:
   title: Test title
   title_abbrev: Test title abbrev
@@ -47,11 +47,12 @@ sns_TestExample2:
         - sdk_version: 2
           github: github/link/to/README.md
           excerpts:
+            - genai: so much
             - snippet_tags:
                 - this.snippet.does.not.exist
   services:
-    garbled: {TestAction}
-    sns: {TestAction}
+    garbled: { TestAction }
+    sns: { TestAction }
 cross_TestExample_Versions:
   title: Test title
   title_abbrev: Test title abbrev
@@ -95,4 +96,4 @@ snsBadFormat:
         - sdk_version: 2
           github: github/link
   services:
-    sns: {TestAction}
+    sns: { TestAction }
