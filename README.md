@@ -4,6 +4,11 @@ This python library is a set of tools to manage [AWS Doc SDK Example metadata](h
 It is used by the AWS Doc SDK Examples team, as well as tributary sources of
 example snippets.
 
+-tools:
+* Validates example metadata.
+* Provides an API to program against example metadata.
+* Hydrates additional derived data not explicitly written by engineers into example metadata.
+
 ## Check-in tests
 
 ### Purpose
