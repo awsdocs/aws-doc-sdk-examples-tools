@@ -20,6 +20,7 @@ sns_TestExample:
         - sdk_version: 3
           excerpts:
             - description: Descriptive
+              genai: some
               snippet_tags:
                 - javascript.snippet.tag
           add_services:
