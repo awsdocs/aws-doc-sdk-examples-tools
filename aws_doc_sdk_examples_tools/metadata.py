@@ -231,7 +231,7 @@ class Language:
 
         return cls(name, property, versions), errors
 
-
+@dataclass
 class DocFilenames(TypedDict):
     # Names that match Code Library entries.
     # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html

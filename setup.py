@@ -8,6 +8,9 @@ setup(
     version="0.0.1",
     packages=["aws_doc_sdk_examples_tools"],
     package_data={"aws_doc_sdk_examples_tools": ["config/*.yaml"]},
+    entry_points={
+        "console_scripts": ["doc-gen=aws_doc_sdk_examples_tools.command_line:doc_gen"],
+    },
     install_requires=[
         "pathspec==0.11.2",
         "PyYAML==6.0.1",
