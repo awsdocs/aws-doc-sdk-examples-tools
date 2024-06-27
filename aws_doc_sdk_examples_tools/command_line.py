@@ -21,7 +21,7 @@ def doc_gen():
         "--write-json",
         default="doc_gen.json",
         type=str,
-        help="Output a JSON version of the computed DocGen. Includes any errors.",
+        help="Output a JSON version of the computed DocGen with some properties stripped out. Includes any errors.",
     )
 
     parser.add_argument(

@@ -237,13 +237,19 @@ class DocGen:
         }
 
 
+# Encode a DocGen instance as JSON. Originally
+# it was planned to have a DocGenDecoder as well,
+# but that required writing environment data like
+# Path to the JSON, which was not very secure
+# and arguably not useful either.
 class DocGenEncoder(json.JSONEncoder):
     def default(self, obj):
         if is_dataclass(obj):
             return asdict(obj)
 
         if isinstance(obj, Path):
-            return {"__path__": str(obj)}
+            # Strip out paths to prevent leaking environment data.
+            return None
 
         if isinstance(obj, MetadataErrors):
             return {"__metadata_errors__": [asdict(error) for error in obj]}
@@ -252,28 +258,3 @@ class DocGenEncoder(json.JSONEncoder):
             return {"__set__": list(obj)}
 
         return super().default(obj)
-
-
-class DocGenDecoder(json.JSONDecoder):
-    def __init__(self, *args, **kwargs):
-        self.target_class = DocGen
-        super().__init__(object_hook=self.object_hook, *args, **kwargs)
-
-    def object_hook(self, dct):
-        if "__path__" in dct:
-            return Path(dct["__path__"])
-
-        if "__metadata_errors__" in dct:
-            metadata_errors = MetadataErrors()
-            metadata_errors._errors = [
-                MetadataError(**error) for error in dct["__metadata_errors__"]
-            ]
-            return metadata_errors
-
-        if "__set__" in dct:
-            return set(dct["__set__"])
-
-        if dct and all(key in self.target_class.__annotations__ for key in dct):
-            return self.target_class(**dct)
-
-        return dct
