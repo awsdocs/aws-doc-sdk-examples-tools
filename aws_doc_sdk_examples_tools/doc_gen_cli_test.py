@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch, mock_open
 from argparse import Namespace
 from .doc_gen import DocGen, MetadataError
-from .command_line import doc_gen
+from .doc_gen_cli import main
 
 @pytest.fixture
 def mock_doc_gen():
@@ -23,7 +23,7 @@ def patched_environment(mock_doc_gen):
     (True, True),
     (False, False)
 ])
-def test_doc_gen_strict_option(strict, should_raise, patched_environment):
+def test_doc_gen_strict_option(strict, should_raise, patched_environment, caplog):
     mock_parse_args, mock_json_dump = patched_environment
     mock_args = Namespace(
         from_root=['/mock/path'],
@@ -33,10 +33,11 @@ def test_doc_gen_strict_option(strict, should_raise, patched_environment):
     mock_parse_args.return_value = mock_args
 
     if should_raise:
-        with pytest.raises(Exception) as exc_info:
-            doc_gen()
-        assert "Errors found in metadata" in str(exc_info.value)
-        assert "Error 1" in str(exc_info.value)
-        assert "Error 2" in str(exc_info.value)
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 1
+        assert "Errors found in metadata" in caplog.text 
+        assert "Error 1" in caplog.text
+        assert "Error 2" in caplog.text
     else:
-        doc_gen()
+        main()

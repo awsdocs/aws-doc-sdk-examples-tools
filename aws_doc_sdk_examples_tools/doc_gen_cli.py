@@ -4,10 +4,15 @@
 import json
 from argparse import ArgumentParser
 from pathlib import Path
+import logging
+
 from .doc_gen import DocGen, DocGenEncoder
 
+logging.basicConfig(
+    level=logging.INFO
+)
 
-def doc_gen():
+def main():
     parser = ArgumentParser(description="Parse examples from example metadata.")
     parser.add_argument(
         "--from-root",
@@ -38,9 +43,13 @@ def doc_gen():
         merged_doc_gen.merge(unmerged_doc_gen)
 
     if args.strict and merged_doc_gen.errors:
-        raise Exception(f"Errors found in metadata. {merged_doc_gen.errors}")
+        logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
+        exit(1)
 
     serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
 
     with open(args.write_json, "w") as out:
         out.write(serialized)
+
+if __name__ == "__main__":
+    main()
