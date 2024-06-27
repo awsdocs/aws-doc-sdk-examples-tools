@@ -231,6 +231,7 @@ class Language:
 
         return cls(name, property, versions), errors
 
+
 @dataclass
 class DocFilenames(TypedDict):
     # Names that match Code Library entries.

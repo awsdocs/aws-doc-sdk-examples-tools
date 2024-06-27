@@ -47,10 +47,11 @@ def test_merge(a: DocGen, b: DocGen, d: DocGen):
     a.merge(b)
     assert a == d
 
+
 def test_encode_decode_integrity():
     root = Path(__file__).parent
     filename = root / "test_resources" / "serialized_doc_gen.json"
-    
+
     with open(filename, "r") as serialized:
         serialized_str = serialized.read()
         decoded = json.loads(serialized_str, cls=DocGenDecoder)

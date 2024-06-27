@@ -15,21 +15,21 @@ def doc_gen():
         action="extend",
         nargs="+",
         required=True,
-        type=str
+        type=str,
     )
     parser.add_argument(
-       "--write-json",
-       default="doc_gen.json",
-       help="Output a JSON version of the computed DocGen."
+        "--write-json",
+        default="doc_gen.json",
+        help="Output a JSON version of the computed DocGen.",
     )
     args = parser.parse_args()
 
     merged_doc_gen = DocGen.empty()
     for root in args.from_root:
-      unmerged_doc_gen = DocGen.from_root(Path(root))
-      merged_doc_gen.merge(unmerged_doc_gen)
+        unmerged_doc_gen = DocGen.from_root(Path(root))
+        merged_doc_gen.merge(unmerged_doc_gen)
 
     serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
-    
+
     with open(args.write_json, "w") as out:
-       out.write(serialized)
+        out.write(serialized)

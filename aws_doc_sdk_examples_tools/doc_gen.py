@@ -241,17 +241,18 @@ class DocGenEncoder(json.JSONEncoder):
     def default(self, obj):
         if is_dataclass(obj):
             return asdict(obj)
-        
+
         if isinstance(obj, Path):
             return {"__path__": str(obj)}
-        
+
         if isinstance(obj, MetadataErrors):
             return {"__metadata_errors__": [asdict(error) for error in obj]}
-        
+
         if isinstance(obj, set):
             return {"__set__": list(obj)}
 
         return super().default(obj)
+
 
 class DocGenDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
@@ -261,18 +262,18 @@ class DocGenDecoder(json.JSONDecoder):
     def object_hook(self, dct):
         if "__path__" in dct:
             return Path(dct["__path__"])
-        
+
         if "__metadata_errors__" in dct:
             metadata_errors = MetadataErrors()
-            metadata_errors._errors = [MetadataError(**error) for error in dct['__metadata_errors__']]
+            metadata_errors._errors = [
+                MetadataError(**error) for error in dct["__metadata_errors__"]
+            ]
             return metadata_errors
-        
+
         if "__set__" in dct:
             return set(dct["__set__"])
-        
+
         if dct and all(key in self.target_class.__annotations__ for key in dct):
             return self.target_class(**dct)
 
         return dct
-
-        
