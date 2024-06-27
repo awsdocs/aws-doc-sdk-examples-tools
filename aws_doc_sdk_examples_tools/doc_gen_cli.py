@@ -8,9 +8,8 @@ import logging
 
 from .doc_gen import DocGen, DocGenEncoder
 
-logging.basicConfig(
-    level=logging.INFO
-)
+logging.basicConfig(level=logging.INFO)
+
 
 def main():
     parser = ArgumentParser(description="Parse examples from example metadata.")
@@ -32,7 +31,7 @@ def main():
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Exit with non-zero code if errors are present. By default errors are written to the output."
+        help="Exit with non-zero code if errors are present. By default errors are written to the output.",
     )
 
     args = parser.parse_args()
@@ -50,6 +49,7 @@ def main():
 
     with open(args.write_json, "w") as out:
         out.write(serialized)
+
 
 if __name__ == "__main__":
     main()
