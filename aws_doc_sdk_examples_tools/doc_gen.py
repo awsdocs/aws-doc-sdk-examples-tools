@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import yaml
+import json
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, is_dataclass, asdict
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set
 
@@ -234,3 +235,26 @@ class DocGen:
             ),
             "snippets": len(self.snippets) + len(self.snippet_files),
         }
+
+
+# Encode a DocGen instance as JSON. Originally
+# it was planned to have a DocGenDecoder as well,
+# but that required writing environment data like
+# Path to the JSON, which was not very secure
+# and arguably not useful either.
+class DocGenEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if is_dataclass(obj):
+            return asdict(obj)
+
+        if isinstance(obj, Path):
+            # Strip out paths to prevent leaking environment data.
+            return None
+
+        if isinstance(obj, MetadataErrors):
+            return {"__metadata_errors__": [asdict(error) for error in obj]}
+
+        if isinstance(obj, set):
+            return {"__set__": list(obj)}
+
+        return super().default(obj)
