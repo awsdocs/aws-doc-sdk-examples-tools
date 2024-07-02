@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable, TypedDict
+from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
 from os.path import splitext
 from .project_validator import ValidationConfig
 
@@ -233,11 +233,11 @@ class Language:
 
 
 @dataclass
-class DocFilenames(TypedDict):
+class DocFilenames:
     # Names that match Code Library entries.
     # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
-    service_page: Optional[str]
-    sdk_pages: Optional[List[str]]
+    service_page: Optional[str] = None
+    sdk_pages: Optional[List[str]] = None
 
 
 @dataclass
@@ -416,24 +416,23 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
     # API examples
     if len(example.services) == 1:
         service_id = next(iter(example.services))
-        return {
-            "service_page": f"{service_id}_example_{example_id}_section",
-            "sdk_pages": [
+        return DocFilenames(
+            service_page=f"{service_id}_example_{example_id}_section",
+            sdk_pages=[
                 f"{language.property}_{language_ver.sdk_version}_{service_id}_code_examples"
                 for _, language in example.languages.items()
                 for language_ver in language.versions
             ],
-        }
+        )
     # Multi-service examples
     elif len(example.services) > 1:
-        return {
-            "service_page": None,
-            "sdk_pages": [
+        return DocFilenames(
+            sdk_pages=[
                 f"{example_id}_{language.property}_{language_ver.sdk_version}_topic"
                 for _, language in example.languages.items()
                 for language_ver in language.versions
-            ],
-        }
+            ]
+        )
     else:
         return None
 
