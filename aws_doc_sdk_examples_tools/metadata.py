@@ -235,8 +235,8 @@ class Language:
 class DocFilenames:
     # Names that match Code Library entries.
     # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
-    service_page: Optional[str]
-    sdk_pages: Optional[List[str]]
+    service_page: Optional[str] = None
+    sdk_pages: Optional[List[str]] = None
 
 
 @dataclass
