@@ -14,6 +14,7 @@ from . import metadata_errors
 from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
     parse,
+    DocFilenames,
     Example,
     Url,
     Language,
@@ -152,10 +153,10 @@ def test_parse():
             "ses": set(["Operation1", "Operation2"]),
             "sqs": set(),
         },
-        doc_filenames={
-            "sdk_pages": ["sns_DeleteTopic_cpp_1_topic"],
-            "service_page": None,
-        },
+        doc_filenames=DocFilenames(
+            sdk_pages=["sns_DeleteTopic_cpp_1_topic"],
+            service_page=None,
+        ),
         languages={"C++": language},
     )
     assert parsed[0] == example
@@ -231,10 +232,10 @@ def test_parse_strict_titles():
         services={
             "sns": {"GoodOne"},
         },
-        doc_filenames={
-            "sdk_pages": ["cpp_1_sns_code_examples"],
-            "service_page": "sns_example_sns_GoodOne_section",
-        },
+        doc_filenames=DocFilenames(
+            sdk_pages=["cpp_1_sns_code_examples"],
+            service_page="sns_example_sns_GoodOne_section",
+        ),
         languages={"C++": language},
     )
     example_scenario = Example(
@@ -244,10 +245,10 @@ def test_parse_strict_titles():
         title_abbrev="Scenario title abbrev",
         synopsis="scenario synopsis.",
         category="Scenarios",
-        doc_filenames={
-            "sdk_pages": ["cpp_1_sns_code_examples"],
-            "service_page": "sns_example_sns_GoodScenario_section",
-        },
+        doc_filenames=DocFilenames(
+            sdk_pages=["cpp_1_sns_code_examples"],
+            service_page="sns_example_sns_GoodScenario_section",
+        ),
         services={
             "sns": {"GoodOne"},
         },
@@ -359,12 +360,12 @@ def test_parse_cross():
         title_abbrev="delete topic",
         synopsis="",
         services={"ses": set(), "sns": set()},
-        doc_filenames={
-            "sdk_pages": [
+        doc_filenames=DocFilenames(
+            sdk_pages=[
                 "cross_DeleteTopic_java_3_topic",
             ],
-            "service_page": None,
-        },
+            service_page=None,
+        ),
         languages={"Java": language},
     )
     assert actual[0] == example
@@ -408,12 +409,12 @@ def test_parse_curated():
         source_key="amazon-sagemaker-examples",
         languages={"Java": language},
         services={"s3": set()},
-        doc_filenames={
-            "sdk_pages": [
+        doc_filenames=DocFilenames(
+            sdk_pages=[
                 "java_2_s3_code_examples",
             ],
-            "service_page": "s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section",
-        },
+            service_page="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section",
+        ),
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
 
@@ -505,14 +506,14 @@ def test_verify_load_successful():
         category="Usage",
         service_main=None,
         languages=languages,
-        doc_filenames={
-            "sdk_pages": [
+        doc_filenames=DocFilenames(
+            sdk_pages=[
                 "sns_TestExample_java_2_topic",
                 "sns_TestExample_javascript_3_topic",
                 "sns_TestExample_php_3_topic",
             ],
-            "service_page": None,
-        },
+            service_page=None,
+        ),
         services={"sns": set(), "sqs": set()},
     )
     assert actual[0] == example

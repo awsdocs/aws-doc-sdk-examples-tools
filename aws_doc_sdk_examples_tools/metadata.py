@@ -231,6 +231,7 @@ class Language:
 
         return cls(name, property, versions), errors
 
+
 @dataclass
 class DocFilenames:
     # Names that match Code Library entries.
@@ -421,7 +422,7 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
                 f"{language.property}_{language_ver.sdk_version}_{service_id}_code_examples"
                 for _, language in example.languages.items()
                 for language_ver in language.versions
-            ]
+            ],
         )
     # Multi-service examples
     elif len(example.services) > 1:
