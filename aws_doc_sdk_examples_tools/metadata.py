@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable, TypedDict
+from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
 from os.path import splitext
 from .project_validator import ValidationConfig
 
@@ -231,9 +231,8 @@ class Language:
 
         return cls(name, property, versions), errors
 
-
 @dataclass
-class DocFilenames(TypedDict):
+class DocFilenames:
     # Names that match Code Library entries.
     # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
     service_page: Optional[str]
