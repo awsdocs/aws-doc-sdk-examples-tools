@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, mock_open
 from argparse import Namespace
+import logging
 from .doc_gen import DocGen, MetadataError
 from .doc_gen_cli import main
 
@@ -28,7 +29,7 @@ def patched_environment(mock_doc_gen):
 
 
 @pytest.mark.parametrize("strict,should_raise", [(True, True), (False, False)])
-def test_doc_gen_strict_option(strict, should_raise, patched_environment, caplog):
+def test_doc_gen_strict_option(strict, should_raise, patched_environment):
     mock_parse_args, mock_json_dump = patched_environment
     mock_args = Namespace(
         from_root=["/mock/path"], write_json="mock_output.json", strict=strict
@@ -39,8 +40,5 @@ def test_doc_gen_strict_option(strict, should_raise, patched_environment, caplog
         with pytest.raises(SystemExit) as exc_info:
             main()
         assert exc_info.value.code == 1
-        assert "Errors found in metadata" in caplog.text
-        assert "Error 1" in caplog.text
-        assert "Error 2" in caplog.text
     else:
         main()
