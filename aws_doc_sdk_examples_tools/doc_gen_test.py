@@ -50,6 +50,18 @@ def test_merge(a: DocGen, b: DocGen, d: DocGen):
     assert a == d
 
 
+def test_incremental():
+    errors = MetadataErrors()
+    doc_gen = DocGen(Path(), errors).for_root(
+        Path(__file__).parent / "test_resources", incremental=False
+    )
+    assert len(doc_gen.examples) == 0
+    doc_gen.process_metadata(doc_gen.root / "awsentity_metadata.yaml")
+    assert len(doc_gen.examples) == 5
+    doc_gen.process_metadata(doc_gen.root / "valid_metadata.yaml")
+    assert len(doc_gen.examples) == 6
+
+
 @pytest.fixture
 def sample_doc_gen() -> DocGen:
     metadata_errors = MetadataErrors()
