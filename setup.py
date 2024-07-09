@@ -13,9 +13,6 @@ setup(
     },
     python_requires=">=3.8,<3.9",
     build_requires=[
-        "black",
-        "mypy",
-        "pytest",
         "setuptools>=40.8.0",
         "wheel",
     ],

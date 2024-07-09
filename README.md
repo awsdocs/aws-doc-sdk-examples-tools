@@ -47,8 +47,10 @@ it treats the checks as failed and displays a message in the pull request.
 ### Running during development
 
 ```
-# With a venv in .venv
+python3.8 -m venv .venv
+# With a python 3.8 venv in .venv
 source .venv/bin/activate # Adjust for windows as necessary
+python -m pip install -r requirements.txt
 python -m pip install -e .
 python -m mypy aws_doc_sdk_examples_tools
 python -m pytest -vv
