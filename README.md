@@ -5,9 +5,10 @@ It is used by the AWS Doc SDK Examples team, as well as tributary sources of
 example snippets.
 
 -tools:
-* Validates example metadata.
-* Provides an API to program against example metadata.
-* Hydrates additional derived data not explicitly written by engineers into example metadata.
+
+- Validates example metadata.
+- Provides an API to program against example metadata.
+- Hydrates additional derived data not explicitly written by engineers into example metadata.
 
 ## Check-in tests
 
@@ -42,6 +43,19 @@ the following issues.
 
 A count of errors found is returned. When CI receives a non-zero return code,
 it treats the checks as failed and displays a message in the pull request.
+
+### Running during development
+
+```
+python3.8 -m venv .venv
+# With a python 3.8 venv in .venv
+source .venv/bin/activate # Adjust for windows as necessary
+python -m pip install -r requirements.txt
+python -m pip install -e .
+python -m mypy aws_doc_sdk_examples_tools
+python -m pytest -vv
+python -m black --check
+```
 
 ## Validation Extensions
 

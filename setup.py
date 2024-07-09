@@ -11,6 +11,11 @@ setup(
     entry_points={
         "console_scripts": ["doc-gen=aws_doc_sdk_examples_tools.doc_gen_cli:main"],
     },
+    python_requires=">=3.8,<3.9",
+    build_requires=[
+        "setuptools>=40.8.0",
+        "wheel",
+    ],
     install_requires=[
         "pathspec==0.11.2",
         "PyYAML==6.0.1",

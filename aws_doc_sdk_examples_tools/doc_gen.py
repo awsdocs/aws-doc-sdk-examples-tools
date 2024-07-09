@@ -45,6 +45,7 @@ class DocGen:
     snippet_files: Set[str] = field(default_factory=set)
     examples: Dict[str, Example] = field(default_factory=dict)
     cross_blocks: Set[str] = field(default_factory=set)
+    _loaded: Set[Path] = field(default_factory=set, init=False)
 
     def collect_snippets(
         self, snippets_root: Optional[Path] = None, prefix: Optional[str] = None
@@ -135,7 +136,9 @@ class DocGen:
             examples={},
         )
 
-    def for_root(self, root: Path, config: Optional[Path] = None) -> "DocGen":
+    def for_root(
+        self, root: Path, config: Optional[Path] = None, incremental=False
+    ) -> "DocGen":
         self.root = root
 
         if config is None:
@@ -179,25 +182,33 @@ class DocGen:
         except Exception:
             pass
 
-        for path in metadata.glob("*_metadata.yaml"):
-            with open(path) as file:
-                examples, errs = parse_examples(
-                    path.name,
-                    yaml.safe_load(file),
-                    self.sdks,
-                    self.services,
-                    self.cross_blocks,
-                    self.validation,
-                )
-                self.extend_examples(examples, self.errors)
-                self.errors.extend(errs)
-                for example in examples:
-                    for lang in example.languages:
-                        language = example.languages[lang]
-                        for version in language.versions:
-                            for excerpt in version.excerpts:
-                                self.snippet_files.update(excerpt.snippet_files)
+        if not incremental:
+            for path in metadata.glob("*_metadata.yaml"):
+                self.process_metadata(path)
 
+        return self
+
+    def process_metadata(self, path: Path) -> "DocGen":
+        if path in self._loaded:
+            return self
+        with open(path) as file:
+            examples, errs = parse_examples(
+                path.name,
+                yaml.safe_load(file),
+                self.sdks,
+                self.services,
+                self.cross_blocks,
+                self.validation,
+            )
+            self.extend_examples(examples, self.errors)
+            self.errors.extend(errs)
+            for example in examples:
+                for lang in example.languages:
+                    language = example.languages[lang]
+                    for version in language.versions:
+                        for excerpt in version.excerpts:
+                            self.snippet_files.update(excerpt.snippet_files)
+        self._loaded.add(path)
         return self
 
     @classmethod
@@ -206,8 +217,11 @@ class DocGen:
         root: Path,
         config: Optional[Path] = None,
         validation: ValidationConfig = ValidationConfig(),
+        incremental: bool = False,
     ) -> "DocGen":
-        return DocGen.empty(validation=validation).for_root(root, config)
+        return DocGen.empty(validation=validation).for_root(
+            root, config, incremental=incremental
+        )
 
     def validate(self):
         for sdk in self.sdks.values():
