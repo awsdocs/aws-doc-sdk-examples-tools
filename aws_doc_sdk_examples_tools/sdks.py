@@ -163,7 +163,7 @@ class Sdk:
         return cls(name=name, versions=versions, guide=guide, property=property), errors
 
 
-def parse(file: str, yaml: Dict[str, Any]) -> tuple[Dict[str, Sdk], MetadataErrors]:
+def parse(file: Path, yaml: Dict[str, Any]) -> tuple[Dict[str, Sdk], MetadataErrors]:
     sdks: Dict[str, Sdk] = {}
     errors = MetadataErrors()
 
@@ -185,5 +185,5 @@ if __name__ == "__main__":
     path = Path(__file__).parent.parent.parent / ".doc_gen" / "metadata" / "sdks.yaml"
     with open(path) as file:
         meta = yaml.safe_load(file)
-    examples, errors = parse(path.name, meta)
+    examples, errors = parse(path, meta)
     print(f"{examples}")

@@ -180,7 +180,7 @@ def validate_files(
             yamale.validate(schema, data)
             print(f"{meta_name.resolve()} validation success! 👍")
         except YamaleError as e:
-            errors.append(ValidateYamaleError(file=str(meta_name), yamale_error=e))
+            errors.append(ValidateYamaleError(file=meta_name, yamale_error=e))
     return errors
 
 

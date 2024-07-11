@@ -20,13 +20,16 @@ def load(path: str) -> Tuple[Dict[str, Service], metadata_errors.MetadataErrors]
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta)
+    return parse(filename, meta)
 
 
 def test_empty_services():
     _, errs = load("empty_services.yaml")
     assert [*errs] == [
-        metadata_errors.MissingServiceBody(file="empty_services.yaml", id="sns")
+        metadata_errors.MissingServiceBody(
+            file=Path(__file__).parent / "test_resources/empty_services.yaml",
+            id="sns",
+        )
     ]
 
 
@@ -34,18 +37,24 @@ def test_services_entity_usage():
     _, errs = load("entityusage_services.yaml")
     assert [*errs] == [
         metadata_errors.MappingMustBeEntity(
-            file="entityusage_services.yaml", id="sns", field="long", value="SNSlong"
+            file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
+            id="sns",
+            field="long",
+            value="SNSlong",
         ),
         metadata_errors.MappingMustBeEntity(
-            file="entityusage_services.yaml", id="sns", field="short", value="SNS"
+            file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
+            id="sns",
+            field="short",
+            value="SNS",
         ),
         metadata_errors.MissingField(
-            file="entityusage_services.yaml",
+            file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
             id="sns",
             field="version",
         ),
         metadata_errors.MissingField(
-            file="entityusage_services.yaml",
+            file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
             id="sns",
             field="api_ref",
         ),

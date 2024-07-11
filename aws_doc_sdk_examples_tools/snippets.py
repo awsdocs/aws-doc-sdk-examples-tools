@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
-from shutil import copyfile
 import re
 
 from .validator_config import skip
@@ -24,7 +23,7 @@ SNIPPET_END = "snippet-end:["
 @dataclass
 class Snippet:
     id: str
-    file: str
+    file: str  # Not a path, but a path fragment.
     line_start: int
     line_end: int
     code: str
@@ -110,7 +109,7 @@ def parse_snippets(
             tag = _tag_from_line(SNIPPET_START, line, prefix)
             if tag in snippets:
                 errors.append(
-                    DuplicateSnippetStartError(file=str(file), line=line_idx, tag=tag)
+                    DuplicateSnippetStartError(file=file, line=line_idx, tag=tag)
                 )
             else:
                 snippets[tag] = Snippet(
@@ -125,11 +124,11 @@ def parse_snippets(
             tag = _tag_from_line(SNIPPET_END, line, prefix)
             if tag not in snippets:
                 errors.append(
-                    MissingSnippetStartError(file=str(file), line=line_idx, tag=tag)
+                    MissingSnippetStartError(file=file, line=line_idx, tag=tag)
                 )
             elif tag not in open_tags:
                 errors.append(
-                    DuplicateSnippetEndError(file=str(file), line=line_idx, tag=tag)
+                    DuplicateSnippetEndError(file=file, line=line_idx, tag=tag)
                 )
             else:
                 open_tags.remove(tag)
@@ -140,9 +139,7 @@ def parse_snippets(
 
     for tag in open_tags:
         errors.append(
-            MissingSnippetEndError(
-                file=str(file), line=snippets[tag].line_start, tag=tag
-            )
+            MissingSnippetEndError(file=file, line=snippets[tag].line_start, tag=tag)
         )
     return snippets, errors
 
@@ -156,11 +153,11 @@ def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], Metadata
                 snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
                 errors.extend(errs)
             except UnicodeDecodeError as err:
-                errors.append(MetadataUnicodeError(file=str(file), err=err))
+                errors.append(MetadataUnicodeError(file=file, err=err))
     except FileNotFoundError:
         pass
     except Exception as e:
-        errors.append(FileReadError(file=str(file), err=e))
+        errors.append(FileReadError(file=file, err=e))
     return snippets, errors
 
 
@@ -213,7 +210,7 @@ def collect_snippet_files(
                             code = file.readlines()
                             snippets[name] = Snippet(
                                 id=name,
-                                file=str(snippet_file),
+                                file=snippet_file,
                                 line_start=0,
                                 line_end=len(code),
                                 code="".join(code),
@@ -281,13 +278,13 @@ def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False
     for tag in snippets:
         name = root / f"{tag}.txt"
         if check and name.exists():
-            errors.append(SnippetAlreadyWritten(file=str(name)))
+            errors.append(SnippetAlreadyWritten(file=name))
         else:
             try:
                 with open(name, "w", encoding="utf-8") as file:
                     file.write(snippets[tag].code)
             except Exception as error:
-                errors.append(SnippetWriteError(file=str(name), error=error))
+                errors.append(SnippetWriteError(file=name, error=error))
     return errors
 
 

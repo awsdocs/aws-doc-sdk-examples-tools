@@ -33,10 +33,10 @@ def load(
 ) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
-    with open(filename) as file:
+    with filename.open() as file:
         meta = yaml.safe_load(file)
     return parse(
-        filename.name, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
+        filename, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
     )
 
 
@@ -123,7 +123,7 @@ sns_DeleteTopic:
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
     parsed, errors = parse(
-        "test_cpp.yaml", meta, SDKS, SERVICES, set(), DOC_GEN.validation
+        Path("test_cpp.yaml"), meta, SDKS, SERVICES, set(), DOC_GEN.validation
     )
     assert len(errors) == 0
     assert len(parsed) == 1
@@ -145,7 +145,7 @@ def test_parse():
         ],
     )
     example = Example(
-        file="test_cpp.yaml",
+        file=Path("test_cpp.yaml"),
         id="sns_DeleteTopic",
         category="Cross",
         services={
@@ -199,7 +199,7 @@ sns_GoodScenario:
 def test_parse_strict_titles():
     meta = yaml.safe_load(STRICT_TITLE_META)
     parsed, errors = parse(
-        "test_cpp.yaml",
+        Path("test_cpp.yaml"),
         meta,
         SDKS,
         SERVICES,
@@ -226,7 +226,7 @@ def test_parse_strict_titles():
         ],
     )
     example_action = Example(
-        file="test_cpp.yaml",
+        file=Path("test_cpp.yaml"),
         id="sns_GoodOne",
         category="Api",
         services={
@@ -239,7 +239,7 @@ def test_parse_strict_titles():
         languages={"C++": language},
     )
     example_scenario = Example(
-        file="test_cpp.yaml",
+        file=Path("test_cpp.yaml"),
         id="sns_GoodScenario",
         title="Scenario title",
         title_abbrev="Scenario title abbrev",
@@ -295,7 +295,7 @@ sns_BadScenario:
 def test_parse_strict_title_errors():
     meta = yaml.safe_load(STRICT_TITLE_ERRORS)
     parsed, errors = parse(
-        "test_cpp.yaml",
+        Path("test_cpp.yaml"),
         meta,
         SDKS,
         SERVICES,
@@ -304,15 +304,15 @@ def test_parse_strict_title_errors():
     )
     expected = [
         metadata_errors.APICannotHaveTitleFields(
-            file="test_cpp.yaml",
+            file=Path("test_cpp.yaml"),
             id="sns_BadOne",
         ),
         metadata_errors.ActionNameFormat(
-            file="test_cpp.yaml",
+            file=Path("test_cpp.yaml"),
             id="sns_BadOne",
         ),
         metadata_errors.NonAPIMustHaveTitleFields(
-            file="test_cpp.yaml",
+            file=Path("test_cpp.yaml"),
             id="sns_BadScenario",
         ),
     ]
@@ -338,7 +338,7 @@ cross_DeleteTopic:
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
     actual, errors = parse(
-        "cross.yaml",
+        Path("cross.yaml"),
         meta,
         SDKS,
         SERVICES,
@@ -353,7 +353,7 @@ def test_parse_cross():
         versions=[Version(sdk_version=3, block_content="cross_DeleteTopic_block.xml")],
     )
     example = Example(
-        file="cross.yaml",
+        file=Path("cross.yaml"),
         id="cross_DeleteTopic",
         category="Cross-service examples",
         title="Delete Topic",
@@ -391,7 +391,12 @@ s3_autogluon_tabular_with_sagemaker_pipelines:
 def test_parse_curated():
     meta = yaml.safe_load(CURATED)
     actual, errors = parse(
-        "curated.yaml", meta, SDKS, SERVICES, set(["block.xml"]), DOC_GEN.validation
+        Path("curated.yaml"),
+        meta,
+        SDKS,
+        SERVICES,
+        set(["block.xml"]),
+        DOC_GEN.validation,
     )
     assert len(errors) == 0
     assert len(actual) == 1
@@ -402,7 +407,7 @@ def test_parse_curated():
     )
     example = Example(
         id="s3_autogluon_tabular_with_sagemaker_pipelines",
-        file="curated.yaml",
+        file=Path("curated.yaml"),
         category="Curated examples",
         title="AutoGluon Tabular with SageMaker Pipelines",
         title_abbrev="AutoGluon Tabular with SageMaker Pipelines",
@@ -422,7 +427,11 @@ def test_parse_curated():
 
 
 def test_verify_load_successful():
-    actual, errors = load(Path("valid_metadata.yaml"), DOC_GEN, set(["test block"]))
+    actual, errors = load(
+        Path(__file__).parent / "test_resources/valid_metadata.yaml",
+        DOC_GEN,
+        set(["test block"]),
+    )
     assert len(errors) == 0
     assert len(actual) == 1
     java = Language(
@@ -496,7 +505,7 @@ def test_verify_load_successful():
     }
 
     example = Example(
-        file="valid_metadata.yaml",
+        file=Path(__file__).parent / "test_resources/valid_metadata.yaml",
         id="sns_TestExample",
         title="Check whether a phone number is opted out using an &AWS; SDK",
         title_abbrev="Check whether a phone number is opted out",
@@ -519,6 +528,13 @@ def test_verify_load_successful():
     assert actual[0] == example
 
 
+EMPTY_METADATA_PATH = Path(__file__).parent / "test_resources/empty_metadata.yaml"
+ERRORS_METADATA_PATH = Path(__file__).parent / "test_resources/errors_metadata.yaml"
+FORMATTER_METADATA_PATH = (
+    Path(__file__).parent / "test_resources/formaterror_metadata.yaml"
+)
+
+
 @pytest.mark.parametrize(
     "filename,expected_errors",
     [
@@ -527,11 +543,11 @@ def test_verify_load_successful():
             [
                 metadata_errors.MissingField(
                     field="languages",
-                    file="empty_metadata.yaml",
+                    file=EMPTY_METADATA_PATH,
                     id="sns_EmptyExample",
                 ),
                 metadata_errors.ServiceNameFormat(
-                    file="empty_metadata.yaml",
+                    file=EMPTY_METADATA_PATH,
                     id="sns_EmptyExample",
                     svc="sns",
                     svcs=[],
@@ -542,48 +558,48 @@ def test_verify_load_successful():
             "errors_metadata.yaml",
             [
                 metadata_errors.APIMustHaveOneServiceOneAction(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     svc_actions="",
                 ),
                 metadata_errors.UnknownLanguage(
                     language="Perl",
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                 ),
                 metadata_errors.InvalidSdkGuideStart(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     guide="https://docs.aws.amazon.com/absolute/link-to-my-guide",
                     sdk_version=1,
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     sdk_version=1,
                 ),
                 metadata_errors.APIExampleCannotAddService(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     sdk_version=1,
                 ),
                 metadata_errors.ServiceNameFormat(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     svc="sqs",
                     svcs=["sns"],
                 ),
                 metadata_errors.MissingField(
                     field="versions",
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sqs_TestExample",
                     language="Java",
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sns_TestExample",
                     language="Java",
                     sdk_version=2,
@@ -596,19 +612,19 @@ def test_verify_load_successful():
                 #     tag="this.snippet.does.not.exist",
                 # ),
                 metadata_errors.UnknownService(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sns_TestExample2",
                     service="garbled",
                 ),
                 metadata_errors.InvalidGithubLink(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sns_TestExample2",
                     language="Java",
                     sdk_version=2,
                     link="github/link/to/README.md",
                 ),
                 metadata_errors.FieldError(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="sns_TestExample2",
                     field="genai",
                     value="so much",
@@ -616,26 +632,26 @@ def test_verify_load_successful():
                     sdk_version=2,
                 ),
                 metadata_errors.BlockContentAndExcerptConflict(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="cross_TestExample_Versions",
                     language="Java",
                     sdk_version=2,
                 ),
                 metadata_errors.MissingCrossContent(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="cross_TestExample_Missing",
                     language="Java",
                     sdk_version=2,
                     block="missing_block_content.xml",
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="snsBadFormat",
                     language="Java",
                     sdk_version=2,
                 ),
                 metadata_errors.NameFormat(
-                    file="errors_metadata.yaml",
+                    file=ERRORS_METADATA_PATH,
                     id="snsBadFormat",
                 ),
             ],
@@ -644,11 +660,11 @@ def test_verify_load_successful():
             "formaterror_metadata.yaml",
             [
                 metadata_errors.NameFormat(
-                    file="formaterror_metadata.yaml",
+                    file=FORMATTER_METADATA_PATH,
                     id="WrongNameFormat",
                 ),
                 metadata_errors.UnknownService(
-                    file="formaterror_metadata.yaml",
+                    file=FORMATTER_METADATA_PATH,
                     id="cross_TestExample",
                     language="Java",
                     sdk_version=2,
@@ -693,7 +709,7 @@ def test_check_id_format(name, check_action, error_count):
         (
             Example(
                 id="ex_a",
-                file="file_a",
+                file=Path("file_a"),
                 languages={
                     "a": Language(
                         name="a",
@@ -710,7 +726,7 @@ def test_check_id_format(name, check_action, error_count):
             ),
             Example(
                 id="ex_a",
-                file="file_b",
+                file=Path("file_b"),
                 languages={
                     "a": Language(
                         name="a",
@@ -737,7 +753,7 @@ def test_check_id_format(name, check_action, error_count):
             ),
             Example(
                 id="ex_a",
-                file="file_a",
+                file=Path("file_a"),
                 languages={
                     "a": Language(
                         name="a",
@@ -780,7 +796,7 @@ def test_merge(a: Example, b: Example, d: Example):
         (
             Example(
                 id="ex_a",
-                file="file_a",
+                file=Path("file_a"),
                 languages={
                     "a": Language(
                         name="a",
@@ -796,7 +812,7 @@ def test_merge(a: Example, b: Example, d: Example):
             ),
             Example(
                 id="ex_a",
-                file="file_b",
+                file=Path("file_b"),
                 languages={
                     "a": Language(
                         name="a",
@@ -812,7 +828,7 @@ def test_merge(a: Example, b: Example, d: Example):
             ),
             Example(
                 id="ex_a",
-                file="file_a",
+                file=Path("file_a"),
                 languages={
                     "a": Language(
                         name="a",
@@ -834,7 +850,7 @@ def test_merge_conflict(a: Example, b: Example, d: Example):
     a.merge(b, errors)
     assert a == d
     assert errors[0] == ExampleMergeConflict(
-        id=a.id, file=a.file, language="a", sdk_version=1, other_file="file_b"
+        id=a.id, file=a.file, language="a", sdk_version=1, other_file=Path("file_b")
     )
 
 

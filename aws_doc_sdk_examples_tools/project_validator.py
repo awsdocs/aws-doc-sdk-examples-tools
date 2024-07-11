@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ValidationConfig:
     allow_list: Set[str] = field(default_factory=set)
-    sample_files: Set[str] = field(default_factory=set)
+    sample_files: Set[Path] = field(default_factory=set)
     strict_titles: bool = False
 
     def clone(self):
@@ -74,7 +74,7 @@ def check_files(
         except Exception as e:
             file_contents = ""
             print(f"Could not verify {file_path}: {e}")
-            errors.append(MetadataError(file=str(file_path)))
+            errors.append(MetadataError(file=file_path))
 
         verify_no_deny_list_words(file_contents, file_path, errors)
         verify_no_secret_keys(file_contents, file_path, validation, errors)
@@ -106,7 +106,7 @@ def verify_no_deny_list_words(
     for word, part in word_parts(file_contents):
         if part in validator_config.DENY_LIST:
             try:
-                errors.append(DenyListWord(file=str(file_location), word=word))
+                errors.append(DenyListWord(file=file_location, word=word))
             except DuplicateItemException:
                 pass
 
@@ -159,13 +159,13 @@ def verify_sample_files(
         file_list.append(path.name)
         ext = path.suffix
         if path.name not in validation.sample_files:
-            errors.append(UnknownSampleFile(file=str(path)))
+            errors.append(UnknownSampleFile(file=path))
         if ext.lower() in validator_config.MEDIA_FILE_TYPES:
             if media_folder not in str(path):
-                errors.append(InvalidSampleDirectory(file=str(path), dir=media_folder))
+                errors.append(InvalidSampleDirectory(file=path, dir=media_folder))
         size_in_mb = os.path.getsize(path) / ONE_MB_AS_BYTES
         if size_in_mb > MAX_FILE_SIZE_MB:
-            errors.append(SampleFileTooLarge(file=str(path), size_in_mb=size_in_mb))
+            errors.append(SampleFileTooLarge(file=path, size_in_mb=size_in_mb))
 
     for sample_file in validation.sample_files:
         if sample_file not in file_list:
@@ -205,4 +205,4 @@ def verify_no_secret_keys(
     keys -= validator_config.ALLOW_LIST
     keys -= validation.allow_list
     for word in keys:
-        errors.append(PossibleSecretKey(file=str(file_location), word=word))
+        errors.append(PossibleSecretKey(file=file_location, word=word))
