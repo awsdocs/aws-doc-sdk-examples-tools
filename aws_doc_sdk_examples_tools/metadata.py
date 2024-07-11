@@ -517,10 +517,20 @@ def validate_no_duplicate_api_examples(
 ):
     """Call this on a full set of examples to verify that there are no duplicate API examples."""
     svc_action_map: Dict[str, List[str]] = defaultdict(list)
-    for example in [ex for ex in examples if ex.category == "Api"]:
-        for service, actions in example.services.items():
-            for action in actions:
-                svc_action_map[f"{service}:{action}"].append(example.id)
+    title_abbr_map: Dict[str, Dict[str, List[str]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    for example in examples:
+        if example.category == "Api":
+            for service, actions in example.services.items():
+                for action in actions:
+                    svc_action_map[f"{service}:{action}"].append(example.id)
+        if example.title_abbrev:
+            for language in example.languages.values():
+                for version in language.versions:
+                    title_abbr_map[example.title_abbrev][
+                        f"{language.name}:{version.sdk_version}"
+                    ].append(example.id)
     for svc_action, ex_items in svc_action_map.items():
         if len(ex_items) > 1:
             errors.append(
@@ -530,6 +540,16 @@ def validate_no_duplicate_api_examples(
                     duplicates=ex_items,
                 )
             )
+    for title_abbrev, languages in title_abbr_map.items():
+        for lang, ids in languages.items():
+            if len(ids) > 1:
+                errors.append(
+                    metadata_errors.DuplicateTitleAbbrev(
+                        id=", ".join(ids),
+                        title_abbrev=title_abbrev,
+                        language=lang,
+                    )
+                )
 
 
 def main():

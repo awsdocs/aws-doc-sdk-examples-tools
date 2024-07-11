@@ -294,7 +294,7 @@ sns_BadScenario:
 
 def test_parse_strict_title_errors():
     meta = yaml.safe_load(STRICT_TITLE_ERRORS)
-    parsed, errors = parse(
+    _, errors = parse(
         Path("test_cpp.yaml"),
         meta,
         SDKS,
@@ -852,6 +852,45 @@ def test_merge_conflict(a: Example, b: Example, d: Example):
     assert errors[0] == ExampleMergeConflict(
         id=a.id, file=a.file, language="a", sdk_version=1, other_file=Path("file_b")
     )
+
+
+def test_no_duplicate_title_abbrev():
+    errors = MetadataErrors()
+    doc_gen = DocGen(
+        Path(__file__).parent / "test_no_duplicate_title_abbrev",
+        errors=errors,
+        examples={
+            "a": Example(
+                id="a",
+                file="a",
+                title_abbrev="abbr",
+                languages={
+                    "java": Language(
+                        name="java", property="java", versions=[Version(sdk_version=1)]
+                    )
+                },
+            ),
+            "b": Example(
+                id="b",
+                file="b",
+                title_abbrev="abbr",
+                languages={
+                    "java": Language(
+                        name="java", property="java", versions=[Version(sdk_version=1)]
+                    )
+                },
+            ),
+        },
+    )
+    doc_gen.validate()
+
+    expected = [
+        metadata_errors.DuplicateTitleAbbrev(
+            id="a, b", title_abbrev="abbr", language="java:1"
+        )
+    ]
+
+    assert expected == [*errors]
 
 
 if __name__ == "__main__":

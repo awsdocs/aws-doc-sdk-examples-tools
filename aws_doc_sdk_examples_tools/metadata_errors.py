@@ -323,6 +323,15 @@ class DuplicateAPIExample(MetadataError):
 
 
 @dataclass
+class DuplicateTitleAbbrev(MetadataError):
+    title_abbrev: str = ""
+    language: str = ""
+
+    def message(self):
+        return f"multiple API examples found with conflicting title_abbrev: {self.title_abbrev} in {self.language}"
+
+
+@dataclass
 class URLMissingTitle(SdkVersionError):
     url: str = ""
 
