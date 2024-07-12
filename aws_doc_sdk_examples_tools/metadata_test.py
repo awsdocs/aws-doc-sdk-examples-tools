@@ -580,7 +580,7 @@ def test_verify_load_successful():
                     2: SDKVersion(
                         actions_scenarios={
                             "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_sqs_code_examples.html#scenarios",
-                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_sns_code_examples.html#scenarios" 
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_sns_code_examples.html#scenarios",
                         }
                     )
                 },
@@ -588,7 +588,7 @@ def test_verify_load_successful():
                     3: SDKVersion(
                         actions_scenarios={
                             "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/php_3_sqs_code_examples.html#scenarios",
-                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/php_3_sns_code_examples.html#scenarios" 
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/php_3_sns_code_examples.html#scenarios",
                         }
                     )
                 },
@@ -596,10 +596,10 @@ def test_verify_load_successful():
                     3: SDKVersion(
                         actions_scenarios={
                             "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_sqs_code_examples.html#scenarios",
-                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_sns_code_examples.html#scenarios" 
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_sns_code_examples.html#scenarios",
                         }
                     )
-                }
+                },
             },
         ),
         services={"sns": set(), "sqs": set()},
