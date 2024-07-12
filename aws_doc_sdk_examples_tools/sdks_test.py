@@ -25,14 +25,14 @@ def load(path: str) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename.name, meta)
+    return parse(filename, meta)
 
 
 def test_empty_sdks():
     _, errors = load("empty_sdks.yaml")
     assert [*errors] == [
         metadata_errors.MissingField(
-            file="empty_sdks.yaml",
+            file=Path(__file__).parent / "test_resources/empty_sdks.yaml",
             id="C++",
             language=None,
             sdk_version=None,
@@ -45,19 +45,19 @@ def test_entityusage():
     _, actual = load("entityusage_sdks.yaml")
     expected = [
         metadata_errors.MappingMustBeEntity(
-            file="entityusage_sdks.yaml",
+            file=Path(__file__).parent / "test_resources/entityusage_sdks.yaml",
             id="C++",
             field="guide",
             value="guide-cpp-dev",
         ),
         metadata_errors.MappingMustBeEntity(
-            file="entityusage_sdks.yaml",
+            file=Path(__file__).parent / "test_resources/entityusage_sdks.yaml",
             id="C++",
             field="long",
             value="CPPlong",
         ),
         metadata_errors.MappingMustBeEntity(
-            file="entityusage_sdks.yaml",
+            file=Path(__file__).parent / "test_resources/entityusage_sdks.yaml",
             id="C++",
             field="short",
             value="CPP",

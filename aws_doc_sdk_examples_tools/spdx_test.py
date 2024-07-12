@@ -46,7 +46,7 @@ from .spdx import verify_spdx, MissingSPDX
         (
             "py",
             ("def foo():\n\tpass"),
-            [MissingSPDX(file=str(Path("/tmp/file.py")))],
+            [MissingSPDX(file=Path("/tmp/file.py"))],
         ),
     ],
 )

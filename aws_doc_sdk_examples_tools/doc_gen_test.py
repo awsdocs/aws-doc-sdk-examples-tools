@@ -65,7 +65,7 @@ def test_incremental():
 @pytest.fixture
 def sample_doc_gen() -> DocGen:
     metadata_errors = MetadataErrors()
-    metadata_errors._errors = [MetadataError(file="filea.txt", id="Error a")]
+    metadata_errors._errors = [MetadataError(file=Path("filea.txt"), id="Error a")]
     return DocGen(
         root=Path("/test/root"),
         errors=metadata_errors,
@@ -108,7 +108,8 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     decoded = json.loads(encoded)
 
     # Verify that the root path is not included in the encoded output
-    assert "root" not in decoded or decoded["root"] is None
+    assert "/test/root" not in decoded
+    assert decoded["root"] == "root"
 
     # Verify SDK information
     assert "sdks" in decoded

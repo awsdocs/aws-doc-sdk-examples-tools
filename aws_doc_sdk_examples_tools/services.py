@@ -116,7 +116,7 @@ class Service:
 
 
 def parse(
-    filename: str, yaml: Dict[str, Any]
+    filename: Path, yaml: Dict[str, Any]
 ) -> tuple[Dict[str, Service], MetadataErrors]:
     errors = metadata_errors.MetadataErrors()
     services: Dict[str, Service] = {}
@@ -143,5 +143,5 @@ if __name__ == "__main__":
     )
     with open(path) as file:
         meta = yaml.safe_load(file)
-    examples = parse(path.name, meta)
+    examples = parse(path, meta)
     print(f"{examples}")

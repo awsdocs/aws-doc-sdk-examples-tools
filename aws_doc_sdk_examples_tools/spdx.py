@@ -68,7 +68,7 @@ def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors)
         if file_has_copyright or file_has_license:
             errors.append(
                 InvalidSPDX(
-                    file=str(file_location),
+                    file=file_location,
                     has_copyright=has_copyright,
                     has_license=has_license,
                 )
@@ -76,7 +76,7 @@ def verify_spdx(file_contents: str, file_location: Path, errors: MetadataErrors)
         else:
             errors.append(
                 MissingSPDX(
-                    file=str(file_location),
+                    file=file_location,
                 )
             )
 

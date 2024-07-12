@@ -8,9 +8,9 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
 from os.path import splitext
-from .project_validator import ValidationConfig
+from pathlib import Path
 
-from aws_doc_sdk_examples_tools import metadata_errors
+from . import metadata_errors
 from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
@@ -20,6 +20,7 @@ from .metadata_errors import (
     ExampleMergeConflict,
 )
 from .metadata_validator import StringExtension
+from .project_validator import ValidationConfig
 from .services import Service
 from .sdks import Sdk
 
@@ -243,7 +244,7 @@ class DocFilenames:
 @dataclass
 class Example:
     id: str
-    file: str
+    file: Optional[Path]
     languages: Dict[str, Language]
     # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
     title: Optional[str] = field(default="")
@@ -370,7 +371,7 @@ class Example:
         return (
             cls(
                 id="",
-                file="",
+                file=None,
                 title=title,
                 title_abbrev=title_abbrev,
                 category=category,
@@ -479,7 +480,7 @@ def check_id_format(
 
 
 def parse(
-    file: str,
+    file: Path,
     yaml: Dict[str, Any],
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
@@ -515,18 +516,18 @@ def validate_no_duplicate_api_examples(
     examples: Iterable[Example], errors: MetadataErrors
 ):
     """Call this on a full set of examples to verify that there are no duplicate API examples."""
-    svc_action_map: Dict[str, List] = defaultdict(list)
+    svc_action_map: Dict[str, List[str]] = defaultdict(list)
     for example in [ex for ex in examples if ex.category == "Api"]:
         for service, actions in example.services.items():
             for action in actions:
-                svc_action_map[f"{service}:{action}"].append(example)
+                svc_action_map[f"{service}:{action}"].append(example.id)
     for svc_action, ex_items in svc_action_map.items():
         if len(ex_items) > 1:
             errors.append(
                 metadata_errors.DuplicateAPIExample(
-                    id=", ".join({ex_item.id for ex_item in ex_items}),
-                    file=", ".join({ex_item.file for ex_item in ex_items}),
+                    id=", ".join({ex_item for ex_item in ex_items}),
                     svc_action=svc_action,
+                    duplicates=ex_items,
                 )
             )
 
@@ -543,7 +544,7 @@ def main():
     )
     with open(path) as file:
         meta = yaml.safe_load(file)
-    (examples, errors) = parse(path.name, meta, {}, {}, set(), ValidationConfig())
+    (examples, errors) = parse(path, meta, {}, {}, set(), ValidationConfig())
     if len(errors) > 0:
         print(f"{errors}")
     else:

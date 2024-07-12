@@ -80,16 +80,14 @@ class DocGen:
                 self.sdks[name] = sdk
             else:
                 warnings.append(
-                    DocGenMergeWarning(
-                        file=str(other.root), id=f"conflict in sdk {name}"
-                    )
+                    DocGenMergeWarning(file=other.root, id=f"conflict in sdk {name}")
                 )
         for name, service in other.services.items():
             if name not in self.services:
                 self.services[name] = service
                 warnings.append(
                     DocGenMergeWarning(
-                        file=str(other.root), id=f"conflict in service {name}"
+                        file=other.root, id=f"conflict in service {name}"
                     )
                 )
         for name, snippet in other.snippets.items():
@@ -97,7 +95,7 @@ class DocGen:
                 self.snippets[name] = snippet
                 warnings.append(
                     DocGenMergeWarning(
-                        file=str(other.root), id=f"conflict in snippet {name}"
+                        file=other.root, id=f"conflict in snippet {name}"
                     )
                 )
 
@@ -154,18 +152,20 @@ class DocGen:
             pass
 
         try:
-            with open(config / "sdks.yaml", encoding="utf-8") as file:
+            sdk_path = config / "sdks.yaml"
+            with sdk_path.open(encoding="utf-8") as file:
                 meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks("sdks.yaml", meta)
+                sdks, errs = parse_sdks(sdk_path, meta)
                 self.sdks = sdks
                 self.errors.extend(errs)
         except Exception:
             pass
 
         try:
-            with open(config / "services.yaml", encoding="utf-8") as file:
+            services_path = config / "services.yaml"
+            with services_path.open(encoding="utf-8") as file:
                 meta = yaml.safe_load(file)
-                services, service_errors = parse_services("services.yaml", meta)
+                services, service_errors = parse_services(services_path, meta)
                 self.services = services
                 self.errors.extend(service_errors)
         except Exception:
@@ -193,7 +193,7 @@ class DocGen:
             return self
         with open(path) as file:
             examples, errs = parse_examples(
-                path.name,
+                path,
                 yaml.safe_load(file),
                 self.sdks,
                 self.services,
@@ -263,7 +263,7 @@ class DocGenEncoder(json.JSONEncoder):
 
         if isinstance(obj, Path):
             # Strip out paths to prevent leaking environment data.
-            return None
+            return obj.name
 
         if isinstance(obj, MetadataErrors):
             return {"__metadata_errors__": [asdict(error) for error in obj]}

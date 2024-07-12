@@ -5,12 +5,13 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Optional, Iterator, Iterable, List, TypeVar
 
 
 @dataclass
 class MetadataError:
-    file: Optional[str] = None
+    file: Optional[Path] = None
     id: Optional[str] = None
 
     def prefix(self):
@@ -266,8 +267,8 @@ class APIMustHaveOneServiceOneAction(MetadataParseError):
 class APICannotHaveTitleFields(MetadataParseError):
     def message(self):
         return (
-            f"is an API example and defines title, title_abbrev, or synopsis. "
-            f"API examples cannot define these fields because they are generated."
+            "is an API example and defines title, title_abbrev, or synopsis. "
+            "API examples cannot define these fields because they are generated."
         )
 
 
@@ -275,8 +276,8 @@ class APICannotHaveTitleFields(MetadataParseError):
 class NonAPIMustHaveTitleFields(MetadataParseError):
     def message(self):
         return (
-            f"is not an API example and does not define title, title_abbrev, or synopsis. "
-            f"Non-API examples must define these fields."
+            "is not an API example and does not define title, title_abbrev, or synopsis. "
+            "Non-API examples must define these fields."
         )
 
 
@@ -315,9 +316,10 @@ class DuplicateExample(MetadataParseError):
 @dataclass
 class DuplicateAPIExample(MetadataError):
     svc_action: str = ""
+    duplicates: List[str] = field(default_factory=list)
 
     def message(self):
-        return f"multiple API examples found for service:action {self.svc_action}"
+        return f"multiple API examples found for service:action {self.svc_action} also in {', '.join(self.duplicates)}"
 
 
 @dataclass
@@ -331,7 +333,7 @@ class URLMissingTitle(SdkVersionError):
 @dataclass
 class ExampleMergeMismatchedId(MetadataError):
     other_id: str = ""
-    other_file: str = ""
+    other_file: Optional[Path] = None
 
     def message(self) -> str:
         return f"mismatched other ID: {self.other_id} in {self.other_file}"
@@ -347,7 +349,7 @@ class ExampleMergeMismatchedLanguage(LanguageError):
 
 @dataclass
 class ExampleMergeConflict(LanguageError):
-    other_file: str = ""
+    other_file: Optional[Path] = None
 
     def message(self) -> str:
         return f"conflict from {self.other_file}: example already exists for this language and SDK version"
