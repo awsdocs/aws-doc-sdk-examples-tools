@@ -26,12 +26,18 @@ from .snippets import Snippet
                 sdks={
                     "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
                 },
+                services={
+                    "x": Service(long="AWS X", short="X", sort="aws x", version=1)
+                },
             ),
             DocGen(
                 root=Path("/b"),
                 errors=MetadataErrors(),
                 sdks={
                     "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                },
+                services={
+                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1)
                 },
             ),
             DocGen(
@@ -40,6 +46,10 @@ from .snippets import Snippet
                 sdks={
                     "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
                     "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                },
+                services={
+                    "x": Service(long="AWS X", short="X", sort="aws x", version=1),
+                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1),
                 },
             ),
         )

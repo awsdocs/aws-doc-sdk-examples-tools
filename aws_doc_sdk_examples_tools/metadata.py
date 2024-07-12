@@ -323,8 +323,8 @@ class Example:
             guide_topic = None
 
         parsed_services = parse_services(yaml.get("services", {}), errors, services)
-        category = yaml.get("category")
-        if category is None or category == "":
+        category = yaml.get("category", "")
+        if category == "":
             category = "Api" if len(parsed_services) == 1 else "Cross"
         is_action = category == "Api"
 
@@ -400,9 +400,9 @@ def parse_services(
             # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
             if service is None:
                 service = set()
-            if isinstance(service, dict):
+            elif isinstance(service, dict):
                 service = set(service.keys())
-            if isinstance(service, set):
+            elif isinstance(service, set):
                 # Make a copy of the set for ourselves
                 service = set(service)
             services[name] = set(service)
@@ -488,7 +488,7 @@ def parse(
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
-    validation = ValidationConfig() if validation is None else validation
+    validation = validation or ValidationConfig()
     for id in yaml:
         example, example_errors = Example.from_yaml(
             yaml[id], sdks, services, blocks, validation
