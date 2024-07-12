@@ -15,6 +15,9 @@ from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
     parse,
     DocFilenames,
+    SDKVersion,
+    SDKLanguage,
+    SDKPages,
     Example,
     Url,
     Language,
@@ -154,8 +157,22 @@ def test_parse():
             "sqs": set(),
         },
         doc_filenames=DocFilenames(
-            sdk_pages=["sns_DeleteTopic_cpp_1_topic"],
-            service_page=None,
+            service_pages={
+                "sns": "https://docs.aws.amazon.com/code-library/latest/ug/sns_example_sns_DeleteTopic_section.html",
+                "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/sqs_example_sns_DeleteTopic_section.html",
+                "ses": "https://docs.aws.amazon.com/code-library/latest/ug/ses_example_sns_DeleteTopic_section.html",
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/cpp_1_sns_code_examples.html#scenarios",
+                            "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/cpp_1_sqs_code_examples.html#scenarios",
+                            "ses": "https://docs.aws.amazon.com/code-library/latest/ug/cpp_1_ses_code_examples.html#scenarios",
+                        }
+                    )
+                }
+            },
         ),
         languages={"C++": language},
     )
@@ -233,8 +250,18 @@ def test_parse_strict_titles():
             "sns": {"GoodOne"},
         },
         doc_filenames=DocFilenames(
-            sdk_pages=["cpp_1_sns_code_examples"],
-            service_page="sns_example_sns_GoodOne_section",
+            service_pages={
+                "sns": "https://docs.aws.amazon.com/code-library/latest/ug/sns_example_sns_GoodOne_section.html",
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/cpp_1_sns_code_examples.html#scenarios",
+                        }
+                    )
+                }
+            },
         ),
         languages={"C++": language},
     )
@@ -246,8 +273,18 @@ def test_parse_strict_titles():
         synopsis="scenario synopsis.",
         category="Scenarios",
         doc_filenames=DocFilenames(
-            sdk_pages=["cpp_1_sns_code_examples"],
-            service_page="sns_example_sns_GoodScenario_section",
+            service_pages={
+                "sns": "https://docs.aws.amazon.com/code-library/latest/ug/sns_example_sns_GoodScenario_section.html",
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/cpp_1_sns_code_examples.html#scenarios",
+                        }
+                    )
+                }
+            },
         ),
         services={
             "sns": {"GoodOne"},
@@ -361,10 +398,20 @@ def test_parse_cross():
         synopsis="",
         services={"ses": set(), "sns": set()},
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "cross_DeleteTopic_java_3_topic",
-            ],
-            service_page=None,
+            service_pages={
+                "sns": "https://docs.aws.amazon.com/code-library/latest/ug/sns_example_cross_DeleteTopic_section.html",
+                "ses": "https://docs.aws.amazon.com/code-library/latest/ug/ses_example_cross_DeleteTopic_section.html",
+            },
+            sdk_pages={
+                "java": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/java_3_sns_code_examples.html#scenarios",
+                            "ses": "https://docs.aws.amazon.com/code-library/latest/ug/java_3_ses_code_examples.html#scenarios",
+                        }
+                    )
+                }
+            },
         ),
         languages={"Java": language},
     )
@@ -415,10 +462,18 @@ def test_parse_curated():
         languages={"Java": language},
         services={"s3": set()},
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "java_2_s3_code_examples",
-            ],
-            service_page="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section",
+            service_pages={
+                "s3": "https://docs.aws.amazon.com/code-library/latest/ug/s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section.html",
+            },
+            sdk_pages={
+                "java": {
+                    2: SDKVersion(
+                        actions_scenarios={
+                            "s3": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_s3_code_examples.html#scenarios",
+                        }
+                    )
+                }
+            },
         ),
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
@@ -516,12 +571,36 @@ def test_verify_load_successful():
         service_main=None,
         languages=languages,
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "sns_TestExample_java_2_topic",
-                "sns_TestExample_javascript_3_topic",
-                "sns_TestExample_php_3_topic",
-            ],
-            service_page=None,
+            service_pages={
+                "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/sqs_example_sns_TestExample_section.html",
+                "sns": "https://docs.aws.amazon.com/code-library/latest/ug/sns_example_sns_TestExample_section.html",
+            },
+            sdk_pages={
+                "java": {
+                    2: SDKVersion(
+                        actions_scenarios={
+                            "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_sqs_code_examples.html#scenarios",
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/java_2_sns_code_examples.html#scenarios" 
+                        }
+                    )
+                },
+                "php": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/php_3_sqs_code_examples.html#scenarios",
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/php_3_sns_code_examples.html#scenarios" 
+                        }
+                    )
+                },
+                "javascript": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "sqs": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_sqs_code_examples.html#scenarios",
+                            "sns": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_sns_code_examples.html#scenarios" 
+                        }
+                    )
+                }
+            },
         ),
         services={"sns": set(), "sqs": set()},
     )
