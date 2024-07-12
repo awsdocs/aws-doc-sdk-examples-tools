@@ -50,10 +50,8 @@ class DocGen:
     def collect_snippets(
         self, snippets_root: Optional[Path] = None, prefix: Optional[str] = None
     ):
-        if prefix is None:
-            prefix = ""
-        if snippets_root is None:
-            snippets_root = self.root
+        prefix = prefix or ""
+        snippets_root = snippets_root or self.root
         snippets, errs = collect_snippets(snippets_root)
         collect_snippet_files(
             self.examples.values(),
@@ -139,13 +137,12 @@ class DocGen:
     ) -> "DocGen":
         self.root = root
 
-        if config is None:
-            config = Path(__file__).parent / "config"
+        config = config or Path(__file__).parent / "config"
 
         try:
             with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
                 validation = yaml.safe_load(file)
-                validation = {} if validation is None else validation
+                validation = validation or {}
                 self.validation.allow_list.update(validation.get("allow_list", []))
                 self.validation.sample_files.update(validation.get("sample_files", []))
         except Exception:

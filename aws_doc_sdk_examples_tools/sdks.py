@@ -151,8 +151,7 @@ class Sdk:
 
         versions: List[SdkVersion] = []
         sdk_versions: None | Dict[str, Any] = yaml.get("sdk")
-        if sdk_versions is None:
-            sdk_versions = {}
+        sdk_versions = sdk_versions or {}
         for version in sdk_versions:
             (sdk_version, errs) = SdkVersion.from_yaml(
                 int(version), sdk_versions[version]
