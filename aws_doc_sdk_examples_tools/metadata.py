@@ -324,8 +324,8 @@ class Example:
             guide_topic = None
 
         parsed_services = parse_services(yaml.get("services", {}), errors, services)
-        category = yaml.get("category", "")
-        if category == "":
+        category = yaml.get("category")
+        if category is None or category == "":
             category = "Api" if len(parsed_services) == 1 else "Cross"
         is_action = category == "Api"
 
@@ -401,9 +401,9 @@ def parse_services(
             # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
             if service is None:
                 service = set()
-            elif isinstance(service, dict):
+            if isinstance(service, dict):
                 service = set(service.keys())
-            elif isinstance(service, set):
+            if isinstance(service, set):
                 # Make a copy of the set for ourselves
                 service = set(service)
             services[name] = set(service)
@@ -489,7 +489,7 @@ def parse(
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
-    validation = validation or ValidationConfig()
+    validation = ValidationConfig() if validation is None else validation
     for id in yaml:
         example, example_errors = Example.from_yaml(
             yaml[id], sdks, services, blocks, validation
@@ -526,11 +526,10 @@ def validate_no_duplicate_api_examples(
                 for action in actions:
                     svc_action_map[f"{service}:{action}"].append(example.id)
         if example.title_abbrev:
-            for language in example.languages.values():
-                for version in language.versions:
-                    title_abbr_map[example.title_abbrev][
-                        f"{language.name}:{version.sdk_version}"
-                    ].append(example.id)
+            for service in example.services.keys():
+                title_abbr_map[example.title_abbrev][
+                    f"{service}:{example.category}"
+                ].append(example.id)
     for svc_action, ex_items in svc_action_map.items():
         if len(ex_items) > 1:
             errors.append(

@@ -862,23 +862,27 @@ def test_no_duplicate_title_abbrev():
         examples={
             "a": Example(
                 id="a",
-                file="a",
+                file=Path("a"),
                 title_abbrev="abbr",
+                category="cat",
                 languages={
                     "java": Language(
                         name="java", property="java", versions=[Version(sdk_version=1)]
                     )
                 },
+                services={"svc": set()},
             ),
             "b": Example(
                 id="b",
-                file="b",
+                file=Path("b"),
                 title_abbrev="abbr",
+                category="cat",
                 languages={
                     "java": Language(
                         name="java", property="java", versions=[Version(sdk_version=1)]
                     )
                 },
+                services={"svc": set(), "cvs": set()},
             ),
         },
     )
@@ -886,7 +890,7 @@ def test_no_duplicate_title_abbrev():
 
     expected = [
         metadata_errors.DuplicateTitleAbbrev(
-            id="a, b", title_abbrev="abbr", language="java:1"
+            id="a, b", title_abbrev="abbr", language="svc:cat"
         )
     ]
 
