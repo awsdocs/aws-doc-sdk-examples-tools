@@ -44,6 +44,14 @@ the following issues.
 A count of errors found is returned. When CI receives a non-zero return code,
 it treats the checks as failed and displays a message in the pull request.
 
+### Updating validations
+
+The above configuration tracks the `main` branch directly. To follow more stable releases, use the most recent release tag in the github action.
+
+```
+uses: awsdocs/aws-doc-sdk-examples-tools@v2024-07-11-A
+```
+
 ### Running during development
 
 ```
@@ -63,6 +71,18 @@ Some validation options can be extended by creating `.doc_gen/validation.yaml`.
 
 - `allow_list`: The 40-character check is _very_ sensitive. To allow certain patterns, add them as a string to the `allow_list` key, which will be loaded as a set of strings to allow.
 - `sample_files`: Sample files are only allowed with certain names. To allow additional sample files, add their file name (with extension, but not path) to this list.
+
+## New Releases
+
+1. When making a release, find the most recent commit sha (or sha that will be tagged for the release).
+2. Update https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml to that tag.
+  * Also add that commit sha to the [validation config](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
+3. Create a PR in aws-doc-sdk-examples (do not submit it) to run tests.
+4. When tests in the main repo are passing, create a tag in this -tools repo at that sha with the format `YYYY-MM-DD-A`, where `YYYY-MM-DD` are the year, month, and day of the release and -A is -A, -B, -C etc for multiple releases within a day.
+5. Push that tag.
+6. Update the PR from 2 with that tag, remove the validation sha exception, and push that for draft.
+7. Create a release using the automated "Create release from tag" button.
+8. Perform internal update process.
 
 ## Security
 
