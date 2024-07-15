@@ -15,7 +15,7 @@ class MetadataError:
     id: Optional[str] = None
 
     def prefix(self):
-        prefix = f"In {self.file} at {self.id},"
+        prefix = f"In {self.file or 'several'} at {self.id},"
         return prefix
 
     def message(self) -> str:
@@ -320,6 +320,15 @@ class DuplicateAPIExample(MetadataError):
 
     def message(self):
         return f"multiple API examples found for service:action {self.svc_action} also in {', '.join(self.duplicates)}"
+
+
+@dataclass
+class DuplicateTitleAbbrev(MetadataError):
+    title_abbrev: str = ""
+    language: str = ""
+
+    def message(self):
+        return f"multiple examples found with conflicting title_abbrev: {self.title_abbrev} in {self.language}"
 
 
 @dataclass
