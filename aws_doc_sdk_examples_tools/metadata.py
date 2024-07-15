@@ -483,9 +483,9 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
     }
 
     if example.file is not None:
-      is_cross = example.file.match('cross_*')
+        is_cross = example.file.match("cross_*")
     else:
-      is_cross = False
+        is_cross = False
 
     sdk_pages: SDKPages = {}
 

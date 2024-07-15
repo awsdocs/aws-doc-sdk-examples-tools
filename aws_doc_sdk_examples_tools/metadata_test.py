@@ -156,17 +156,31 @@ def test_parse():
         },
         doc_filenames=DocFilenames(
             service_pages={
-                "medical-imaging": make_doc_link(stub="medical-imaging_example_medical-imaging_CreateDatastore_section"),
-                "sqs": make_doc_link(stub="sqs_example_medical-imaging_CreateDatastore_section"),
-                "api-gateway": make_doc_link(stub="api-gateway_example_medical-imaging_CreateDatastore_section"),
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_CreateDatastore_section"
+                ),
+                "sqs": make_doc_link(
+                    stub="sqs_example_medical-imaging_CreateDatastore_section"
+                ),
+                "api-gateway": make_doc_link(
+                    stub="api-gateway_example_medical-imaging_CreateDatastore_section"
+                ),
             },
             sdk_pages={
                 "cpp": {
                     1: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="cpp_1_medical-imaging_code_examples", anchor="scenarios"),
-                            "sqs": make_doc_link(stub="cpp_1_sqs_code_examples", anchor="scenarios"),
-                            "api-gateway": make_doc_link(stub="cpp_1_api-gateway_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                            "sqs": make_doc_link(
+                                stub="cpp_1_sqs_code_examples", anchor="scenarios"
+                            ),
+                            "api-gateway": make_doc_link(
+                                stub="cpp_1_api-gateway_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 }
@@ -249,13 +263,18 @@ def test_parse_strict_titles():
         },
         doc_filenames=DocFilenames(
             service_pages={
-                "medical-imaging": make_doc_link(stub="medical-imaging_example_medical-imaging_GoodOne_section"),
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_GoodOne_section"
+                ),
             },
             sdk_pages={
                 "cpp": {
                     1: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="cpp_1_medical-imaging_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 }
@@ -272,13 +291,18 @@ def test_parse_strict_titles():
         category="Scenarios",
         doc_filenames=DocFilenames(
             service_pages={
-                "medical-imaging": make_doc_link(stub="medical-imaging_example_medical-imaging_GoodScenario_section"),
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_GoodScenario_section"
+                ),
             },
             sdk_pages={
                 "cpp": {
                     1: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="cpp_1_medical-imaging_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 }
@@ -397,15 +421,25 @@ def test_parse_cross():
         services={"api-gateway": set(), "medical-imaging": set()},
         doc_filenames=DocFilenames(
             service_pages={
-                "medical-imaging": make_doc_link(stub="medical-imaging_example_cross_DeleteTopic_section"),
-                "api-gateway": make_doc_link(stub="api-gateway_example_cross_DeleteTopic_section"),
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_cross_DeleteTopic_section"
+                ),
+                "api-gateway": make_doc_link(
+                    stub="api-gateway_example_cross_DeleteTopic_section"
+                ),
             },
             sdk_pages={
                 "java": {
                     3: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="java_3_medical-imaging_code_examples", anchor="scenarios"),
-                            "api-gateway": make_doc_link(stub="java_3_api-gateway_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="java_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                            "api-gateway": make_doc_link(
+                                stub="java_3_api-gateway_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 }
@@ -461,13 +495,17 @@ def test_parse_curated():
         services={"s3": set()},
         doc_filenames=DocFilenames(
             service_pages={
-                "s3": make_doc_link(stub="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section"),
+                "s3": make_doc_link(
+                    stub="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section"
+                ),
             },
             sdk_pages={
                 "java": {
                     2: SDKVersion(
                         actions_scenarios={
-                            "s3": make_doc_link(stub="java_2_s3_code_examples", anchor="scenarios"),
+                            "s3": make_doc_link(
+                                stub="java_2_s3_code_examples", anchor="scenarios"
+                            ),
                         }
                     )
                 }
@@ -516,7 +554,9 @@ def test_verify_load_successful():
                     Excerpt(
                         description="Descriptive",
                         snippet_files=[],
-                        snippet_tags=["medical-imaging.JavaScript.datastore.createDatastoreV3"],
+                        snippet_tags=[
+                            "medical-imaging.JavaScript.datastore.createDatastoreV3"
+                        ],
                         genai="some",
                     )
                 ],
@@ -570,27 +610,38 @@ def test_verify_load_successful():
         languages=languages,
         doc_filenames=DocFilenames(
             service_pages={
-                "medical-imaging": make_doc_link(stub="medical-imaging_example_medical-imaging_TestExample_section"),
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_TestExample_section"
+                ),
             },
             sdk_pages={
                 "java": {
                     2: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="java_2_medical-imaging_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="java_2_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 },
                 "php": {
                     3: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="php_3_medical-imaging_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="php_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 },
                 "javascript": {
                     3: SDKVersion(
                         actions_scenarios={
-                            "medical-imaging": make_doc_link(stub="javascript_3_medical-imaging_code_examples", anchor="scenarios"),
+                            "medical-imaging": make_doc_link(
+                                stub="javascript_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
                         }
                     )
                 },
@@ -926,11 +977,13 @@ def test_merge_conflict(a: Example, b: Example, d: Example):
         id=a.id, file=a.file, language="a", sdk_version=1, other_file=Path("file_b")
     )
 
+
 def make_doc_link(stub: str, anchor: str = ""):
     base_url = "https://docs.aws.amazon.com/code-library/latest/ug"
     file_ext = "html"
     anchor = f"#{anchor}" if anchor else ""
     return f"{base_url}/{stub}.{file_ext}{anchor}"
+
 
 def test_no_duplicate_title_abbrev():
     errors = MetadataErrors()
