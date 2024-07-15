@@ -1,4 +1,4 @@
-sns_TestExample:
+medical-imaging_TestExample:
   title: Check whether a phone number is opted out using an &AWS; SDK
   title_abbrev: Check whether a phone number is opted out
   synopsis: check whether a phone number is opted out using some of the &AWS; SDKs that are available.
@@ -13,22 +13,23 @@ sns_TestExample:
     Java:
       versions:
         - sdk_version: 2
-          github: javav2/example_code/sns
+          github: javav2/example_code/medical-imaging
           block_content: test block
     JavaScript:
       versions:
         - sdk_version: 3
+          github_note_at_bottom: true
           excerpts:
             - description: Descriptive
               genai: some
               snippet_tags:
-                - javascript.snippet.tag
+                - medical-imaging.JavaScript.datastore.createDatastoreV3
           add_services:
             s3:
     PHP:
       versions:
         - sdk_version: 3
-          github: php/example_code/sns
+          github: php/example_code/medical-imaging
           sdkguide: php/sdkguide/link
           excerpts:
             - description: Optional description.
@@ -36,5 +37,4 @@ sns_TestExample:
                 - php.snippet.tag.1
                 - php.snippet.tag.2
   services:
-    sns:
-    sqs:
+    medical-imaging:

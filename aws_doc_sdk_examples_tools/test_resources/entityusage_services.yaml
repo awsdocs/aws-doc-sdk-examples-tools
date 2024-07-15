@@ -1,7 +1,7 @@
-sns:
-  long: SNSlong
-  short: SNS
+medical-imaging:
+  long: AHIlong
+  short: AHI 
   expanded:
-    long: Amazon Simple Notification Service (Amazon SNS)
-    short: Amazon SNS
-  sort: SNS
+    long: AWS HealthImaging
+    short: HealthImaging
+  sort: HealthImaging 

@@ -13,15 +13,14 @@ s3:
   guide:
     subtitle: User Guide
     url: AmazonS3/latest/userguide/Welcome.html
-sns:
-  short: "&SNS;"
-  long: "&SNSlong;"
-  expanded: 
-    long: Amazon Simple Notification Service (Amazon SNS)
-    short: Amazon SNS
-  sort: "SNS"
-  version: sns-2010-03-31
-  bundle: sqs
+medical-imaging:
+  short: "&AHI;"
+  long: "&AHIlong;"
+  expanded:
+    long: AWS HealthImaging
+    short: HealthImaging
+  sort: "HealthImaging"
+  version: medical-imaging-2023-07-19
 sqs:
   short: "&SQS;"
   long: "&SQSlong;"
