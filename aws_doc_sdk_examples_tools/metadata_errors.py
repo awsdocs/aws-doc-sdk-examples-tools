@@ -15,7 +15,7 @@ class MetadataError:
     id: Optional[str] = None
 
     def prefix(self):
-        prefix = f"In {self.file} at {self.id},"
+        prefix = f"In {self.file or 'several'} at {self.id},"
         return prefix
 
     def message(self) -> str:
@@ -328,7 +328,7 @@ class DuplicateTitleAbbrev(MetadataError):
     language: str = ""
 
     def message(self):
-        return f"multiple API examples found with conflicting title_abbrev: {self.title_abbrev} in {self.language}"
+        return f"multiple examples found with conflicting title_abbrev: {self.title_abbrev} in {self.language}"
 
 
 @dataclass
