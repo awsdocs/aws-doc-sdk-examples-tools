@@ -234,14 +234,6 @@ class Language:
 
 
 @dataclass
-class DocFilenames:
-    # Names that match Code Library entries.
-    # e.g. https://docs.aws.amazon.com/code-library/latest/ug/{service_page or sdk_pages[i]}.html
-    service_page: Optional[str] = None
-    sdk_pages: Optional[List[str]] = None
-
-
-@dataclass
 class Example:
     id: str
     file: Optional[Path]
@@ -413,29 +405,109 @@ def parse_services(
 ALLOWED = ["&AWS;", "&AWS-Region;", "&AWS-Regions;" "AWSJavaScriptSDK"]
 
 
+@dataclass
+class CrossServicePage:
+    cross: str
+
+
+@dataclass
+class SDKVersion:
+    """
+    A mapping of example type to a dictionary of service id's
+    and their documentation URL. Cross service example have a
+    special service id named `cross`.
+    """
+
+    actions_scenarios: Optional[Dict[str, str]] = None
+    cross_service: Optional[CrossServicePage] = None
+
+
+SDKLanguage = Dict[int, SDKVersion]
+SDKPages = Dict[str, SDKLanguage]
+
+ServicePages = Dict[str, str]
+
+
+@dataclass
+class DocFilenames:
+    """
+    Names that match the one or more Code Library entries for a single example.
+
+    Example structure:
+    ```
+    transcribe_app.doc_filenames == {
+        "service_pages": {
+            "cognito-identity": "https://docs.aws.amazon.com/code-library/latest/ug/cognito-identity_example_cross_TranscriptionApp_section.html",
+            "transcribe": "https://docs.aws.amazon.com/code-library/latest/ug/transcribe_example_cross_TranscriptionApp_section.html",
+        },
+        "sdk_pages": {
+            "JavaScript": {
+                3: {
+                    "cross_service": {
+                        "cross": "https://docs.aws.amazon.com/code-library/latest/ug/cross_TranscriptionStreamingApp_javascript_3_topic.html"
+                    }
+                }
+            }
+        },
+    }
+
+    # A multi service scenario
+    resilient_service.doc_file_names == {
+        "service_pages": {
+            "auto-scaling": "https://docs.aws.amazon.com/code-library/latest/ug/auto-scaling_example_cross_ResilientService_section.html",
+            "ec2": "https://docs.aws.amazon.com/code-library/latest/ug/ec2_example_cross_ResilientService_section.html",
+        },
+        "sdk_pages": {
+            "JavaScript": {
+                3: {
+                    "actions_scenarios": {
+                        "auto-scaling": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_auto-scaling_code_examples.html",
+                        "ec2": "https://docs.aws.amazon.com/code-library/latest/ug/javascript_3_ec2_code_examples.html"
+                    }
+                }
+            },
+        },
+    }
+    ```
+    """
+
+    service_pages: Optional[ServicePages] = None
+    sdk_pages: Optional[SDKPages] = None
+
+
 def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilenames]:
-    # API examples
-    if len(example.services) == 1:
-        service_id = next(iter(example.services))
-        return DocFilenames(
-            service_page=f"{service_id}_example_{example_id}_section",
-            sdk_pages=[
-                f"{language.property}_{language_ver.sdk_version}_{service_id}_code_examples"
-                for _, language in example.languages.items()
-                for language_ver in language.versions
-            ],
-        )
-    # Multi-service examples
-    elif len(example.services) > 1:
-        return DocFilenames(
-            sdk_pages=[
-                f"{example_id}_{language.property}_{language_ver.sdk_version}_topic"
-                for _, language in example.languages.items()
-                for language_ver in language.versions
-            ]
-        )
+    base_url = "https://docs.aws.amazon.com/code-library/latest/ug"
+    service_pages = {
+        service_id: f"{base_url}/{service_id}_example_{example_id}_section.html"
+        for service_id in example.services
+    }
+
+    if example.file is not None:
+        is_cross = example.file.match("cross_*")
     else:
-        return None
+        is_cross = False
+
+    sdk_pages: SDKPages = {}
+
+    for language in example.languages.values():
+        sdk_pages[language.property] = {}
+        for version in language.versions:
+            if is_cross:
+                sdk_pages[language.property][version.sdk_version] = SDKVersion(
+                    cross_service=CrossServicePage(
+                        cross=f"{base_url}/{example_id}_{language.property}_{version.sdk_version}_topic.html"
+                    )
+                )
+            else:
+                anchor = "actions" if example.category == "Actions" else "scenarios"
+                sdk_pages[language.property][version.sdk_version] = SDKVersion(
+                    actions_scenarios={
+                        service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"
+                        for service_id in example.services
+                    }
+                )
+
+    return DocFilenames(service_pages, sdk_pages)
 
 
 def get_with_valid_entities(

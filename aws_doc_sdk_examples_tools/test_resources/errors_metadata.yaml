@@ -7,12 +7,12 @@ sqs_WrongServiceSlug:
     Perl:
       versions:
         - sdk_version: 1
-          github: perl/example_code/sns
+          github: perl/example_code/medical-imaging
           sdkguide: https://docs.aws.amazon.com/absolute/link-to-my-guide
           add_services:
             sqs:
   services:
-    sns:
+    medical-imaging:
 sqs_TestExample:
   title: Test title
   title_abbrev: Test title abbrev
@@ -22,9 +22,9 @@ sqs_TestExample:
     Java:
       versions:
   services:
-    sns:
+    medical-imaging:
     sqs:
-sns_TestExample:
+medical-imaging_TestExample:
   title: Test title
   title_abbrev: Test title abbrev
   synopsis: |-
@@ -35,8 +35,8 @@ sns_TestExample:
         - sdk_version: 2
           sdkguide: http://sdk/guide/url
   services:
-    sns: { TestAction }
-sns_TestExample2:
+    medical-imaging: { TestAction }
+medical-imaging_TestExample2:
   title: Test title
   title_abbrev: Test title abbrev
   synopsis: |-
@@ -52,7 +52,7 @@ sns_TestExample2:
                 - this.snippet.does.not.exist
   services:
     garbled: { TestAction }
-    sns: { TestAction }
+    medical-imaging: { TestAction }
 cross_TestExample_Versions:
   title: Test title
   title_abbrev: Test title abbrev
@@ -71,7 +71,7 @@ cross_TestExample_Versions:
           add_services:
             sqs:
   services:
-    sns:
+    medical-imaging:
 cross_TestExample_Missing:
   title: Test title
   title_abbrev: Test title abbrev
@@ -83,9 +83,9 @@ cross_TestExample_Missing:
         - sdk_version: 2
           block_content: missing_block_content.xml
   services:
-    sns:
+    medical-imaging:
     sqs:
-snsBadFormat:
+medical-imagingBadFormat:
   title: Test title
   title_abbrev: Test title abbrev
   synopsis: |-
@@ -96,4 +96,4 @@ snsBadFormat:
         - sdk_version: 2
           github: github/link
   services:
-    sns: { TestAction }
+    medical-imaging: { TestAction }

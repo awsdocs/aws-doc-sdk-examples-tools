@@ -8,13 +8,14 @@ This script contains tests that verify the examples loader finds appropriate err
 import pytest
 import yaml
 from pathlib import Path
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Optional
 
 from . import metadata_errors
 from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
     parse,
     DocFilenames,
+    SDKVersion,
     Example,
     Url,
     Language,
@@ -41,22 +42,22 @@ def load(
 
 
 SERVICES = {
-    "ses": Service(
-        long="&SESlong;",
-        short="&SES;",
+    "api-gateway": Service(
+        long="&ABPlong;",
+        short="&ABP;",
         expanded=ServiceExpanded(
-            long="Amazon Simple Email Service (Amazon SES)", short="Amazon SES"
+            long="Amazon API Gateway (API Gateway)", short="API Gateway"
         ),
-        sort="ses",
+        sort="api-gateway",
         version=1,
     ),
-    "sns": Service(
-        long="&SNSlong;",
-        short="&SNS;",
+    "medical-imaging": Service(
+        long="&AHIlong;",
+        short="&AHI;",
         expanded=ServiceExpanded(
-            long="Amazon Simple Notification Service (Amazon SNS)", short="Amazon SNS"
+            long="AWS HealthImaging (HealthImaging)", short="HealthImaging"
         ),
-        sort="sns",
+        sort="HealthImaging",
         version=1,
     ),
     "sqs": Service(
@@ -100,22 +101,22 @@ DOC_GEN = DocGen(
 )
 
 GOOD_SINGLE_CPP = """
-sns_DeleteTopic:
+medical-imaging_CreateDatastore:
    languages:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/sns
+           github: cpp/example_code/medical-imaging
            sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
                  - test.excerpt
    services:
-     sns:
+     medical-imaging:
        ? Operation1
        ? Operation2
-     ses: { Operation1, Operation2 }
+     api-gateway: { Operation1, Operation2 }
      sqs:
 """
 
@@ -133,7 +134,7 @@ def test_parse():
         versions=[
             Version(
                 sdk_version=1,
-                github="cpp/example_code/sns",
+                github="cpp/example_code/medical-imaging",
                 sdkguide="sdkguide/link",
                 excerpts=[
                     Excerpt(
@@ -146,16 +147,44 @@ def test_parse():
     )
     example = Example(
         file=Path("test_cpp.yaml"),
-        id="sns_DeleteTopic",
+        id="medical-imaging_CreateDatastore",
         category="Cross",
         services={
-            "sns": set(["Operation1", "Operation2"]),
-            "ses": set(["Operation1", "Operation2"]),
+            "medical-imaging": set(["Operation1", "Operation2"]),
+            "api-gateway": set(["Operation1", "Operation2"]),
             "sqs": set(),
         },
         doc_filenames=DocFilenames(
-            sdk_pages=["sns_DeleteTopic_cpp_1_topic"],
-            service_page=None,
+            service_pages={
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_CreateDatastore_section"
+                ),
+                "sqs": make_doc_link(
+                    stub="sqs_example_medical-imaging_CreateDatastore_section"
+                ),
+                "api-gateway": make_doc_link(
+                    stub="api-gateway_example_medical-imaging_CreateDatastore_section"
+                ),
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                            "sqs": make_doc_link(
+                                stub="cpp_1_sqs_code_examples", anchor="scenarios"
+                            ),
+                            "api-gateway": make_doc_link(
+                                stub="cpp_1_api-gateway_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                }
+            },
         ),
         languages={"C++": language},
     )
@@ -163,20 +192,20 @@ def test_parse():
 
 
 STRICT_TITLE_META = """
-sns_GoodOne:
+medical-imaging_GoodOne:
    languages:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/sns
+           github: cpp/example_code/medical-imaging
            sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
                  - test.excerpt
    services:
-     sns: {GoodOne}
-sns_GoodScenario:
+     medical-imaging: {GoodOne}
+medical-imaging_GoodScenario:
    title: Scenario title
    title_abbrev: Scenario title abbrev
    synopsis: scenario synopsis.
@@ -185,14 +214,14 @@ sns_GoodScenario:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/sns
+           github: cpp/example_code/medical-imaging
            sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
                  - test.excerpt
    services:
-     sns: {GoodOne}
+     medical-imaging: {GoodOne}
 """
 
 
@@ -214,7 +243,7 @@ def test_parse_strict_titles():
         versions=[
             Version(
                 sdk_version=1,
-                github="cpp/example_code/sns",
+                github="cpp/example_code/medical-imaging",
                 sdkguide="sdkguide/link",
                 excerpts=[
                     Excerpt(
@@ -227,30 +256,60 @@ def test_parse_strict_titles():
     )
     example_action = Example(
         file=Path("test_cpp.yaml"),
-        id="sns_GoodOne",
+        id="medical-imaging_GoodOne",
         category="Api",
         services={
-            "sns": {"GoodOne"},
+            "medical-imaging": {"GoodOne"},
         },
         doc_filenames=DocFilenames(
-            sdk_pages=["cpp_1_sns_code_examples"],
-            service_page="sns_example_sns_GoodOne_section",
+            service_pages={
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_GoodOne_section"
+                ),
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                }
+            },
         ),
         languages={"C++": language},
     )
     example_scenario = Example(
         file=Path("test_cpp.yaml"),
-        id="sns_GoodScenario",
+        id="medical-imaging_GoodScenario",
         title="Scenario title",
         title_abbrev="Scenario title abbrev",
         synopsis="scenario synopsis.",
         category="Scenarios",
         doc_filenames=DocFilenames(
-            sdk_pages=["cpp_1_sns_code_examples"],
-            service_page="sns_example_sns_GoodScenario_section",
+            service_pages={
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_GoodScenario_section"
+                ),
+            },
+            sdk_pages={
+                "cpp": {
+                    1: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="cpp_1_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                }
+            },
         ),
         services={
-            "sns": {"GoodOne"},
+            "medical-imaging": {"GoodOne"},
         },
         languages={"C++": language},
     )
@@ -259,7 +318,7 @@ def test_parse_strict_titles():
 
 
 STRICT_TITLE_ERRORS = """
-sns_BadOne:
+medical-imaging_BadOne:
    title: Disallowed title
    title_abbrev: Disallowed title abbrev
    synopsis: disallowed synopsis. 
@@ -267,28 +326,28 @@ sns_BadOne:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/sns
+           github: cpp/example_code/medical-imaging
            sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
                  - test.excerpt
    services:
-     sns: {Different}
-sns_BadScenario:
+     medical-imaging: {Different}
+medical-imaging_BadScenario:
    category: Scenarios
    languages:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/sns
+           github: cpp/example_code/medical-imaging
            sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
                  - test.excerpt
    services:
-     sns: {BadOne}
+     medical-imaging: {BadOne}
 """
 
 
@@ -305,15 +364,15 @@ def test_parse_strict_title_errors():
     expected = [
         metadata_errors.APICannotHaveTitleFields(
             file=Path("test_cpp.yaml"),
-            id="sns_BadOne",
+            id="medical-imaging_BadOne",
         ),
         metadata_errors.ActionNameFormat(
             file=Path("test_cpp.yaml"),
-            id="sns_BadOne",
+            id="medical-imaging_BadOne",
         ),
         metadata_errors.NonAPIMustHaveTitleFields(
             file=Path("test_cpp.yaml"),
-            id="sns_BadScenario",
+            id="medical-imaging_BadScenario",
         ),
     ]
     assert expected == [*errors]
@@ -330,8 +389,8 @@ cross_DeleteTopic:
          - sdk_version: 3
            block_content: cross_DeleteTopic_block.xml
   services:
-     sns:
-     ses:
+     medical-imaging:
+     api-gateway:
 """
 
 
@@ -359,12 +418,32 @@ def test_parse_cross():
         title="Delete Topic",
         title_abbrev="delete topic",
         synopsis="",
-        services={"ses": set(), "sns": set()},
+        services={"api-gateway": set(), "medical-imaging": set()},
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "cross_DeleteTopic_java_3_topic",
-            ],
-            service_page=None,
+            service_pages={
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_cross_DeleteTopic_section"
+                ),
+                "api-gateway": make_doc_link(
+                    stub="api-gateway_example_cross_DeleteTopic_section"
+                ),
+            },
+            sdk_pages={
+                "java": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="java_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                            "api-gateway": make_doc_link(
+                                stub="java_3_api-gateway_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                }
+            },
         ),
         languages={"Java": language},
     )
@@ -415,10 +494,22 @@ def test_parse_curated():
         languages={"Java": language},
         services={"s3": set()},
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "java_2_s3_code_examples",
-            ],
-            service_page="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section",
+            service_pages={
+                "s3": make_doc_link(
+                    stub="s3_example_s3_autogluon_tabular_with_sagemaker_pipelines_section"
+                ),
+            },
+            sdk_pages={
+                "java": {
+                    2: SDKVersion(
+                        actions_scenarios={
+                            "s3": make_doc_link(
+                                stub="java_2_s3_code_examples", anchor="scenarios"
+                            ),
+                        }
+                    )
+                }
+            },
         ),
         synopsis="use AutoGluon with SageMaker Pipelines.",
     )
@@ -440,7 +531,7 @@ def test_verify_load_successful():
         versions=[
             Version(
                 sdk_version=2,
-                github="javav2/example_code/sns",
+                github="javav2/example_code/medical-imaging",
                 block_content="test block",
                 excerpts=[],
                 add_services={},
@@ -463,7 +554,9 @@ def test_verify_load_successful():
                     Excerpt(
                         description="Descriptive",
                         snippet_files=[],
-                        snippet_tags=["javascript.snippet.tag"],
+                        snippet_tags=[
+                            "medical-imaging.JavaScript.datastore.createDatastoreV3"
+                        ],
                         genai="some",
                     )
                 ],
@@ -479,7 +572,7 @@ def test_verify_load_successful():
         versions=[
             Version(
                 sdk_version=3,
-                github="php/example_code/sns",
+                github="php/example_code/medical-imaging",
                 sdkguide="php/sdkguide/link",
                 block_content=None,
                 excerpts=[
@@ -506,7 +599,7 @@ def test_verify_load_successful():
 
     example = Example(
         file=Path(__file__).parent / "test_resources/valid_metadata.yaml",
-        id="sns_TestExample",
+        id="medical-imaging_TestExample",
         title="Check whether a phone number is opted out using an &AWS; SDK",
         title_abbrev="Check whether a phone number is opted out",
         synopsis="check whether a phone number is opted out using some of the &AWS; SDKs that are available.",
@@ -516,14 +609,45 @@ def test_verify_load_successful():
         service_main=None,
         languages=languages,
         doc_filenames=DocFilenames(
-            sdk_pages=[
-                "sns_TestExample_java_2_topic",
-                "sns_TestExample_javascript_3_topic",
-                "sns_TestExample_php_3_topic",
-            ],
-            service_page=None,
+            service_pages={
+                "medical-imaging": make_doc_link(
+                    stub="medical-imaging_example_medical-imaging_TestExample_section"
+                ),
+            },
+            sdk_pages={
+                "java": {
+                    2: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="java_2_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                },
+                "php": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="php_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                },
+                "javascript": {
+                    3: SDKVersion(
+                        actions_scenarios={
+                            "medical-imaging": make_doc_link(
+                                stub="javascript_3_medical-imaging_code_examples",
+                                anchor="scenarios",
+                            ),
+                        }
+                    )
+                },
+            },
         ),
-        services={"sns": set(), "sqs": set()},
+        services={"medical-imaging": set()},
     )
     assert actual[0] == example
 
@@ -544,12 +668,12 @@ FORMATTER_METADATA_PATH = (
                 metadata_errors.MissingField(
                     field="languages",
                     file=EMPTY_METADATA_PATH,
-                    id="sns_EmptyExample",
+                    id="medical-imaging_EmptyExample",
                 ),
                 metadata_errors.ServiceNameFormat(
                     file=EMPTY_METADATA_PATH,
-                    id="sns_EmptyExample",
-                    svc="sns",
+                    id="medical-imaging_EmptyExample",
+                    svc="medical-imaging",
                     svcs=[],
                 ),
             ],
@@ -590,7 +714,7 @@ FORMATTER_METADATA_PATH = (
                     file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     svc="sqs",
-                    svcs=["sns"],
+                    svcs=["medical-imaging"],
                 ),
                 metadata_errors.MissingField(
                     field="versions",
@@ -600,7 +724,7 @@ FORMATTER_METADATA_PATH = (
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
                     file=ERRORS_METADATA_PATH,
-                    id="sns_TestExample",
+                    id="medical-imaging_TestExample",
                     language="Java",
                     sdk_version=2,
                 ),
@@ -613,19 +737,19 @@ FORMATTER_METADATA_PATH = (
                 # ),
                 metadata_errors.UnknownService(
                     file=ERRORS_METADATA_PATH,
-                    id="sns_TestExample2",
+                    id="medical-imaging_TestExample2",
                     service="garbled",
                 ),
                 metadata_errors.InvalidGithubLink(
                     file=ERRORS_METADATA_PATH,
-                    id="sns_TestExample2",
+                    id="medical-imaging_TestExample2",
                     language="Java",
                     sdk_version=2,
                     link="github/link/to/README.md",
                 ),
                 metadata_errors.FieldError(
                     file=ERRORS_METADATA_PATH,
-                    id="sns_TestExample2",
+                    id="medical-imaging_TestExample2",
                     field="genai",
                     value="so much",
                     language="Java",
@@ -646,13 +770,13 @@ FORMATTER_METADATA_PATH = (
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
                     file=ERRORS_METADATA_PATH,
-                    id="snsBadFormat",
+                    id="medical-imagingBadFormat",
                     language="Java",
                     sdk_version=2,
                 ),
                 metadata_errors.NameFormat(
                     file=ERRORS_METADATA_PATH,
-                    id="snsBadFormat",
+                    id="medical-imagingBadFormat",
                 ),
             ],
         ),
@@ -852,6 +976,13 @@ def test_merge_conflict(a: Example, b: Example, d: Example):
     assert errors[0] == ExampleMergeConflict(
         id=a.id, file=a.file, language="a", sdk_version=1, other_file=Path("file_b")
     )
+
+
+def make_doc_link(stub: str, anchor: str = ""):
+    base_url = "https://docs.aws.amazon.com/code-library/latest/ug"
+    file_ext = "html"
+    anchor = f"#{anchor}" if anchor else ""
+    return f"{base_url}/{stub}.{file_ext}{anchor}"
 
 
 def test_no_duplicate_title_abbrev():

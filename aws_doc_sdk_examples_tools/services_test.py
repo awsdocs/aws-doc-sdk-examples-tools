@@ -28,7 +28,7 @@ def test_empty_services():
     assert [*errs] == [
         metadata_errors.MissingServiceBody(
             file=Path(__file__).parent / "test_resources/empty_services.yaml",
-            id="sns",
+            id="medical-imaging",
         )
     ]
 
@@ -38,24 +38,24 @@ def test_services_entity_usage():
     assert [*errs] == [
         metadata_errors.MappingMustBeEntity(
             file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
-            id="sns",
+            id="medical-imaging",
             field="long",
-            value="SNSlong",
+            value="AHIlong",
         ),
         metadata_errors.MappingMustBeEntity(
             file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
-            id="sns",
+            id="medical-imaging",
             field="short",
-            value="SNS",
+            value="AHI",
         ),
         metadata_errors.MissingField(
             file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
-            id="sns",
+            id="medical-imaging",
             field="version",
         ),
         metadata_errors.MissingField(
             file=Path(__file__).parent / "test_resources/entityusage_services.yaml",
-            id="sns",
+            id="medical-imaging",
             field="api_ref",
         ),
     ]
@@ -80,16 +80,15 @@ def test_services():
                 url="AmazonS3/latest/userguide/Welcome.html",
             ),
         ),
-        "sns": Service(
-            short="&SNS;",
-            long="&SNSlong;",
+        "medical-imaging": Service(
+            short="&AHI;",
+            long="&AHIlong;",
             expanded=ServiceExpanded(
-                long="Amazon Simple Notification Service (Amazon SNS)",
-                short="Amazon SNS",
+                long="AWS HealthImaging",
+                short="HealthImaging",
             ),
-            sort="SNS",
-            version="sns-2010-03-31",
-            bundle="sqs",
+            sort="HealthImaging",
+            version="medical-imaging-2023-07-19",
         ),
         "sqs": Service(
             short="&SQS;",
