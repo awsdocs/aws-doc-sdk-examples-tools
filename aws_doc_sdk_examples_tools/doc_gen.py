@@ -4,7 +4,9 @@
 import yaml
 import json
 
+from collections import defaultdict
 from dataclasses import dataclass, field, is_dataclass, asdict
+from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set
 
@@ -236,6 +238,18 @@ class DocGen:
         )
 
     def stats(self):
+        values = self.examples.values()
+        initial = defaultdict(int)
+
+        def count_genai(d: Dict[str, int], e: Example):
+            for lang in e.languages.values():
+                for version in lang.versions:
+                    for excerpt in version.excerpts:
+                        d[excerpt.genai] += 1
+            return d
+
+        genai = reduce(count_genai, values, initial)
+
         return {
             "sdks": len(self.sdks),
             "services": len(self.services),
@@ -245,6 +259,7 @@ class DocGen:
                 for e in self.examples.values()
             ),
             "snippets": len(self.snippets) + len(self.snippet_files),
+            "genai": genai,
         }
 
 
