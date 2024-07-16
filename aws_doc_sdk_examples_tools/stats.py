@@ -1,5 +1,6 @@
 from typing import List
 from pathlib import Path
+from pprint import pformat
 
 from .doc_gen import DocGen
 
@@ -17,6 +18,8 @@ def main(roots: List[str]):
         print(f"Examples	{stats['examples']}")
         print(f"Version	{stats['versions']}")
         print(f"Snippets	{stats['snippets']}")
+        genai = pformat(dict(stats["genai"]))
+        print(f"GenAI	{genai}")
 
 
 if __name__ == "__main__":
