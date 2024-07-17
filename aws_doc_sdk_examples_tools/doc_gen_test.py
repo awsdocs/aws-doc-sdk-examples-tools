@@ -12,7 +12,7 @@ import json
 from .metadata_errors import MetadataErrors, MetadataError
 from .doc_gen import DocGen, DocGenEncoder
 from .sdks import Sdk, SdkVersion
-from .services import Service
+from .services import Service, ServiceExpanded
 from .snippets import Snippet
 
 
@@ -80,6 +80,7 @@ def sample_doc_gen() -> DocGen:
         root=Path("/test/root"),
         errors=metadata_errors,
         prefix="test_prefix",
+        entities={"&S3long;": "Amazon Simple Storage Service", "&S3;": "Amazon S3"},
         sdks={
             "python": Sdk(
                 name="python",
@@ -92,8 +93,11 @@ def sample_doc_gen() -> DocGen:
         },
         services={
             "s3": Service(
-                long="Amazon S3",
-                short="S3",
+                long="&S3long;",
+                short="&S3;",
+                expanded=ServiceExpanded(
+                    long="Amazon Simple Storage Service", short="Amazon S3"
+                ),
                 sort="Amazon S3",
                 version="2006-03-01",
             )
@@ -111,6 +115,12 @@ def sample_doc_gen() -> DocGen:
         examples={},
         cross_blocks={"test_block"},
     )
+
+
+def test_expand_entities(sample_doc_gen: DocGen):
+    expanded, errors = sample_doc_gen.expand_entities("Hello &S3;")
+    assert expanded == "Hello Amazon S3"
+    assert not errors
 
 
 def test_doc_gen_encoder(sample_doc_gen: DocGen):
@@ -132,8 +142,8 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     # Verify service information
     assert "services" in decoded
     assert "s3" in decoded["services"]
-    assert decoded["services"]["s3"]["long"] == "Amazon S3"
-    assert decoded["services"]["s3"]["short"] == "S3"
+    assert decoded["services"]["s3"]["long"] == "&S3long;"
+    assert decoded["services"]["s3"]["short"] == "&S3;"
 
     # Verify snippet information
     assert "snippets" in decoded

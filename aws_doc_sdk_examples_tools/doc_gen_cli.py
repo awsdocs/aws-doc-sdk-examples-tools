@@ -7,6 +7,7 @@ from pathlib import Path
 import logging
 
 from .doc_gen import DocGen, DocGenEncoder
+from .entities import EntityErrors
 
 logging.basicConfig(level=logging.INFO)
 
@@ -44,6 +45,24 @@ def main():
     if args.strict and merged_doc_gen.errors:
         logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
         exit(1)
+
+    # Replace entities
+    for example in merged_doc_gen.examples.values():
+        errors = EntityErrors()
+        title, title_errors = merged_doc_gen.expand_entities(example.title)
+        errors.extend(title_errors)
+
+        title_abbrev, title_abbrev_errors = merged_doc_gen.expand_entities(
+            example.title_abbrev
+        )
+        errors.extend(title_abbrev_errors)
+
+        if errors:
+            logging.error(f"Errors expanding entities for example: {example}. {errors}")
+            exit(1)
+
+        example.title = title
+        example.title_abbrev = title_abbrev
 
     serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
 
