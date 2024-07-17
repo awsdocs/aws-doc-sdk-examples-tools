@@ -1,5 +1,5 @@
 import pytest
-from entities import (
+from .entities import (
     EntityErrors,
     InvalidItemException,
     expand_all_entities,
