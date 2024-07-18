@@ -411,7 +411,7 @@ class CrossServicePage:
 
 
 @dataclass
-class SDKVersion:
+class SDKPageVersion:
     """
     A mapping of example type to a dictionary of service id's
     and their documentation URL. Cross service example have a
@@ -422,8 +422,8 @@ class SDKVersion:
     cross_service: Optional[CrossServicePage] = None
 
 
-SDKLanguage = Dict[int, SDKVersion]
-SDKPages = Dict[str, SDKLanguage]
+SDKPageLanguage = Dict[int, SDKPageVersion]
+SDKPages = Dict[str, SDKPageLanguage]
 
 ServicePages = Dict[str, str]
 
@@ -493,14 +493,14 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
         sdk_pages[language.property] = {}
         for version in language.versions:
             if is_cross:
-                sdk_pages[language.property][version.sdk_version] = SDKVersion(
+                sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
                     cross_service=CrossServicePage(
                         cross=f"{base_url}/{example_id}_{language.property}_{version.sdk_version}_topic.html"
                     )
                 )
             else:
                 anchor = "actions" if example.category == "Actions" else "scenarios"
-                sdk_pages[language.property][version.sdk_version] = SDKVersion(
+                sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
                     actions_scenarios={
                         service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"
                         for service_id in example.services

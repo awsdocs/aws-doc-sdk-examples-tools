@@ -8,7 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Set
+from typing import Dict, Iterable, Optional, Set, Tuple
 
 # from os import glob
 
@@ -17,6 +17,7 @@ from .metadata import (
     parse as parse_examples,
     validate_no_duplicate_api_examples,
 )
+from .entities import expand_all_entities, EntityErrors
 from .metadata_errors import MetadataErrors, MetadataError
 from .metadata_validator import validate_metadata
 from .project_validator import ValidationConfig
@@ -39,6 +40,7 @@ class DocGenMergeWarning(MetadataError):
 class DocGen:
     root: Path
     errors: MetadataErrors
+    entities: Dict[str, str] = field(default_factory=dict)
     prefix: Optional[str] = None
     validation: ValidationConfig = field(default_factory=ValidationConfig)
     sdks: Dict[str, Sdk] = field(default_factory=dict)
@@ -72,6 +74,9 @@ class DocGen:
                 languages.add(f"{sdk_name}:{version.version}")
         return languages
 
+    def expand_entities(self, text: str) -> Tuple[str, EntityErrors]:
+        return expand_all_entities(text, self.entities)
+
     def merge(self, other: "DocGen") -> MetadataErrors:
         """Merge fields from other into self, prioritizing self fields."""
         warnings = MetadataErrors()
@@ -96,6 +101,16 @@ class DocGen:
                 warnings.append(
                     DocGenMergeWarning(
                         file=other.root, id=f"conflict in snippet {name}"
+                    )
+                )
+
+        for entity, expanded in other.entities.items():
+            if entity not in self.entities:
+                self.entities[entity] = expanded
+            else:
+                warnings.append(
+                    DocGenMergeWarning(
+                        file=other.root, id=f"conflict in entity {entity}"
                     )
                 )
 
@@ -166,8 +181,21 @@ class DocGen:
                 meta = yaml.safe_load(file)
                 services, service_errors = parse_services(services_path, meta)
                 self.services = services
+                for service in self.services.values():
+                    if service.expanded:
+                        self.entities[service.long] = service.expanded.long
+                        self.entities[service.short] = service.expanded.short
                 self.errors.extend(service_errors)
         except Exception:
+            pass
+
+        try:
+            entities_config_path = config / "entities.yaml"
+            with entities_config_path.open(encoding="utf-8") as file:
+                entities_config = yaml.safe_load(file)
+            for entity, expanded in entities_config["expanded_override"].items():
+                self.entities[entity] = expanded
+        except Exception as e:
             pass
 
         metadata = root / ".doc_gen/metadata"
@@ -279,6 +307,11 @@ class DocGenEncoder(json.JSONEncoder):
 
         if isinstance(obj, MetadataErrors):
             return {"__metadata_errors__": [asdict(error) for error in obj]}
+
+        if isinstance(obj, EntityErrors):
+            return {
+                "__entity_errors__": [{error.entity: error.message()} for error in obj]
+            }
 
         if isinstance(obj, set):
             return {"__set__": list(obj)}

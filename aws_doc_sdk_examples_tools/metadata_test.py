@@ -15,7 +15,7 @@ from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
     parse,
     DocFilenames,
-    SDKVersion,
+    SDKPageVersion,
     Example,
     Url,
     Language,
@@ -168,7 +168,7 @@ def test_parse():
             },
             sdk_pages={
                 "cpp": {
-                    1: SDKVersion(
+                    1: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="cpp_1_medical-imaging_code_examples",
@@ -269,7 +269,7 @@ def test_parse_strict_titles():
             },
             sdk_pages={
                 "cpp": {
-                    1: SDKVersion(
+                    1: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="cpp_1_medical-imaging_code_examples",
@@ -297,7 +297,7 @@ def test_parse_strict_titles():
             },
             sdk_pages={
                 "cpp": {
-                    1: SDKVersion(
+                    1: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="cpp_1_medical-imaging_code_examples",
@@ -430,7 +430,7 @@ def test_parse_cross():
             },
             sdk_pages={
                 "java": {
-                    3: SDKVersion(
+                    3: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="java_3_medical-imaging_code_examples",
@@ -501,7 +501,7 @@ def test_parse_curated():
             },
             sdk_pages={
                 "java": {
-                    2: SDKVersion(
+                    2: SDKPageVersion(
                         actions_scenarios={
                             "s3": make_doc_link(
                                 stub="java_2_s3_code_examples", anchor="scenarios"
@@ -616,7 +616,7 @@ def test_verify_load_successful():
             },
             sdk_pages={
                 "java": {
-                    2: SDKVersion(
+                    2: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="java_2_medical-imaging_code_examples",
@@ -626,7 +626,7 @@ def test_verify_load_successful():
                     )
                 },
                 "php": {
-                    3: SDKVersion(
+                    3: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="php_3_medical-imaging_code_examples",
@@ -636,7 +636,7 @@ def test_verify_load_successful():
                     )
                 },
                 "javascript": {
-                    3: SDKVersion(
+                    3: SDKPageVersion(
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="javascript_3_medical-imaging_code_examples",
