@@ -56,7 +56,6 @@ def main():
         # Replace entities
         for example in merged_doc_gen.examples.values():
             errors = EntityErrors()
-            print(example)
             title, title_errors = merged_doc_gen.expand_entities(example.title)
             errors.extend(title_errors)
 
@@ -76,7 +75,7 @@ def main():
                 synopsis_list.append(expanded_synopsis)
                 errors.extend(synopsis_errors)
 
-            if errors:
+            if args.strict and errors:
                 logging.error(
                     f"Errors expanding entities for example: {example}. {errors}"
                 )
