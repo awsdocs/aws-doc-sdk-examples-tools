@@ -450,8 +450,6 @@ def test_parse_cross():
     assert actual[0] == example
 
 
-
-
 def test_verify_load_successful():
     actual, errors = load(
         Path(__file__).parent / "test_resources/valid_metadata.yaml",
