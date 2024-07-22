@@ -87,7 +87,7 @@ def expand_entity(
     entity: str, entity_map: Dict[str, str]
 ) -> Tuple[str, Optional[EntityError]]:
     expanded = entity_map.get(entity)
-    if expanded:
+    if expanded is not None:
         return entity.replace(entity, expanded), None
     else:
-        return "", MissingEntityError(entity)
+        return entity, MissingEntityError(entity)
