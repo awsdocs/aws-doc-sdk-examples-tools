@@ -73,6 +73,35 @@ Some validation options can be extended by creating `.doc_gen/validation.yaml`.
 - `sample_files`: Sample files are only allowed with certain names. To allow additional sample files, add their file name (with extension, but not path) to this list.
 
 ## New Releases
+There are 2 stages: testing and deployment.
+
+### 1. Testing
+
+1. **Create a testing branch** from [aws-doc-sdk-examples:main](https://github.com/awsdocs/aws-doc-sdk-examples).
+
+1. **Find the most recent commit SHA in [aws-doc-sdk-examples-tools:main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main/)**.
+
+1. **Update your testing branch**: Add your SHA to the following files in tag format (e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`):
+
+  * [.github/workflows/validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
+  * [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
+
+1. **Create a PR from branch**
+Create a Pull Request (PR) in the aws-doc-sdk-examples repository, but do not submit it yet. This PR will be used to run tests.
+
+1. **Wait for tests to pass** before continuing to next section.
+
+### 2. Deployment
+
+1. **Create a tag in the -tools repo**: Once the tests pass, create a tag in the -tools repository at the same SHA you identified earlier. The tag format should be YYYY-MM-DD-A, where YYYY-MM-DD represents the year, month, and day of the release, and -A is used for the first release of the day. Use -B, -C, etc., for subsequent releases on the same day.
+
+1. **Push the tag: Push the tag you created in step 6 to the -tools repository.
+
+1. **Update the PR with the new tag: In the PR you created in step 4, update the commit SHA with the new tag you pushed in step 7. Remove the validation SHA exception, and push the changes for draft review.
+
+1. **Create a release: Use the automated "Create release from tag" button to create a new release based on the tag you pushed in step 7.
+
+1. **Perform internal update process: Perform any internal update processes required for the release.
 
 1. When making a release, find the most recent commit sha (or sha that will be tagged for the release).
 2. Update https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml to that tag.
