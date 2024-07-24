@@ -77,11 +77,11 @@ There are 2 stages: testing and deployment.
 
 ### 1. Testing
 
-1. **Create a testing branch** from [aws-doc-sdk-examples:main](https://github.com/awsdocs/aws-doc-sdk-examples).
+1. **Create a testing branch** from [aws-doc-sdk-examples@main](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main).
 
 1. **Find the most recent commit SHA in [aws-doc-sdk-examples-tools:main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main/)**.
 
-1. **Update your testing branch**: Add your SHA to the following files in tag format (e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`):
+1. **Update your testing branch**: Add your SHA as a tag (`org/repo@tag`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`) to the following files:
 
   * [.github/workflows/validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
   * [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
@@ -95,7 +95,10 @@ There are 2 stages: testing and deployment.
 
 Here is a command line example, tested on Mac:
 ```
-TAG_NAME=$(date +%Y-%m-%d)-A && SHA=$(git rev-parse HEAD) && git tag -a "$TAG_NAME" "$SHA" -m "Release $TAG_NAME" && git push origin "$TAG_NAME"
+TAG_NAME=$(date +%Y-%m-%d)-A && \
+  SHA=$(git rev-parse HEAD) && \
+  git tag -a "$TAG_NAME" "$SHA" -m "Release $TAG_NAME" && \
+  git push origin "$TAG_NAME"
 ```
 
 1. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
