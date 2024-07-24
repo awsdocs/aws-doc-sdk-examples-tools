@@ -79,7 +79,7 @@ There are 2 stages: testing and deployment.
 
 1. **Create a testing branch** from [aws-doc-sdk-examples@main](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main).
 2. **Find the most recent commit SHA in [aws-doc-sdk-examples-tools/commits/main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main/)**.
-3. **Update your testing branch**: Add your SHA (`org/repo@tag`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`) to the following files:
+3. **Update your testing branch**: Add your SHA (format: `org/repo@hash`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`) to the following files:
     - [.github/workflows/validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
     - [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
 4. **Open a Draft PR to main branch**: Do not publish for review. Wait for checks/tests to pass on the PR.
