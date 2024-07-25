@@ -73,17 +73,33 @@ Some validation options can be extended by creating `.doc_gen/validation.yaml`.
 - `sample_files`: Sample files are only allowed with certain names. To allow additional sample files, add their file name (with extension, but not path) to this list.
 
 ## New Releases
+There are 2 stages: testing and deployment.
 
-1. When making a release, find the most recent commit sha (or sha that will be tagged for the release).
-2. Update https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml to that tag.
-  * Also add that commit sha to the [validation config](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
-3. Create a PR in aws-doc-sdk-examples (do not submit it) to run tests.
-4. When tests in the main repo are passing, create a tag in this -tools repo at that sha with the format `YYYY-MM-DD-A`, where `YYYY-MM-DD` are the year, month, and day of the release and -A is -A, -B, -C etc for multiple releases within a day.
-5. Push that tag.
-6. Update the PR from 2 with that tag, remove the validation sha exception, and push that for draft.
-7. Create a release using the automated "Create release from tag" button.
-8. Perform internal update process.
+### 1. Testing
 
+1. **Create a testing branch** from [aws-doc-sdk-examples@main](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main).
+2. **Find the most recent commit SHA in [aws-doc-sdk-examples-tools/commits/main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main/)**.
+3. **Update your testing branch**: Add your commit SHA (format: `org/repo@hash`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`) to the following files:
+    - In [.github/workflows/validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml), replace the current tag with the SHA.
+    - Add only the commit SHA to the `allow_list` field in [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml).
+4. **Open a Draft PR to main branch**: Do not publish for review. Wait for checks/tests to pass on the PR.
+
+### 2. Deployment
+1. **Create a -tools tag**: Once the tests pass, create a tag in the -tools repository at the same SHA you identified earlier.
+   - NOTE: tag format is `YYYY-MM-DD-A`, where `YYYY-MM-DD` represents release date, and `-A` is used for the first release of the day (followed by `-B`, `-C`, etc., for subsequent same-day releases)
+Here is a command line example, tested on Mac:
+```
+TAG_NAME=$(date +%Y-%m-%d)-A && \
+  SHA=$(git rev-parse HEAD) && \
+  git tag -a "$TAG_NAME" "$SHA" -m "Release $TAG_NAME" && \
+  git push origin "$TAG_NAME"
+```
+2. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
+    - NOTE: Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
+    - This is easily accomplished in the UI.
+3. **Create a release**: Use the automated ["Create release from tag" button](https://github.com/awsdocs/aws-doc-sdk-examples-tools/releases/new) to create a new release with the new tag.
+4. **Perform internal update process**.
+   
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
