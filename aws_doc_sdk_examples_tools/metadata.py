@@ -320,6 +320,7 @@ class Example:
         if category == "":
             category = "Api" if len(parsed_services) == 1 else "Cross"
         is_action = category == "Api"
+        is_basics = category == "Basics"
 
         if is_action:
             svc_actions = []
@@ -337,6 +338,10 @@ class Example:
             if is_action:
                 if title or title_abbrev or synopsis or synopsis_list:
                     errors.append(metadata_errors.APICannotHaveTitleFields())
+            elif is_basics:
+                # Basics examples can have custom titles or no titles (in this case they're generated).
+                if not (synopsis or synopsis_list):
+                    errors.append(metadata_errors.BasicsMustHaveSynopsisField())
             else:
                 if not (title and title_abbrev and (synopsis or synopsis_list)):
                     errors.append(metadata_errors.NonAPIMustHaveTitleFields())
