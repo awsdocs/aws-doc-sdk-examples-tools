@@ -207,7 +207,7 @@ def collect_snippet_files(
                             continue
                         name = prefix + str(snippet_file).replace("/", ".")
                         with open(root / snippet_file, encoding="utf-8") as file:
-                            code = file.readlines()
+                            code = strip_snippet_tags(file.readlines())
                             snippets[name] = Snippet(
                                 id=name,
                                 file=snippet_file,
@@ -215,6 +215,14 @@ def collect_snippet_files(
                                 line_end=len(code),
                                 code="".join(code),
                             )
+
+
+def strip_snippet_tags(lines: List[str]) -> List[str]:
+    return [line for line in lines if not has_snippet_tag(line)]
+
+
+def has_snippet_tag(line: str) -> bool:
+    return "snippet-start" in line or "snippet-end" in line
 
 
 @dataclass
