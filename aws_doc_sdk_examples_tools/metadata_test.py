@@ -533,7 +533,7 @@ def test_verify_load_successful():
                             "php.snippet.tag.1",
                             "php.snippet.tag.2",
                         ],
-                        snippet_files=[],
+                        snippet_files=["snippet_file.txt"],
                     )
                 ],
                 add_services={},

@@ -207,13 +207,13 @@ def collect_snippet_files(
                             continue
                         name = prefix + str(snippet_file).replace("/", ".")
                         with open(root / snippet_file, encoding="utf-8") as file:
-                            code = strip_snippet_tags(file.readlines())
+                            code = file.readlines()
                             snippets[name] = Snippet(
                                 id=name,
                                 file=snippet_file,
                                 line_start=0,
                                 line_end=len(code),
-                                code="".join(code),
+                                code="".join(strip_snippet_tags(code)),
                             )
 
 
