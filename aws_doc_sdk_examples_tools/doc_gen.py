@@ -226,6 +226,7 @@ class DocGen:
                 self.services,
                 self.cross_blocks,
                 self.validation,
+                self.root,
             )
             self.extend_examples(examples, self.errors)
             self.errors.extend(errs)
@@ -264,6 +265,14 @@ class DocGen:
             self.errors,
             self.root,
         )
+
+    def validate_links(self):
+        for example in self.examples.values():
+            for language in example.languages.values():
+                for version in language.versions:
+                    if version.github:
+                        if not (self.root / version.github).exists():
+                            self.errors.append()
 
     def stats(self):
         values = self.examples.values()

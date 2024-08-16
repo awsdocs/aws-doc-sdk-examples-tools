@@ -237,6 +237,15 @@ class InvalidGithubLink(SdkVersionError):
 
 
 @dataclass
+class MissingGithubLink(SdkVersionError):
+    link: str = ""
+    root: Optional[Path] = None
+
+    def message(self):
+        return f"has link {self.link}, which is not a folder in this project (root: {self.root})."
+
+
+@dataclass
 class InvalidSdkGuideStart(SdkVersionError):
     guide: str = ""
 

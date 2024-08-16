@@ -13,7 +13,7 @@ medical-imaging_TestExample:
     Java:
       versions:
         - sdk_version: 2
-          github: javav2/example_code/medical-imaging
+          github: test_path
           block_content: test block
     JavaScript:
       versions:
@@ -29,7 +29,6 @@ medical-imaging_TestExample:
     PHP:
       versions:
         - sdk_version: 3
-          github: php/example_code/medical-imaging
           sdkguide: php/sdkguide/link
           excerpts:
             - description: Optional description.
