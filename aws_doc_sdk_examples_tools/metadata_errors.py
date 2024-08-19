@@ -282,6 +282,15 @@ class NonAPIMustHaveTitleFields(MetadataParseError):
 
 
 @dataclass
+class BasicsMustHaveSynopsisField(MetadataParseError):
+    def message(self):
+        return (
+            "is a Basics example and does not define synopsis or synopsis_list. "
+            "Basics examples must define one of these fields."
+        )
+
+
+@dataclass
 class MissingSnippetTag(SdkVersionError):
     tag: str = ""
 

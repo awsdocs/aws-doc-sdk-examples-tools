@@ -348,6 +348,20 @@ medical-imaging_BadScenario:
                  - test.excerpt
    services:
      medical-imaging: {BadOne}
+medical-imaging_BadBasics:
+   category: Basics
+   languages:
+     C++:
+       versions:
+         - sdk_version: 1
+           github: cpp/example_code/medical-imaging
+           sdkguide: sdkguide/link
+           excerpts:
+             - description: test excerpt description
+               snippet_tags:
+                 - test.excerpt
+   services:
+     medical-imaging: {BadOne}
 """
 
 
@@ -373,6 +387,10 @@ def test_parse_strict_title_errors():
         metadata_errors.NonAPIMustHaveTitleFields(
             file=Path("test_cpp.yaml"),
             id="medical-imaging_BadScenario",
+        ),
+        metadata_errors.BasicsMustHaveSynopsisField(
+            file=Path("test_cpp.yaml"),
+            id="medical-imaging_BadBasics",
         ),
     ]
     assert expected == [*errors]
