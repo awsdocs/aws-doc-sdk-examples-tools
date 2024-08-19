@@ -391,7 +391,7 @@ def test_parse_strict_title_errors():
         metadata_errors.BasicsMustHaveSynopsisField(
             file=Path("test_cpp.yaml"),
             id="medical-imaging_BadBasics",
-        )
+        ),
     ]
     assert expected == [*errors]
 
