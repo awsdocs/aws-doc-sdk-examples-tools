@@ -1,7 +1,7 @@
 # Labels for tracking statistics and history
-- name: Task
+- name: Enhancement
   color: f5f7f9
-  description: "A general update to the code base for language clarification, missing actions, tests, etc."
+  description: "A general update to the code base."
 - name: Bug
   color: f5f7f9
   description: "An update to fix incorrect code or typos."
