@@ -214,21 +214,39 @@ def collect_snippet_files(
                                 file=snippet_file,
                                 line_start=0,
                                 line_end=len(code),
-                                code="".join(strip_snippet_tags_and_spdx_headers(code)),
+                                code="".join(
+                                    strip_snippet_tags(strip_spdx_header(code))
+                                ),
                             )
 
 
-def strip_snippet_tags_and_spdx_headers(lines: List[str]) -> List[str]:
+def strip_snippet_tags(lines: List[str]) -> List[str]:
     return [line for line in lines if not has_snippet_tag_or_spdx_header(line)]
 
 
-def has_snippet_tag_or_spdx_header(line: str) -> bool:
-    return (
-        "snippet-start" in line
-        or "snippet-end" in line
-        or re.match(validator_config.SPDX_COPYRIGHT, line) is not None
-        or re.match(validator_config.SPDX_LICENSE, line) is not None
+def strip_spdx_header(file: List[str]) -> List[str]:
+    has_copyright = (
+        re.match(
+            validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT, file[0]
+        )
+        is not None
     )
+    has_license = (
+        re.match(validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE, file[1])
+        is not None
+    )
+    has_spacer = file[2] == ""
+    if has_copyright and has_license:
+        if has_spacer:
+            return file[3:]
+        else:
+            return file[2:]
+    else:
+        return file
+
+
+def has_snippet_tag_or_spdx_header(line: str) -> bool:
+    return "snippet-start" in line or "snippet-end" in line
 
 
 @dataclass

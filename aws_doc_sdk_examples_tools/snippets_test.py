@@ -71,14 +71,32 @@ def test_verify_snippet_start_end(file_contents: str, expected_error_count: int)
 
 
 def test_strip_snippet_tags():
-    assert ["Line A", "Line C"] == snippets.strip_snippet_tags_and_spdx_headers(
+    assert ["Line A", "Line C"] == snippets.strip_snippet_tags(
         [
-            "# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.",
-            "# SPDX-License-Identifier: Apache-2.0",
             "Line A",
             "# snippet-start:[line b]",
             "Line C",
             "# snippet-end:[line d]",
             "line E # snippet-end",
+        ]
+    )
+
+
+def test_strip_spdx_header():
+    assert ["Line A", "Line B"] == snippets.strip_spdx_header(
+        [
+            "# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.",
+            "# SPDX-License-Identifier: Apache-2.0",
+            "Line A",
+            "Line B",
+        ]
+    )
+    assert ["Line A", "Line B"] == snippets.strip_spdx_header(
+        [
+            "# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.",
+            "# SPDX-License-Identifier: Apache-2.0",
+            "",
+            "Line A",
+            "Line B",
         ]
     )
