@@ -225,17 +225,16 @@ def strip_snippet_tags(lines: List[str]) -> List[str]:
 
 
 def strip_spdx_header(file: List[str]) -> List[str]:
+    [a, b, c, *_] = file + [""] * 3
     has_copyright = (
-        re.match(
-            validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT, file[0]
-        )
+        re.match(validator_config.SPDX_LEADER + validator_config.SPDX_COPYRIGHT, a)
         is not None
     )
     has_license = (
-        re.match(validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE, file[1])
+        re.match(validator_config.SPDX_LEADER + validator_config.SPDX_LICENSE, b)
         is not None
     )
-    has_spacer = file[2] == ""
+    has_spacer = "" == c
     if has_copyright and has_license:
         if has_spacer:
             return file[3:]

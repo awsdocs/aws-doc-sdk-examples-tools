@@ -100,3 +100,5 @@ def test_strip_spdx_header():
             "Line B",
         ]
     )
+
+    assert [] == snippets.strip_spdx_header([])
