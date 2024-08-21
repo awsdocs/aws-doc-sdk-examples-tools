@@ -378,6 +378,14 @@ def test_parse_strict_title_errors():
             file=Path("test_cpp.yaml"),
             id="medical-imaging_BadBasics",
         ),
+        metadata_errors.MissingGithubLink(
+            file=Path("test_cpp.yaml"),
+            id="medical-imaging_BadBasics",
+            language="C++",
+            sdk_version=1,
+            link="cpp/example_code/medical-imaging",
+            root=Path("."),
+        ),
     ]
     assert expected == [*errors]
 
