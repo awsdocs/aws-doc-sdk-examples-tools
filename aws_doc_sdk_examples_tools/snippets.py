@@ -15,6 +15,7 @@ from .project_validator import (
     verify_no_secret_keys,
     ValidationConfig,
 )
+from . import validator_config
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -213,16 +214,21 @@ def collect_snippet_files(
                                 file=snippet_file,
                                 line_start=0,
                                 line_end=len(code),
-                                code="".join(strip_snippet_tags(code)),
+                                code="".join(strip_snippet_tags_and_spdx_headers(code)),
                             )
 
 
-def strip_snippet_tags(lines: List[str]) -> List[str]:
-    return [line for line in lines if not has_snippet_tag(line)]
+def strip_snippet_tags_and_spdx_headers(lines: List[str]) -> List[str]:
+    return [line for line in lines if not has_snippet_tag_or_spdx_header(line)]
 
 
-def has_snippet_tag(line: str) -> bool:
-    return "snippet-start" in line or "snippet-end" in line
+def has_snippet_tag_or_spdx_header(line: str) -> bool:
+    return (
+        "snippet-start" in line
+        or "snippet-end" in line
+        or re.match(validator_config.SPDX_COPYRIGHT, line) is not None
+        or re.match(validator_config.SPDX_LICENSE, line) is not None
+    )
 
 
 @dataclass
