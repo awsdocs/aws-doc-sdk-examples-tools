@@ -135,6 +135,7 @@ class Sdk:
     versions: List[SdkVersion]
     guide: str
     property: str
+    syntax: str
 
     def validate(self, errors: MetadataErrors):
         if len(self.versions) == 0:
@@ -144,6 +145,7 @@ class Sdk:
     def from_yaml(cls, name: str, yaml: Dict[str, Any]) -> tuple[Sdk, MetadataErrors]:
         errors = MetadataErrors()
         property = yaml.get("property", "")
+        syntax = yaml.get("syntax", "")
         guide = check_mapping(yaml.get("guide"), "guide")
         if isinstance(guide, MetadataParseError):
             errors.append(guide)
@@ -159,7 +161,7 @@ class Sdk:
             versions.append(sdk_version)
             errors.extend(errs)
 
-        return cls(name=name, versions=versions, guide=guide, property=property), errors
+        return cls(name=name, versions=versions, guide=guide, property=property, syntax=syntax), errors
 
 
 def parse(file: Path, yaml: Dict[str, Any]) -> tuple[Dict[str, Sdk], MetadataErrors]:

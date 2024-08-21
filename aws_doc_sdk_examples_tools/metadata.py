@@ -88,6 +88,8 @@ class Version:
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
+    # Not part of the metadata, this is filled in based on the root of the mirror when the metadata is processed.
+    root: Optional[Path] = None
 
     @classmethod
     def from_yaml(
@@ -167,6 +169,7 @@ class Version:
                 add_services,
                 sdkguide,
                 more_info,
+                root,
             ),
             errors,
         )
