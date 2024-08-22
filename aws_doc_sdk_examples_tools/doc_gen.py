@@ -266,14 +266,6 @@ class DocGen:
             self.root,
         )
 
-    def validate_links(self):
-        for example in self.examples.values():
-            for language in example.languages.values():
-                for version in language.versions:
-                    if version.github:
-                        if not (self.root / version.github).exists():
-                            self.errors.append()
-
     def stats(self):
         values = self.examples.values()
         initial = defaultdict(int)
