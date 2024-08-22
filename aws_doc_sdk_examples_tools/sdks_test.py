@@ -72,6 +72,7 @@ def test_sdks():
         "C++": Sdk(
             name="C++",
             property="cpp",
+            syntax="",
             guide="&guide-cpp-dev;",
             versions=[
                 SdkVersion(
@@ -82,6 +83,7 @@ def test_sdks():
         "Go": Sdk(
             name="Go",
             property="go",
+            syntax="",
             guide="&guide-go-dev;",
             versions=[
                 SdkVersion(version=1, long="&Golong; V1", short="&Go; V1"),
@@ -91,6 +93,7 @@ def test_sdks():
         "Java": Sdk(
             name="Java",
             property="java",
+            syntax="",
             guide="&guide-javav2-dev;",
             versions=[
                 SdkVersion(version=1, long="&Javalong;", short="&Java;"),
@@ -100,6 +103,7 @@ def test_sdks():
         "JavaScript": Sdk(
             name="JavaScript",
             property="javascript",
+            syntax="",
             guide="&guide-jsb-dev;",
             versions=[
                 SdkVersion(version=2, long="&JSBlong; V2", short="&JSB; V2"),
@@ -119,6 +123,7 @@ def test_sdks():
             name="Kotlin",
             property="kotlin",
             guide="&NO_GUIDE;",
+            syntax="",
             versions=[
                 SdkVersion(
                     version=1,
@@ -132,6 +137,7 @@ def test_sdks():
             name=".NET",
             property="csharp",
             guide="&guide-net-dev;",
+            syntax="",
             versions=[
                 SdkVersion(
                     version=3,
@@ -147,18 +153,21 @@ def test_sdks():
         "PHP": Sdk(
             name="PHP",
             property="php",
+            syntax="",
             guide="&guide-php-dev;",
             versions=[SdkVersion(version=3, long="&PHPlong;", short="&PHP;")],
         ),
         "Python": Sdk(
             name="Python",
             property="python",
+            syntax="",
             guide="&guide-python3-gsg;",
             versions=[SdkVersion(version=3, long="&Python3long;", short="&Python3;")],
         ),
         "Ruby": Sdk(
             name="Ruby",
             property="ruby",
+            syntax="",
             guide="&guide-ruby-dev;",
             versions=[SdkVersion(version=3, long="&Rubylong;", short="&Ruby;")],
         ),

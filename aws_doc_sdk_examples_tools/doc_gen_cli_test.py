@@ -52,6 +52,7 @@ def mock_doc_gen(mock_example):
             versions=[SdkVersion(version=3, long="&JS;", short="&JSlong")],
             guide="",
             property="javascript",
+            syntax="",
         )
     }
     doc_gen.examples = {"ex": mock_example}

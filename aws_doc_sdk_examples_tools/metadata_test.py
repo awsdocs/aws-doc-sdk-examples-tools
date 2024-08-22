@@ -87,10 +87,10 @@ SERVICES = {
     ),
 }
 SDKS = {
-    "C++": Sdk(name="C++", versions=[], guide="", property="cpp"),
-    "Java": Sdk(name="Java", versions=[], guide="", property="java"),
-    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript"),
-    "PHP": Sdk(name="PHP", versions=[], guide="", property="php"),
+    "C++": Sdk(name="C++", versions=[], guide="", property="cpp", syntax="test"),
+    "Java": Sdk(name="Java", versions=[], guide="", property="java", syntax="test"),
+    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript", syntax=""),
+    "PHP": Sdk(name="PHP", versions=[], guide="", property="php", syntax=""),
 }
 DOC_GEN = DocGen(
     root=Path(),
@@ -121,8 +121,9 @@ medical-imaging_CreateDatastore:
 
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
+    meta_path = Path("test_cpp.yaml")
     parsed, errors = parse(
-        Path("test_cpp.yaml"), meta, SDKS, SERVICES, set(), DOC_GEN.validation
+        meta_path, meta, SDKS, SERVICES, set(), DOC_GEN.validation
     )
     assert len(errors) == 0
     assert len(parsed) == 1
@@ -132,6 +133,7 @@ def test_parse():
         versions=[
             Version(
                 sdk_version=1,
+                root=meta_path.parent,
                 excerpts=[
                     Excerpt(
                         description="test excerpt description",
@@ -219,8 +221,9 @@ medical-imaging_GoodScenario:
 
 def test_parse_strict_titles():
     meta = yaml.safe_load(STRICT_TITLE_META)
+    meta_path = Path("test_cpp.yaml")
     parsed, errors = parse(
-        Path("test_cpp.yaml"),
+        meta_path,
         meta,
         SDKS,
         SERVICES,
@@ -235,6 +238,7 @@ def test_parse_strict_titles():
         versions=[
             Version(
                 sdk_version=1,
+                root=meta_path.parent,
                 excerpts=[
                     Excerpt(
                         description="test excerpt description",
@@ -408,8 +412,9 @@ cross_DeleteTopic:
 
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
+    meta_path = Path("cross.yaml")
     actual, errors = parse(
-        Path("cross.yaml"),
+        meta_path,
         meta,
         SDKS,
         SERVICES,
@@ -421,7 +426,7 @@ def test_parse_cross():
     language = Language(
         name="Java",
         property="java",
-        versions=[Version(sdk_version=3, block_content="cross_DeleteTopic_block.xml")],
+        versions=[Version(sdk_version=3, root=meta_path.parent, block_content="cross_DeleteTopic_block.xml")],
     )
     example = Example(
         file=Path("cross.yaml"),
@@ -463,8 +468,9 @@ def test_parse_cross():
 
 
 def test_verify_load_successful():
+    meta_path = Path(__file__).parent / "test_resources/valid_metadata.yaml"
     actual, errors = load(
-        Path(__file__).parent / "test_resources/valid_metadata.yaml",
+        meta_path,
         DOC_GEN,
         set(["test block"]),
     )
@@ -482,6 +488,7 @@ def test_verify_load_successful():
                 add_services={},
                 sdkguide=None,
                 more_info=[],
+                root=meta_path.parent,
             ),
         ],
     )
@@ -506,6 +513,7 @@ def test_verify_load_successful():
                 ],
                 sdkguide=None,
                 more_info=[],
+                root=meta_path.parent,
             ),
         ],
     )
@@ -530,6 +538,7 @@ def test_verify_load_successful():
                 ],
                 add_services={},
                 more_info=[],
+                root=meta_path.parent,
             )
         ],
     )

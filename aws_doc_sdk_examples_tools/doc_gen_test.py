@@ -24,7 +24,7 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", syntax="test", versions=[])
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1)
@@ -34,7 +34,7 @@ from .snippets import Snippet
                 root=Path("/b"),
                 errors=MetadataErrors(),
                 sdks={
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", syntax="test", versions=[])
                 },
                 services={
                     "y": Service(long="AWS Y", short="Y", sort="aws y", version=1)
@@ -44,8 +44,8 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                    "a": Sdk(name="a", guide="guide_a", property="a_prop", syntax="test", versions=[]),
+                    "b": Sdk(name="b", guide="guide_b", property="b_prop", syntax="test", versions=[]),
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1),
@@ -89,6 +89,7 @@ def sample_doc_gen() -> DocGen:
                 ],
                 guide="Python Guide",
                 property="python",
+                syntax="python_syntax",
             )
         },
         services={
