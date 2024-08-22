@@ -1,0 +1,5 @@
+Line A
+# snippet-start:[line b]
+Line C
+# snippet-end:[line d]
+line E # snippet-end

@@ -172,3 +172,14 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     # Verify examples (empty in this case)
     assert "examples" in decoded
     assert decoded["examples"] == {}
+
+
+def test_doc_gen_load_snippets():
+    errors = MetadataErrors()
+    doc_gen = DocGen(Path(), errors).for_root(
+        Path(__file__).parent / "test_resources", incremental=False
+    )
+    doc_gen.process_metadata(doc_gen.root / "valid_metadata.yaml")
+    doc_gen.collect_snippets()
+    assert doc_gen.snippet_files == set(["snippet_file.txt"])
+    assert doc_gen.snippets["snippet_file.txt"].code == "Line A\nLine C\n"

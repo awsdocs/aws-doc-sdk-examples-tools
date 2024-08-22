@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 import pytest
 from pathlib import Path
 
@@ -65,3 +68,37 @@ def test_verify_snippet_start_end(file_contents: str, expected_error_count: int)
     _, errors = snippets.parse_snippets(file_contents.split("\n"), Path("test"), "")
     error_count = len(errors)
     assert error_count == expected_error_count
+
+
+def test_strip_snippet_tags():
+    assert ["Line A", "Line C"] == snippets.strip_snippet_tags(
+        [
+            "Line A",
+            "# snippet-start:[line b]",
+            "Line C",
+            "# snippet-end:[line d]",
+            "line E # snippet-end",
+        ]
+    )
+
+
+def test_strip_spdx_header():
+    assert ["Line A", "Line B"] == snippets.strip_spdx_header(
+        [
+            "# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.",
+            "# SPDX-License-Identifier: Apache-2.0",
+            "Line A",
+            "Line B",
+        ]
+    )
+    assert ["Line A", "Line B"] == snippets.strip_spdx_header(
+        [
+            "# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.",
+            "# SPDX-License-Identifier: Apache-2.0",
+            "",
+            "Line A",
+            "Line B",
+        ]
+    )
+
+    assert [] == snippets.strip_spdx_header([])

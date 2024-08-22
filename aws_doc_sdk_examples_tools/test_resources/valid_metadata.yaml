@@ -36,5 +36,7 @@ medical-imaging_TestExample:
               snippet_tags:
                 - php.snippet.tag.1
                 - php.snippet.tag.2
+              snippet_files:
+                - snippet_file.txt
   services:
     medical-imaging:

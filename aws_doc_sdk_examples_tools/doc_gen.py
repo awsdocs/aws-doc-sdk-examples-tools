@@ -195,7 +195,7 @@ class DocGen:
                 entities_config = yaml.safe_load(file)
             for entity, expanded in entities_config["expanded_override"].items():
                 self.entities[entity] = expanded
-        except Exception as e:
+        except Exception:
             pass
 
         metadata = root / ".doc_gen/metadata"
