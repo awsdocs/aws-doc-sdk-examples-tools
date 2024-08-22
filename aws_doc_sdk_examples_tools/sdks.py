@@ -25,6 +25,7 @@ class SdkApiRef:
     uid: str
     name: str
     link_template: Optional[str]
+    service_map: Optional[Dict[str, str]] = None
 
     @classmethod
     def from_yaml(
@@ -35,6 +36,7 @@ class SdkApiRef:
         uid = yaml.get("uid")
         name = check_mapping(yaml.get("name"), "api_ref.name")
         link_template = yaml.get("link_template")
+        service_map = yaml.get("service_map")
 
         if uid is None:
             errors.append(metadata_errors.MissingField(field="api_ref.uid"))
@@ -43,7 +45,7 @@ class SdkApiRef:
             errors.append(name)
             name = ""
 
-        return cls(uid, name, link_template)
+        return cls(uid, name, link_template, service_map)
 
 
 @dataclass

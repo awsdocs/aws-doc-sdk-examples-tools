@@ -87,7 +87,17 @@ def test_sdks():
             guide="&guide-go-dev;",
             versions=[
                 SdkVersion(version=1, long="&Golong; V1", short="&Go; V1"),
-                SdkVersion(version=2, long="&Golong; V2", short="&Go; V2"),
+                SdkVersion(
+                    version=2,
+                    long="&Golong; V2",
+                    short="&Go; V2",
+                    api_ref=SdkApiRef(
+                        uid="",
+                        name="",
+                        link_template="https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/{{.MappedService}}#Client.{{.Action}}",
+                        service_map={"acm-pca": "acmpca"},
+                    ),
+                ),
             ],
         ),
         "Java": Sdk(

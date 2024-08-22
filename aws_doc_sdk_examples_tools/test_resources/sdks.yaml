@@ -16,6 +16,10 @@ Go:
     2:
       long: "&Golong; V2"
       short: "&Go; V2"
+      api_ref:
+        link_template: "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/{{.MappedService}}#Client.{{.Action}}"
+        service_map:
+          acm-pca: acmpca
   guide: "&guide-go-dev;"
 Java:
   property: java
