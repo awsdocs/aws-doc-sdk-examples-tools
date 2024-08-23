@@ -14,7 +14,7 @@ accessanalyzer:
     product_categories: {'Security, Identity, &amp; Compliance'}
   version: accessanalyzer-2019-11-01
 acm:
-  long: '&ACMlong;'
+  long: '&ACMlong; (&ACM;)'
   short: '&ACM;'
   sort: ACM
   expanded:
@@ -999,7 +999,7 @@ dynamodb-streams:
     product_categories: {}
   version: '2012-08-10'
 ebs:
-  long: '&EBSlong;'
+  long: '&EBSlong; (&EBS;)'
   short: '&EBS;'
   sort: EBS
   expanded:
@@ -1014,7 +1014,7 @@ ebs:
     product_categories: {'Storage'}
   version: ebs-2019-11-02
 ec2:
-  long: '&EC2long;'
+  long: '&EC2long; (&EC2;)'
   short: '&EC2;'
   sort: EC2
   expanded:
@@ -1045,7 +1045,7 @@ ec2-instance-connect:
     product_categories: {}
   version: '2018-04-02'
 ecr:
-  long: '&ECRlong;'
+  long: '&ECRlong; (&ECR;)'
   short: '&ECR;'
   sort: ECR
   expanded:
@@ -1075,7 +1075,7 @@ ecr-public:
     product_categories: {}
   version: '2020-10-30'
 ecs:
-  long: '&ECSlong;'
+  long: '&ECSlong; (&ECS;)'
   short: '&ECS;'
   sort: ECS
   expanded:
@@ -1105,7 +1105,7 @@ efs:
     product_categories: {}
   version: '2015-02-01'
 eks:
-  long: '&EKSlong;'
+  long: '&EKSlong; (&EKS;)'
   short: '&EKS;'
   sort: EKS
   expanded:
@@ -1484,7 +1484,7 @@ healthlake:
   version: '2017-07-01'
 iam:
   bundle: iam
-  long: '&IAMlong;'
+  long: '&IAMlong; (&IAM;)'
   short: '&IAM;'
   sort: IAM
   expanded:
@@ -1830,7 +1830,7 @@ kinesis-analytics-v2:
     product_categories: {'Analytics'}
   version: kinesisanalyticsv2-2018-05-23
 kms:
-  long: '&KMSlong;'
+  long: '&KMSlong; (&KMS;)'
   short: '&KMS;'
   sort: KMS
   expanded:
@@ -2480,7 +2480,7 @@ proton:
     product_categories: {}
   version: '2020-07-20'
 qldb:
-  long: '&QLDBlong;'
+  long: '&QLDBlong; (&QLDB;)'
   short: '&QLDB;'
   sort: QLDB
   expanded:
@@ -2510,7 +2510,7 @@ ram:
     product_categories: {}
   version: '2018-01-04'
 rds:
-  long: '&RDSlong;'
+  long: '&RDSlong; (&RDS;)'
   short: '&RDS;'
   sort: RDS
   expanded:
@@ -2695,7 +2695,7 @@ route53resolver:
     product_categories: {}
   version: '2018-04-01'
 s3:
-  long: '&S3long;'
+  long: '&S3long; (&S3;)'
   short: '&S3;'
   sort: S3
   expanded:
@@ -2861,7 +2861,7 @@ servicediscovery:
   version: '2017-03-14'
 ses:
   bundle: ses
-  long: '&SESlong;'
+  long: '&SESlong; (&SES;)'
   short: '&SES;'
   sort: SES
   expanded:
@@ -2953,7 +2953,7 @@ snowball:
     product_categories: {'Storage'}
   version: snowball-2016-06-30
 sns:
-  long: '&SNSlong;'
+  long: '&SNSlong; (&SNS;)'
   short: '&SNS;'
   sort: SNS
   expanded:
@@ -2968,7 +2968,7 @@ sns:
     product_categories: {'Application Integration'}
   version: sns-2010-03-31
 sqs:
-  long: '&SQSlong;'
+  long: '&SQSlong; (&SQS;)'
   short: '&SQS;'
   sort: SQS
   expanded:
@@ -3044,7 +3044,7 @@ storage-gateway:
   version: '2013-06-30'
 sts:
   bundle: iam
-  long: '&STSlong;'
+  long: '&STSlong; (&STS;)'
   short: '&STS;'
   sort: STS
   expanded:
