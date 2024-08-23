@@ -88,6 +88,8 @@ class Version:
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
+    # When present, specifies an SDK-specific name for the action, such as `create-bucket` for CLI commands.
+    sdk_action: Optional[str] = None
     # Not part of the metadata, this is filled in based on the root of the mirror when the metadata is processed.
     root: Optional[Path] = None
 
