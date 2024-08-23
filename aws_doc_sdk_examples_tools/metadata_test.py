@@ -106,6 +106,7 @@ medical-imaging_CreateDatastore:
      C++:
        versions:
          - sdk_version: 1
+           sdk_action: test_action
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -133,6 +134,7 @@ def test_parse():
         versions=[
             Version(
                 sdk_version=1,
+                sdk_action="test_action",
                 root=meta_path.parent,
                 excerpts=[
                     Excerpt(

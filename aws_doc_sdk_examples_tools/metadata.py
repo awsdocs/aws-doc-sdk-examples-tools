@@ -111,6 +111,7 @@ class Version:
         block_content = yaml.get("block_content")
         github = yaml.get("github")
         sdkguide = yaml.get("sdkguide")
+        sdk_action = yaml.get("sdk_action")
 
         if sdkguide is not None:
             if sdkguide.startswith("https://docs.aws.amazon.com"):
@@ -171,6 +172,7 @@ class Version:
                 add_services,
                 sdkguide,
                 more_info,
+                sdk_action,
                 root,
             ),
             errors,
