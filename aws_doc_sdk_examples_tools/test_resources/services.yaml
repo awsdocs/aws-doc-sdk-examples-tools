@@ -24,6 +24,7 @@ medical-imaging:
 sqs:
   short: "&SQS;"
   long: "&SQSlong;"
+  api_client: "test_sqs_api_client"
   expanded:
     long: Amazon Simple Queue Service (Amazon SQS)
     short: Amazon SQS

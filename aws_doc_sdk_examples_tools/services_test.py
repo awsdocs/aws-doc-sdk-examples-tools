@@ -102,6 +102,7 @@ def test_services():
             },
             version="sqs-2012-11-05",
             bundle="sqs",
+            api_client="test_sqs_api_client",
         ),
         "textract": Service(
             short="&TEXTRACT;",

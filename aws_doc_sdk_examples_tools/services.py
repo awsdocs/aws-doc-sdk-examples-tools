@@ -34,6 +34,7 @@ class Service:
     caveat: Optional[str] = field(default=None)
     guide: Optional[ServiceGuide] = field(default=None)
     tags: Dict[str, Set[str]] = field(default_factory=dict)
+    api_client: Optional[str] = None
 
     def validate(self, errors: MetadataErrors):
         pass
@@ -50,6 +51,7 @@ class Service:
         sort = yaml.get("sort")
         version = yaml.get("version")
         api_ref = yaml.get("api_ref")
+        api_client = yaml.get("api_client")
 
         if isinstance(long, metadata_errors.MetadataParseError):
             errors.append(long)
@@ -110,6 +112,7 @@ class Service:
                 guide=guide,
                 tags=tags,
                 version=version,
+                api_client=api_client,
             ),
             errors,
         )
