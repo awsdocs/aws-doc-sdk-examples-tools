@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name="aws_doc_sdk_examples_tools",
-    version="1.0.1rc2+2024-08-26-A",
+    version="1.0.1+2024-08-26-A",
     packages=["aws_doc_sdk_examples_tools"],
     package_data={"aws_doc_sdk_examples_tools": ["config/*.yaml"]},
     entry_points={
