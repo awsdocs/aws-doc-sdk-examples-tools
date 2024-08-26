@@ -94,6 +94,5 @@ medical-imagingBadFormat:
     Java:
       versions:
         - sdk_version: 2
-          github: github/link
   services:
     medical-imaging: { TestAction }

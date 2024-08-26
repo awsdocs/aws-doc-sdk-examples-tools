@@ -96,6 +96,7 @@ class Version:
         services: Dict[str, Service],
         cross_content_blocks: Set[str],
         is_action: bool,
+        root: Path,
     ) -> tuple["Version", MetadataErrors]:
         errors = MetadataErrors()
 
@@ -117,6 +118,12 @@ class Version:
                 errors.append(
                     metadata_errors.InvalidGithubLink(
                         link=github, sdk_version=sdk_version
+                    )
+                )
+            elif not (root / github).exists():
+                errors.append(
+                    metadata_errors.MissingGithubLink(
+                        link=github, sdk_version=sdk_version, root=root
                     )
                 )
 
@@ -205,6 +212,7 @@ class Language:
         services: Dict[str, Service],
         blocks: Set[str],
         is_action: bool,
+        root: Path,
     ) -> tuple[Language, MetadataErrors]:
         errors = MetadataErrors()
         if name not in sdks:
@@ -221,7 +229,7 @@ class Language:
         versions: List[Version] = []
         for version in yaml_versions:
             vers, version_errors = Version.from_yaml(
-                version, services, blocks, is_action
+                version, services, blocks, is_action, root
             )
             errors.extend(version_errors)
             versions.append(vers)
@@ -301,6 +309,7 @@ class Example:
         services: Dict[str, Service],
         blocks: Set[str],
         validation: ValidationConfig,
+        root: Path,
     ) -> tuple[Example, MetadataErrors]:
         errors = MetadataErrors()
 
@@ -360,7 +369,7 @@ class Example:
         else:
             for name in yaml_languages:
                 language, errs = Language.from_yaml(
-                    name, yaml_languages[name], sdks, services, blocks, is_action
+                    name, yaml_languages[name], sdks, services, blocks, is_action, root
                 )
                 languages[language.name] = language
                 errors.extend(errs)
@@ -563,13 +572,14 @@ def parse(
     services: Dict[str, Service],
     blocks: Set[str],
     validation: Optional[ValidationConfig],
+    root: Optional[Path] = None,
 ) -> tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
     validation = validation or ValidationConfig()
     for id in yaml:
         example, example_errors = Example.from_yaml(
-            yaml[id], sdks, services, blocks, validation
+            yaml[id], sdks, services, blocks, validation, root or file.parent
         )
         check_id_format(
             id,

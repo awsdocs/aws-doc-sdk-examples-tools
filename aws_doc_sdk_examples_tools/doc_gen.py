@@ -226,6 +226,7 @@ class DocGen:
                 self.services,
                 self.cross_blocks,
                 self.validation,
+                self.root,
             )
             self.extend_examples(examples, self.errors)
             self.errors.extend(errs)

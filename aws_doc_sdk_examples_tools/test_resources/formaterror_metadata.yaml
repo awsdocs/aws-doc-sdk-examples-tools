@@ -8,9 +8,8 @@ WrongNameFormat:
       versions:
         - sdk_version: 2
           block_content: test/block
-          github: javav2/example_code/medical-imaging
   services:
-    medical-imaging: {TestAction}
+    medical-imaging: { TestAction }
 cross_TestExample:
   title: Test title
   title_abbrev: Test title abbrev
@@ -23,5 +22,5 @@ cross_TestExample:
           add_services:
             garbage:
   services:
-    medical-imaging: {TestAction}
-    sqs: {TestAction}
+    medical-imaging: { TestAction }
+    sqs: { TestAction }

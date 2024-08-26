@@ -106,8 +106,6 @@ medical-imaging_CreateDatastore:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/medical-imaging
-           sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -134,8 +132,6 @@ def test_parse():
         versions=[
             Version(
                 sdk_version=1,
-                github="cpp/example_code/medical-imaging",
-                sdkguide="sdkguide/link",
                 excerpts=[
                     Excerpt(
                         description="test excerpt description",
@@ -197,8 +193,6 @@ medical-imaging_GoodOne:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/medical-imaging
-           sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -214,8 +208,6 @@ medical-imaging_GoodScenario:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/medical-imaging
-           sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -243,8 +235,6 @@ def test_parse_strict_titles():
         versions=[
             Version(
                 sdk_version=1,
-                github="cpp/example_code/medical-imaging",
-                sdkguide="sdkguide/link",
                 excerpts=[
                     Excerpt(
                         description="test excerpt description",
@@ -326,8 +316,6 @@ medical-imaging_BadOne:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/medical-imaging
-           sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -340,8 +328,6 @@ medical-imaging_BadScenario:
      C++:
        versions:
          - sdk_version: 1
-           github: cpp/example_code/medical-imaging
-           sdkguide: sdkguide/link
            excerpts:
              - description: test excerpt description
                snippet_tags:
@@ -391,6 +377,14 @@ def test_parse_strict_title_errors():
         metadata_errors.BasicsMustHaveSynopsisField(
             file=Path("test_cpp.yaml"),
             id="medical-imaging_BadBasics",
+        ),
+        metadata_errors.MissingGithubLink(
+            file=Path("test_cpp.yaml"),
+            id="medical-imaging_BadBasics",
+            language="C++",
+            sdk_version=1,
+            link="cpp/example_code/medical-imaging",
+            root=Path("."),
         ),
     ]
     assert expected == [*errors]
@@ -482,7 +476,7 @@ def test_verify_load_successful():
         versions=[
             Version(
                 sdk_version=2,
-                github="javav2/example_code/medical-imaging",
+                github="test_path",
                 block_content="test block",
                 excerpts=[],
                 add_services={},
@@ -498,7 +492,6 @@ def test_verify_load_successful():
         versions=[
             Version(
                 sdk_version=3,
-                github=None,
                 block_content=None,
                 add_services={"s3": set()},
                 excerpts=[
@@ -523,7 +516,6 @@ def test_verify_load_successful():
         versions=[
             Version(
                 sdk_version=3,
-                github="php/example_code/medical-imaging",
                 sdkguide="php/sdkguide/link",
                 block_content=None,
                 excerpts=[
@@ -648,6 +640,14 @@ FORMATTER_METADATA_PATH = (
                     language="Perl",
                     guide="https://docs.aws.amazon.com/absolute/link-to-my-guide",
                     sdk_version=1,
+                ),
+                metadata_errors.MissingGithubLink(
+                    file=ERRORS_METADATA_PATH,
+                    id="sqs_WrongServiceSlug",
+                    language="Perl",
+                    sdk_version=1,
+                    link="perl/example_code/medical-imaging",
+                    root=ERRORS_METADATA_PATH.parent,
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
                     file=ERRORS_METADATA_PATH,
