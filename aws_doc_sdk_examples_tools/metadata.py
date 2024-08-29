@@ -120,6 +120,8 @@ class Version:
                         link=github, sdk_version=sdk_version
                     )
                 )
+            elif github.startswith("http"):
+                pass  # Tributaries specify full GitHub path. Consider passing in GitHub root from tributaries and doing a full check at some point.
             elif not (root / github).exists():
                 errors.append(
                     metadata_errors.MissingGithubLink(
