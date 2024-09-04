@@ -89,8 +89,8 @@ There are two stages, testing and deployment.
 
 1. **Update the -tools version**: Once the tests pass, update the `setup.py` version and create a tag in the -tools repository at the same SHA you identified earlier.
 
-   - Determine the next [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers) number as appropriate for the changes in this release.
-   - Create a local version identifier, with the format `YYYY-MM-DD-A`, where `YYYY-MM-DD` represents release date, and `-A` is used for the first release of the day (followed by `-B`, `-C`, etc., for subsequent same-day releases).
+   - Determine the next [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers) number as appropriate for the changes in this release. EG `1.1.4`
+   - Create a local version identifier, with the format `YYYY-MM-DD-A`, where `YYYY-MM-DD` represents release date, and `-A` is used for the first release of the day (followed by `-B`, `-C`, etc., for subsequent same-day releases). EG `2024-08-24-A`
 
      - Here is a command line script to generate the local identifier, tested on Mac:
 
@@ -101,7 +101,7 @@ There are two stages, testing and deployment.
        git push origin "$TAG_NAME"
      ```
 
-   - The new version will be `{NEXT_SEMVER}+{LOCAL_VERSION}`.
+   - The new version will be `{NEXT_SEMVER}+{LOCAL_VERSION}`, EG `1.1.4+2024-08-24-A`
      - **Update `setup.py` with this version.**
    - Create a tag at the SHA from the testing phase, using the local version identifier.
 
