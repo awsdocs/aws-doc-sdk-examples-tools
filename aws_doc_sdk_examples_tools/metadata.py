@@ -73,6 +73,9 @@ class Excerpt:
 
         return (cls(description, snippet_tags, snippet_files, genai), errors)
 
+    def validate(self, errors: MetadataErrors):
+        pass
+
 
 @dataclass
 class Version:
@@ -111,23 +114,6 @@ class Version:
         if sdkguide is not None:
             if sdkguide.startswith("https://docs.aws.amazon.com"):
                 errors.append(metadata_errors.InvalidSdkGuideStart(guide=sdkguide))
-
-        if github is not None:
-            _, ext = splitext(github)
-            if ext != "":
-                errors.append(
-                    metadata_errors.InvalidGithubLink(
-                        link=github, sdk_version=sdk_version
-                    )
-                )
-            elif github.startswith("http"):
-                pass  # Tributaries specify full GitHub path. Consider passing in GitHub root from tributaries and doing a full check at some point.
-            elif not (root / github).exists():
-                errors.append(
-                    metadata_errors.MissingGithubLink(
-                        link=github, sdk_version=sdk_version, root=root
-                    )
-                )
 
         excerpts = []
         for excerpt in yaml.get("excerpts", []):
@@ -172,6 +158,28 @@ class Version:
             ),
             errors,
         )
+
+    def validate(self, errors: MetadataErrors, root: Path):
+        github = self.github
+        if github is not None:
+            _, ext = splitext(github)
+            if ext != "":
+                errors.append(
+                    metadata_errors.InvalidGithubLink(
+                        link=github, sdk_version=self.sdk_version
+                    )
+                )
+            elif github.startswith("http"):
+                pass  # Tributaries specify full GitHub path. Consider passing in GitHub root from tributaries and doing a full check at some point.
+            elif not (root / github).exists():
+                errors.append(
+                    metadata_errors.MissingGithubLink(
+                        link=github, sdk_version=self.sdk_version, root=root
+                    )
+                )
+
+        for excerpt in self.excerpts:
+            excerpt.validate(errors)
 
 
 @dataclass
@@ -241,6 +249,15 @@ class Language:
                 error.language = name
 
         return cls(name, property, versions), errors
+
+    def validate(self, errors: MetadataErrors, root: Path):
+        errs = MetadataErrors()
+        for version in self.versions:
+            version.validate(errs, root)
+        for error in errs:
+            if isinstance(error, MetadataParseError):
+                error.language = self.name
+        errors.extend(errs)
 
 
 @dataclass
@@ -393,6 +410,15 @@ class Example:
             ),
             errors,
         )
+
+    def validate(self, errors: MetadataErrors, root: Path):
+        errs = MetadataErrors()
+        for language in self.languages.values():
+            language.validate(errs, root)
+        for error in errs:
+            error.file = self.file
+            error.id = self.id
+        errors.extend(errs)
 
 
 def parse_services(
