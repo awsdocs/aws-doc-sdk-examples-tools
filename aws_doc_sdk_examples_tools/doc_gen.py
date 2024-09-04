@@ -256,6 +256,8 @@ class DocGen:
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
+        for example in self.examples.values():
+            example.validate(self.errors, self.root)
         validate_metadata(self.root, self.errors)
         validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(

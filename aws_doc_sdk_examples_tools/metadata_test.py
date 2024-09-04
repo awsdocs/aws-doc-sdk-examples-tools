@@ -8,7 +8,7 @@ This script contains tests that verify the examples loader finds appropriate err
 import pytest
 import yaml
 from pathlib import Path
-from typing import List, Set, Tuple, Optional
+from typing import List, Set, Tuple
 
 from . import metadata_errors
 from .metadata_errors import MetadataErrors, ExampleMergeConflict
@@ -32,13 +32,9 @@ from .services import Service, ServiceExpanded
 def load(
     path: Path, doc_gen: DocGen, blocks: Set[str] = set()
 ) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
-    root = Path(__file__).parent
-    filename = root / "test_resources" / path
-    with filename.open() as file:
+    with path.open() as file:
         meta = yaml.safe_load(file)
-    return parse(
-        filename, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
-    )
+    return parse(path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
 
 
 SERVICES = {
@@ -378,14 +374,6 @@ def test_parse_strict_title_errors():
             file=Path("test_cpp.yaml"),
             id="medical-imaging_BadBasics",
         ),
-        metadata_errors.MissingGithubLink(
-            file=Path("test_cpp.yaml"),
-            id="medical-imaging_BadBasics",
-            language="C++",
-            sdk_version=1,
-            link="cpp/example_code/medical-imaging",
-            root=Path("."),
-        ),
     ]
     assert expected == [*errors]
 
@@ -464,7 +452,7 @@ def test_parse_cross():
 
 def test_verify_load_successful():
     actual, errors = load(
-        Path(__file__).parent / "test_resources/valid_metadata.yaml",
+        TEST_RESOURCES_PATH / "valid_metadata.yaml",
         DOC_GEN,
         set(["test block"]),
     )
@@ -595,15 +583,14 @@ def test_verify_load_successful():
     assert actual[0] == example
 
 
-EMPTY_METADATA_PATH = Path(__file__).parent / "test_resources/empty_metadata.yaml"
-ERRORS_METADATA_PATH = Path(__file__).parent / "test_resources/errors_metadata.yaml"
-FORMATTER_METADATA_PATH = (
-    Path(__file__).parent / "test_resources/formaterror_metadata.yaml"
-)
+TEST_RESOURCES_PATH = Path(__file__).parent / "test_resources"
+EMPTY_METADATA_PATH = TEST_RESOURCES_PATH / "empty_metadata.yaml"
+ERRORS_METADATA_PATH = TEST_RESOURCES_PATH / "errors_metadata.yaml"
+FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
 
 
 @pytest.mark.parametrize(
-    "filename,expected_errors",
+    "filename,expected_errors,validation_errors",
     [
         (
             "empty_metadata.yaml",
@@ -620,6 +607,7 @@ FORMATTER_METADATA_PATH = (
                     svcs=[],
                 ),
             ],
+            [],
         ),
         (
             "errors_metadata.yaml",
@@ -640,14 +628,6 @@ FORMATTER_METADATA_PATH = (
                     language="Perl",
                     guide="https://docs.aws.amazon.com/absolute/link-to-my-guide",
                     sdk_version=1,
-                ),
-                metadata_errors.MissingGithubLink(
-                    file=ERRORS_METADATA_PATH,
-                    id="sqs_WrongServiceSlug",
-                    language="Perl",
-                    sdk_version=1,
-                    link="perl/example_code/medical-imaging",
-                    root=ERRORS_METADATA_PATH.parent,
                 ),
                 metadata_errors.MissingBlockContentAndExcerpt(
                     file=ERRORS_METADATA_PATH,
@@ -691,13 +671,6 @@ FORMATTER_METADATA_PATH = (
                     id="medical-imaging_TestExample2",
                     service="garbled",
                 ),
-                metadata_errors.InvalidGithubLink(
-                    file=ERRORS_METADATA_PATH,
-                    id="medical-imaging_TestExample2",
-                    language="Java",
-                    sdk_version=2,
-                    link="github/link/to/README.md",
-                ),
                 metadata_errors.FieldError(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -730,6 +703,23 @@ FORMATTER_METADATA_PATH = (
                     id="medical-imagingBadFormat",
                 ),
             ],
+            [
+                metadata_errors.MissingGithubLink(
+                    file=ERRORS_METADATA_PATH,
+                    id="sqs_WrongServiceSlug",
+                    language="Perl",
+                    sdk_version=1,
+                    link="perl/example_code/medical-imaging",
+                    root=TEST_RESOURCES_PATH,
+                ),
+                metadata_errors.InvalidGithubLink(
+                    file=ERRORS_METADATA_PATH,
+                    id="medical-imaging_TestExample2",
+                    language="Java",
+                    sdk_version=2,
+                    link="github/link/to/README.md",
+                ),
+            ],
         ),
         (
             "formaterror_metadata.yaml",
@@ -746,14 +736,22 @@ FORMATTER_METADATA_PATH = (
                     service="garbage",
                 ),
             ],
+            [],
         ),
     ],
 )
 def test_common_errors(
-    filename: str, expected_errors: List[metadata_errors.MetadataError]
+    filename: str,
+    expected_errors: List[metadata_errors.MetadataError],
+    validation_errors: List[metadata_errors.MetadataError],
 ):
-    _, actual = load(Path(filename), DOC_GEN, set(["test/block", "cross_block.xml"]))
+    root = TEST_RESOURCES_PATH / filename
+    examples, actual = load(root, DOC_GEN, set(["test/block", "cross_block.xml"]))
     assert expected_errors == [*actual]
+    validations = MetadataErrors()
+    for example in examples:
+        example.validate(validations, root.parent)
+    assert validation_errors == [*validations]
 
 
 TEST_SERVICES = {"test": {"Test", "Test2", "Test3", "1"}}
