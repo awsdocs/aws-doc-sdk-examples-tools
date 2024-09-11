@@ -338,8 +338,8 @@ bedrock-agent:
   short: '&BRA;'
   sort: Bedrock3
   expanded:
-    long: Agents for Amazon Bedrock
-    short: Agents for Amazon Bedrock
+    long: Amazon Bedrock Agents
+    short: Amazon Bedrock Agents
   blurb: offer you the ability to build and configure autonomous agents in your application.
   guide:
     subtitle: User Guide
@@ -354,8 +354,8 @@ bedrock-agent-runtime:
   short: '&BRARUN;'
   sort: Bedrock4
   expanded:
-    long: Agents for Amazon Bedrock Runtime
-    short: Agents for Amazon Bedrock Runtime
+    long: Amazon Bedrock Agents Runtime
+    short: Amazon Bedrock Agents Runtime
   blurb: offers you the ability to run autonomous agents in your application.
   guide:
     subtitle: User Guide
