@@ -150,7 +150,6 @@ Java:
         long: "AWS SDK for Java 2.x"
         short: "SDK for Java 2.x"
       guide: "sdk-for-java/latest/developer-guide/home.html"
-      bookmark: readme
       api_ref:
         uid: "SdkForJavaV2"
         name: "&guide-javaV2-api;"
