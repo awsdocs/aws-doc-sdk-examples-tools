@@ -377,3 +377,14 @@ Bash:
         uid: "aws-cli"
         name: "&guide-cli-ref;"
   guide: "&guide-cli-ug;"
+CloudFormation:
+  property: cfn
+  sdk:
+    1:
+      long: "&CFNlong;"
+      short: "&CFN;"
+      expanded:
+        long: "AWS CloudFormation Infrastructure as Code"
+        short: "AWS CFN"
+      guide: AWSCloudFormation/latest/UserGuide/Welcome.html
+  guide: "&guide-cfn-user;"
