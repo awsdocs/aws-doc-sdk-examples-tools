@@ -287,7 +287,6 @@ Swift:
     1:
       long: "&Swiftlong;"
       short: "&Swift;"
-      caveat: "This is prerelease documentation for an SDK in preview release. It is subject to change."
       expanded:
         long: "AWS SDK for Swift"
         short: "SDK for Swift"
