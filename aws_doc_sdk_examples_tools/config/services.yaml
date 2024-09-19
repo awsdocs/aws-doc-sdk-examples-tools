@@ -1528,6 +1528,21 @@ inspector:
   tags:
     product_categories: {}
   version: '2016-02-16'
+inspector2:
+  api_ref: inspector/v2/APIReference/Welcome.html
+  blurb: is a vulnerability discovery service that automates continuous scanning for security vulnerabilities within your Amazon EC2, Amazon ECR, and AWS Lambda environments.
+  expanded:
+    long: Amazon Inspector
+    short: Amazon Inspector
+  guide:
+    subtitle: User Guide
+    url: inspector/latest/user/what-is-inspector.html
+  long: '&INSlong;'
+  short: '&INS;'
+  sort: Inspector
+  tags:
+    product_categories: {'Security, Identity, &amp; Compliance'}
+  version: inspector2-2020-06-08
 iot:
   long: '&IoTlong;'
   short: '&IoT;'
@@ -2664,6 +2679,21 @@ route-53-domains:
   tags:
     product_categories: {'Networking &amp; Content Delivery'}
   version: route53domains-2014-05-15
+route53profiles:
+  long: '&R53Pslong;'
+  short: '&R53Ps;'
+  sort: Route 53 Profiles
+  expanded:
+    long: Amazon Route 53 Profiles
+    short: Route 53 Profiles
+  blurb: lets you apply and manage DNS-related Route 53 configurations across many VPCs and in different AWS accounts.
+  guide:
+    subtitle: Developer Guide
+    url: Route53/latest/DeveloperGuide/profiles.html
+  api_ref: Route53/latest/APIReference/API_Operations_Route_53_Profiles.html
+  tags:
+    product_categories: {'Networking &amp; Content Delivery'}
+  version: route53profiles-2018-05-10
 route53-recovery-cluster:
   long: '&R53ARClong;'
   short: '&R53ARC;'
@@ -2784,6 +2814,21 @@ securityhub:
   tags:
     product_categories: {}
   version: '2018-10-26'
+securitylake:
+  api_ref: security-lake/latest/APIReference/Welcome.html
+  blurb: is a fully-managed security data lake service.
+  expanded:
+    long: Amazon Security Lake
+    short: Security Lake
+  guide:
+    subtitle: User Guide
+    url: security-lake/latest/userguide/what-is-security-lake.html
+  long: '&SLlong;'
+  short: '&SL;'
+  sort: Security Lake
+  tags:
+    product_categories: {'Security, Identity, &amp; Compliance'}
+  version: securitylake-2018-05-10
 serverlessapplicationrepository:
   api_ref: serverlessrepo/latest/devguide/operations.html
   blurb: ''
