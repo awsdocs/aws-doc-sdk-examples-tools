@@ -16,8 +16,17 @@ REPO_PATH = "/Users/fprior/Development/GitFarm/workplace/fprior/update-mirror-3/
 # Path to the YAML file you want to extract from each commit
 FILE_PATH = "tools/update_mirror/config.yaml"
 
-# Function to run git commands
 def run_git_command(command, cwd=None):
+    """
+    Run a Git command and return the output.
+
+    Args:
+        command (str): The Git command to run.
+        cwd (str, optional): The directory to run the command in. Defaults to None.
+
+    Returns:
+        str: The output of the Git command, or None if an error occurred.
+    """
     try:
         result = subprocess.run(command, cwd=cwd, text=True, capture_output=True, shell=True)
         if result.returncode != 0:
@@ -27,8 +36,15 @@ def run_git_command(command, cwd=None):
         print(f"{Fore.RED}Error running command: {command}\n{Fore.RED}Error: {e}")
         return None
 
-# Function to clone a repository if it's not already cloned
 def clone_or_reuse_repo(repo_url, branch, clone_dir):
+    """
+    Clone a Git repository if it doesn't already exist, or reuse the existing clone.
+
+    Args:
+        repo_url (str): The URL of the repository to clone.
+        branch (str): The branch to check out.
+        clone_dir (str): The directory to clone the repository into.
+    """
     if os.path.exists(clone_dir):
         print(f"{Fore.YELLOW}Repository {repo_url} already cloned in {clone_dir}. Reusing existing clone.")
     else:
@@ -41,8 +57,17 @@ def clone_or_reuse_repo(repo_url, branch, clone_dir):
         checkout_cmd = f"git checkout {branch}"
         run_git_command(checkout_cmd, cwd=clone_dir)
 
-# Function to get the latest commit hash for the specific age in the repo
 def get_commit_hash_for_age(repo_dir, age):
+    """
+    Get the commit hash for a specific age in the repository's history.
+
+    Args:
+        repo_dir (str): The path to the Git repository.
+        age (str): The age to search for (e.g., '1 month ago').
+
+    Returns:
+        str: The commit hash corresponding to the specified age, or None if not found.
+    """
     log_cmd = f'git rev-list -1 --before="{age}" HEAD'
     commit_hash = run_git_command(log_cmd, cwd=repo_dir)
     if commit_hash:
@@ -51,14 +76,27 @@ def get_commit_hash_for_age(repo_dir, age):
         print(f"{Fore.RED}Failed to find commit hash for {age} in {repo_dir}")
         return None
 
-# Function to force checkout to the specific commit hash
 def checkout_commit(repo_dir, commit_hash):
+    """
+    Checkout a specific commit hash in the repository.
+
+    Args:
+        repo_dir (str): The path to the Git repository.
+        commit_hash (str): The commit hash to checkout.
+    """
     print(f"{Fore.CYAN}Checking out commit {commit_hash} in {repo_dir}")
     checkout_cmd = f'git checkout --force {commit_hash}'
     run_git_command(checkout_cmd, cwd=repo_dir)
 
-# Function to run the specific Git log command and Python command
 def run_commands_in_repo(repo_dir, commit_hash, age):
+    """
+    Run Git log and a Python command in a specific commit of a repository.
+
+    Args:
+        repo_dir (str): The path to the repository.
+        commit_hash (str): The commit hash to run the commands in.
+        age (str): The age of the commit being processed.
+    """
     # Checkout the repository to the specific commit
     checkout_commit(repo_dir, commit_hash)
 
@@ -74,7 +112,7 @@ def run_commands_in_repo(repo_dir, commit_hash, age):
 
         print(f"{Fore.MAGENTA}Commit for {age}: {commit_hash}, Author: {author_name}, Date: {commit_date}")
 
-        # Now run the Python command on the repository
+        # Run the Python command on the repository
         python_cmd = f'python3 -m aws_doc_sdk_examples_tools.stats "{repo_dir}"'
         print(f"{Fore.CYAN}Running stats command for repository: {repo_dir}")
         output = run_git_command(python_cmd, cwd=repo_dir)
@@ -84,14 +122,24 @@ def run_commands_in_repo(repo_dir, commit_hash, age):
     else:
         print(f"{Fore.RED}No commit found for {age} in {repo_dir}")
 
-# Main function to gather file contents from specific commits and clone repositories
 def get_file_from_commits_and_clone(repo_path, file_path, ages):
+    """
+    Extract file contents from specific commits and clone repositories for each mirror.
+
+    Args:
+        repo_path (str): Path to the main repository.
+        file_path (str): Path to the YAML file within the repository.
+        ages (list): List of age ranges to retrieve commit hashes for.
+
+    Returns:
+        dict: A dictionary mapping each age to the mirrors section of the YAML file.
+    """
     age_content_dict = {}
     cloned_repos = {}  # To track cloned repositories and their directories
 
     # Create a temporary directory for the clones
     with tempfile.TemporaryDirectory() as tmp_dir:
-        # First, fetch the configuration file from the main repository for each age
+        # Fetch the configuration file from the main repository for each age
         for age in ages:
             print(f"{Style.BRIGHT}{Fore.BLUE}#############################################################")
             print(f"{Style.BRIGHT}{Fore.BLUE}######################## {age.upper()} ##############################")
@@ -147,8 +195,13 @@ def get_file_from_commits_and_clone(repo_path, file_path, ages):
 
     return age_content_dict
 
-# Review the contents (age range as key and the list of mirror repositories as values)
 def display_age_content_dict(age_content_dict):
+    """
+    Display the mirrors section extracted from the YAML files, grouped by age.
+
+    Args:
+        age_content_dict (dict): A dictionary with age as keys and mirrors data as values.
+    """
     print(f"{Style.BRIGHT}{Fore.GREEN}File contents grouped by age range:")
     for age, mirrors in age_content_dict.items():
         print(f"{Fore.YELLOW}Age: {age}")
