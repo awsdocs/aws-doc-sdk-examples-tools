@@ -97,10 +97,10 @@ def run_commands_in_repo(repo_dir, commit_hash, age):
         commit_hash (str): The commit hash to run the commands in.
         age (str): The age of the commit being processed.
     """
-    # Checkout the repository to the specific commit
+    # Checkout repo at the specific commit
     checkout_commit(repo_dir, commit_hash)
 
-    # Retrieve the commit details
+    # Retrieve commit details
     log_cmd = f'git log -n 1 {commit_hash} --pretty=format:"%H|%an|%aI"'
     log_output = run_git_command(log_cmd, cwd=repo_dir)
 
@@ -112,7 +112,7 @@ def run_commands_in_repo(repo_dir, commit_hash, age):
 
         print(f"{Fore.MAGENTA}Commit for {age}: {commit_hash}, Author: {author_name}, Date: {commit_date}")
 
-        # Run the Python command on the repository
+        # Run the Python command on the repo
         python_cmd = f'python3 -m aws_doc_sdk_examples_tools.stats "{repo_dir}"'
         print(f"{Fore.CYAN}Running stats command for repository: {repo_dir}")
         output = run_git_command(python_cmd, cwd=repo_dir)
@@ -137,9 +137,9 @@ def get_file_from_commits_and_clone(repo_path, file_path, ages):
     age_content_dict = {}
     cloned_repos = {}  # To track cloned repositories and their directories
 
-    # Create a temporary directory for the clones
+    # Create a tmp directory for the clones
     with tempfile.TemporaryDirectory() as tmp_dir:
-        # Fetch the configuration file from the main repository for each age
+        # Fetch the config file from the main repository for each age
         for age in ages:
             print(f"{Style.BRIGHT}{Fore.BLUE}#############################################################")
             print(f"{Style.BRIGHT}{Fore.BLUE}######################## {age.upper()} ##############################")
@@ -163,13 +163,13 @@ def get_file_from_commits_and_clone(repo_path, file_path, ages):
                     mirrors = yaml_content.get('mirrors', {})
                     age_content_dict[age] = mirrors
 
-                    # Clone or reuse repositories for each mirror
+                    # Clone or reuse repos for each mirror
                     for mirror_name, mirror_info in mirrors.items():
                         repo_url = mirror_info.get('git_mirror')
                         branch = mirror_info.get('branch')
                         dir_name = mirror_info.get('dir')
 
-                        # Check if this repository has already been cloned
+                        # Check if repo has already been cloned
                         if repo_url not in cloned_repos:
                             # If not, clone the repository to a subfolder in the temp directory
                             clone_dir = os.path.join(tmp_dir, dir_name)
@@ -214,8 +214,8 @@ def display_age_content_dict(age_content_dict):
         print("-----------------")
 
 if __name__ == "__main__":
-    # Get the contents from the commits and clone the repos
+    # Get the contents from the commits and clone the repos.
     age_content_dict = get_file_from_commits_and_clone(REPO_PATH, FILE_PATH, AGES)
 
-    # Display the contents in the dictionary format
+    # Display the contents in the dictionary format.
     display_age_content_dict(age_content_dict)
