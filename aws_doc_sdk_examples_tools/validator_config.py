@@ -32,6 +32,7 @@ EXT_LOOKUP = {
     ".rs": "Rust",
     ".sh": "AWS-CLI",
     ".swift": "Swift",
+    ".tf": "Terraform",
     ".toml": "Toml",
     ".ts": "TypeScript",
     ".tsx": "TypeScript",
