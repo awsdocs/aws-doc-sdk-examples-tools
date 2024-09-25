@@ -1979,22 +1979,39 @@ macie2:
   tags:
     product_categories: {}
   version: '2020-01-01'
+marketplace:
+  long: "&MKTlong;"
+  short: "&MKT;"
+  sort: Marketplace
+  expanded:
+    long: AWS Marketplace
+    short: Marketplace
+  blurb: is an online store where you can buy or sell software that runs on Amazon Web Services.
+  guide:
+    subtitle: Landing Page
+    url: marketplace/
+  api_ref: marketplace/
+  tags:
+    product_categories: {'Marketplace'}
+  version: marketplace-agreement-2020-03-01
 marketplace-agreement:
+  bundle: marketplace
   api_ref: marketplace-agreements/latest/api-reference/welcome.html
   blurb: provides an API interface that helps AWS Marketplace sellers manage their agreements, including listing, filtering, and viewing details about their agreements.
   expanded:
-    long: AWS Marketplace Agreement Service
-    short: AWS Marketplace Agreement Service
+    long: AWS Marketplace Agreement API
+    short: AWS Marketplace Agreement API
   guide:
     subtitle: Seller Guide
     url: marketplace/latest/userguide/what-is-marketplace.html
   long: '&MKTAgreementlong;'
   short: '&MKTAgreement;'
-  sort: Marketplace Agreement Service
+  sort: Marketplace Agreement API
   tags:
     product_categories: {'Marketplace'}
   version: marketplace-agreement-2020-03-01
 marketplace-catalog:
+  bundle: marketplace
   api_ref: marketplace-catalog/latest/api-reference/welcome.html
   blurb: provides an API interface for approved providers to programmatically manage their products.
   expanded:
@@ -2003,8 +2020,8 @@ marketplace-catalog:
   guide:
     subtitle: Seller Guide
     url: marketplace/latest/userguide/what-is-marketplace.html
-  long: '&MKTCAPIlong;'
-  short: '&MKTCAPI;'
+  long: '&MKTCataloglong;'
+  short: '&MKTCatalog;'
   sort: Marketplace Catalog API
   tags:
     product_categories: {'Marketplace'}
