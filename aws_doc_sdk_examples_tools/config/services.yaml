@@ -2006,7 +2006,7 @@ marketplace-agreement:
     url: marketplace/latest/userguide/what-is-marketplace.html
   long: '&MKTAgreementlong;'
   short: '&MKTAgreement;'
-  sort: Marketplace Agreement API
+  sort: Marketplace2
   tags:
     product_categories: {'Marketplace'}
   version: marketplace-agreement-2020-03-01
@@ -2022,7 +2022,7 @@ marketplace-catalog:
     url: marketplace/latest/userguide/what-is-marketplace.html
   long: '&MKTCataloglong;'
   short: '&MKTCatalog;'
-  sort: Marketplace Catalog API
+  sort: Marketplace1
   tags:
     product_categories: {'Marketplace'}
   version: marketplace-catalog-2018-09-17
