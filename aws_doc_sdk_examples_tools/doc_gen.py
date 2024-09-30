@@ -3,6 +3,8 @@
 
 import yaml
 import json
+import urllib.request
+
 
 from collections import defaultdict
 from dataclasses import dataclass, field, is_dataclass, asdict
@@ -34,6 +36,21 @@ from .snippets import (
 @dataclass
 class DocGenMergeWarning(MetadataError):
     pass
+
+
+def load_meta(path: Optional[Path], name: str):
+    try:
+        if path is None:
+            url = f"https://github.com/awsdocs/aws-doc-sdk-examples-tools/tree/main/aws_doc_sdk_examples_tools/config/{name}"
+            path = Path(url)
+            with urllib.request.urlopen(url) as file:
+                data = file
+    except Exception:
+        path = path or Path(__file__).parent / "config"
+        with path.open(encoding="utf-8") as file:
+            data = file
+    meta = yaml.safe_load(data)
+    return path, meta
 
 
 @dataclass
@@ -150,11 +167,9 @@ class DocGen:
         )
 
     def for_root(
-        self, root: Path, config: Optional[Path] = None, incremental=False
+        self, root: Path, config_path: Optional[Path] = None, incremental=False
     ) -> "DocGen":
         self.root = root
-
-        config = config or Path(__file__).parent / "config"
 
         try:
             with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
@@ -166,33 +181,28 @@ class DocGen:
             pass
 
         try:
-            sdk_path = config / "sdks.yaml"
-            with sdk_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks(sdk_path, meta)
-                self.sdks = sdks
-                self.errors.extend(errs)
+            sdk_path, meta = load_meta(config_path, "sdks.yaml")
+            sdks, errs = parse_sdks(sdk_path, meta)
+            self.sdks = sdks
+            self.errors.extend(errs)
         except Exception:
             pass
 
         try:
-            services_path = config / "services.yaml"
-            with services_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                services, service_errors = parse_services(services_path, meta)
-                self.services = services
-                for service in self.services.values():
-                    if service.expanded:
-                        self.entities[service.long] = service.expanded.long
-                        self.entities[service.short] = service.expanded.short
-                self.errors.extend(service_errors)
+            services_path, meta = load_meta(config_path, "services.yaml")
+            services, service_errors = parse_services(services_path, meta)
+            self.services = services
+            for service in self.services.values():
+                if service.expanded:
+                    self.entities[service.long] = service.expanded.long
+                    self.entities[service.short] = service.expanded.short
+            self.errors.extend(service_errors)
         except Exception:
             pass
 
         try:
-            entities_config_path = config / "entities.yaml"
-            with entities_config_path.open(encoding="utf-8") as file:
-                entities_config = yaml.safe_load(file)
+            _, entities_config = load_meta(config_path, "entities.yaml")
+            _, meta = load_meta(config_path, "entities.yaml")
             for entity, expanded in entities_config["expanded_override"].items():
                 self.entities[entity] = expanded
         except Exception:
