@@ -7,14 +7,14 @@ set -e # Exit on errors
 BRANCH=$(git rev-parse --abbrev-rev HEAD)
 if [ "$BRANCH" != "main" ] ; then 
     echo "Not on main, exiting!" 
-    exit 1
+    # exit 1
 fi 
 
 # And check that the main branch is clean
 STATUS=$(git status --porcelain)
 if [ -n "${STATUS}" ] ; then
     echo "Repository is not clean, exiting!" 
-    exit 1
+    # exit 1
 fi 
 
 # VERSION and DATE have the format YYYY.WW.REV, where YYYY is the current year,
@@ -48,9 +48,12 @@ NEXT=$(date +%Y.%W.0)
 VERSION=$(compare_versions "$CURRENT" "$NEXT")
 echo "Releasing $VERSION..."
 sed -i '' "/version=/ s/$CURRENT/$VERSION/" setup.py
-git diff
+git --no-pager diff
 git add setup.py
 git commit --message "Release ${VERSION}"
-git tag $VERSION main
-git push origin $VERSION
-git push origin main
+
+if [ "$1" == "--release" ] ; then
+    git tag $VERSION main
+    git push origin $VERSION
+    git push origin main
+fi

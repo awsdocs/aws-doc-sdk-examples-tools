@@ -90,15 +90,11 @@ There are two stages, testing and deployment.
 1. **Update the -tools version**: Once the tests pass, update the `setup.py` version and create a tag in the -tools repository at the same SHA you identified earlier.
 
   - Determine the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
-  - Get the current year and week with `date +%Y.%W`. Increment or roll over the version number as necessary.
-  - **Update `setup.py` with this version.**
-  - Create a local version identifier, with the format `YYYY-WW-REV`.
-  - Create a tag at the SHA from the testing phase, using the local version identifier.
-  <!-- TODO: Create a script using Python setuptools, `import pkg_resources; version = pkg_resources.require("MyProject")[0].version` and auto-increment/roll over versions.>
+  - Run `stamp.sh` to automatically perform this action. Use `--release` to additionally create a tag and push to main.
 
 1. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
    - NOTE: Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
-   - This is easily accomplished in the UI.
+   - This is easily accomplished in the Github UI.
 2. **Create a release**: Use the automated ["Create release from tag" button](https://github.com/awsdocs/aws-doc-sdk-examples-tools/releases/new) to create a new release with the new tag.
 3. **Perform internal update process**.
 
