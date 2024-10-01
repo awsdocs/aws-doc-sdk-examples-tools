@@ -17,23 +17,26 @@ if [ -n "${STATUS}" ] ; then
     # exit 1
 fi 
 
-# VERSION and DATE have the format YYYY.WW.REV, where YYYY is the current year,
+# And check that the REMOTE points to the -tools repo.
+REMOTE="${REMOTE:origin}"
+if [ "$(git remote get-url $REMOTE 2>/dev/null)" != "git@github.com:awsdocs/aws-doc-sdk-examples-tools.git" ] ; then
+    echo "REMOTE=${REMOTE} is not set to git@github.com:awsdocs/aws-doc-sdk-examples-tools.git, please adjust accordingly and rerun."
+    exit 1
+fi
+
+# CURRENT and NEXT have the format YYYY.WW.REV, where YYYY is the current year,
 # WW is the current week, and REV is the number of releases this week.
 # The next revision compares the two, in this way
-# - If DATE is later than VERSION in all fields, accept date.
-# - Otherwise, return VERSION, with one added to REV.
+# - If NEXT is later than CURRENT in any fields, accept NEXT.
+# - Otherwise, return CURRENT, with one added to REV.
 #
 # THIS FUNCTION IS NOT TRANSITIVE! It must be called with
 # `compare_versions CURRENT NEXT`
 compare_versions() {
-    IFS='.' read -r y1 w1 r1 <<< "$1"
-    IFS='.' read -r y2 w2 r2 <<< "$2"
-
-    if [ "$y1" -lt "$y2" ] || \
-       [ "$w1" -lt "$w2" ] || \
-       [ "$r1" -lt "$r2" ]; then
+    if [[ "$1" < "$2" ]] ; then
         echo "$2"
     else
+        IFS='.' read -r y1 w1 r1 <<< "$1"
         r1=$((r1 + 1))
         echo "${y1}.${w1}.${r1}"
     fi
@@ -53,7 +56,7 @@ git add setup.py
 git commit --message "Release ${VERSION}"
 
 if [ "$1" == "--release" ] ; then
-    git tag $VERSION main
-    git push origin $VERSION
-    git push origin main
+    git tag "$VERSION" main
+    git push "$REMOTE" "$VERSION"
+    git push "$REMOTE" main
 fi
