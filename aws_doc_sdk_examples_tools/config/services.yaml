@@ -2742,6 +2742,7 @@ route53resolver:
     product_categories: {}
   version: '2018-04-01'
 s3:
+  bundle: s3
   long: '&S3long;'
   short: '&S3;'
   sort: S3
@@ -2757,6 +2758,7 @@ s3:
     product_categories: {'Storage'}
   version: s3-2006-03-01
 s3-control:
+  bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
   blurb: ''
   expanded:
