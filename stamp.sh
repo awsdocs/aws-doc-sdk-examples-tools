@@ -7,20 +7,20 @@ set -e # Exit on errors
 BRANCH=$(git rev-parse --abbrev-rev HEAD)
 if [ "$BRANCH" != "main" ] ; then 
     echo "Not on main, exiting!" 
-    # exit 1
+    exit 1
 fi 
 
 # And check that the main branch is clean
 STATUS=$(git status --porcelain)
 if [ -n "${STATUS}" ] ; then
     echo "Repository is not clean, exiting!" 
-    # exit 1
+    exit 1
 fi 
 
 # And check that the REMOTE points to the -tools repo.
-REMOTE="${REMOTE:origin}"
-if [ "$(git remote get-url $REMOTE 2>/dev/null)" != "git@github.com:awsdocs/aws-doc-sdk-examples-tools.git" ] ; then
-    echo "REMOTE=${REMOTE} is not set to git@github.com:awsdocs/aws-doc-sdk-examples-tools.git, please adjust accordingly and rerun."
+REMOTE="${REMOTE:-origin}"
+if [[ "$(git remote get-url $REMOTE 2>/dev/null)" != *"awsdocs/aws-doc-sdk-examples-tools.git"* ]] ; then
+    echo "REMOTE=${REMOTE} is not set to awsdocs/aws-doc-sdk-examples-tools.git, please adjust accordingly and rerun."
     exit 1
 fi
 
@@ -50,7 +50,7 @@ CURRENT=$(grep version= setup.py | awk -F\" '{print $2}')
 NEXT=$(date +%Y.%W.0)
 VERSION=$(compare_versions "$CURRENT" "$NEXT")
 echo "Releasing $VERSION..."
-sed -i '' "/version=/ s/$CURRENT/$VERSION/" setup.py
+sed "/version=/ s/$CURRENT/$VERSION/" setup.py > setup.py.out ; mv setup.py.out setup.py
 git --no-pager diff
 git add setup.py
 git commit --message "Release ${VERSION}"
