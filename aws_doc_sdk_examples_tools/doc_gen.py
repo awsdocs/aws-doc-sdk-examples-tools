@@ -114,6 +114,8 @@ class DocGen:
                     )
                 )
 
+        self.validation.allow_list.update(other.validation.allow_list)
+        self.validation.sample_files.update(other.validation.sample_files)
         self.snippet_files.update(other.snippet_files)
         self.cross_blocks.update(other.cross_blocks)
         self.extend_examples(other.examples.values(), warnings)
@@ -134,7 +136,7 @@ class DocGen:
 
     @classmethod
     def default(cls) -> "DocGen":
-        return DocGen.empty().for_root(Path(__file__).parent)
+        return DocGen.empty().for_root(Path(__file__).parent, incremental=True)
 
     def clone(self) -> "DocGen":
         return DocGen(
