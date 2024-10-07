@@ -4,7 +4,7 @@ set -e # Exit on errors
 # set -x # Shell debugging
 
 # First, check that we're on the main branch.
-BRANCH=$(git rev-parse --abbrev-rev HEAD)
+BRANCH=$(git branch --show-current)
 if [ "$BRANCH" != "main" ] ; then 
     echo "Not on main, exiting!" 
     exit 1
