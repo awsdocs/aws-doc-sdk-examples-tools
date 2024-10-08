@@ -1,6 +1,8 @@
-from typing import List, Optional, TypeVar, Dict, Set, Union, Tuple, Iterator, Iterable
+from typing import Optional, TypeVar, Dict, Set, Tuple
 from dataclasses import dataclass
 import re
+
+from .metadata_errors import ErrorsList
 
 K = TypeVar("K")
 
@@ -28,39 +30,8 @@ class MissingEntityError(EntityError):
         return f"{self.entity} not found."
 
 
-class EntityErrors:
-    def __init__(self):
-        self._errors: List[EntityError] = []
-
-    def append(self, maybe_error: Union[K, EntityError]):
-        if not isinstance(maybe_error, EntityError):
-            raise InvalidItemException(maybe_error)
-        self._errors.append(maybe_error)
-
-    def extend(self, errors: Iterable[EntityError]):
-        self._errors.extend(errors)
-
-    def __getitem__(self, key: int) -> EntityError:
-        return self._errors[key]
-
-    def __setitem__(self, key: int, value: EntityError):
-        self._errors[key] = value
-
-    def __len__(self) -> int:
-        return len(self._errors)
-
-    def __iter__(self) -> Iterator[EntityError]:
-        return self._errors.__iter__()
-
-    def __repr__(self) -> str:
-        return repr(self._errors)
-
-    def __str__(self) -> str:
-        errs = "\n".join([f"\t{err}" for err in self._errors])
-        return f"EntityErrors with {len(self)} errors:\n{errs}"
-
-    def __eq__(self, __value: object) -> bool:
-        return isinstance(__value, EntityErrors) and self._errors == __value._errors
+class EntityErrors(ErrorsList[EntityError]):
+    pass
 
 
 def expand_all_entities(
