@@ -1,15 +1,8 @@
-from typing import Optional, TypeVar, Dict, Set, Tuple
+from typing import Optional, Dict, Set, Tuple
 from dataclasses import dataclass
 import re
 
 from .metadata_errors import ErrorsList
-
-K = TypeVar("K")
-
-
-class InvalidItemException(Exception):
-    def __init__(self, item: K):
-        super().__init__(self, f"Cannot append {item!r} to EntityErrors")
 
 
 @dataclass
