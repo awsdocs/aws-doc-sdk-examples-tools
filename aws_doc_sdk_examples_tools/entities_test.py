@@ -1,10 +1,10 @@
 import pytest
 from .entities import (
     EntityErrors,
-    InvalidItemException,
     expand_all_entities,
     MissingEntityError,
 )
+from .metadata_errors import InvalidItemException
 
 
 def test_entity_errors_append():
@@ -14,7 +14,8 @@ def test_entity_errors_append():
     assert errors._errors[0].entity == "entity1"
 
     with pytest.raises(InvalidItemException):
-        errors.append("invalid item")
+        # test runtime type checking
+        errors.append("invalid item")  # type: ignore
 
 
 def test_expand_missing_entities():

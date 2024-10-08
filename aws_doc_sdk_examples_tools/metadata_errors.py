@@ -6,7 +6,71 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Iterator, Iterable, List, TypeVar
+from typing import Optional, Iterator, Iterable, List, TypeVar, Generic
+
+
+ErrorT = TypeVar("ErrorT")
+
+
+class InvalidItemException(Exception, Generic[ErrorT]):
+    def __init__(self, item: ErrorT):
+        super().__init__(self, f"Cannot append {item!r} to ExampleErrors")
+
+
+class ErrorsList(Generic[ErrorT]):
+    """MyPy isn't catching List[Foo].append(List[Foo])"""
+
+    def __init__(self, no_duplicates: bool = False):
+        self.no_duplicates = no_duplicates
+        self._errors: List[ErrorT] = []
+
+    def append(self, item: ErrorT):
+        # Look up the generic type. This is reliant on the internal implementation
+        # of __orig_bases__, but it will definitely fail tests if a python minor
+        # version breaks it.
+        generic = self.__orig_bases__[0]  # type: ignore
+        T = generic.__args__[0]
+        if not isinstance(item, T):
+            raise InvalidItemException(item)
+
+        """
+        It is dangerous to go alone: 🗡️
+        If you're seeing duplicated Errors, and aren't sure why, uncommenting these lines may help you debug it.
+        """
+        # if item in self._errors:
+        #     raise DuplicateItemException(item)
+        self._errors.append(item)
+
+    def extend(self, errors: Iterable[ErrorT]):
+        self._errors.extend(errors)
+
+    def maybe_extend(self, maybe_errors: K | ErrorsList[ErrorT]) -> K | None:
+        if isinstance(maybe_errors, ErrorsList):
+            self.extend(maybe_errors._errors)
+            return None
+        return maybe_errors
+
+    def __getitem__(self, key: int) -> ErrorT:
+        return self._errors[key]
+
+    def __setitem__(self, key: int, value: ErrorT):
+        self._errors[key] = value
+
+    def __len__(self) -> int:
+        return len(self._errors)
+
+    def __iter__(self) -> Iterator[ErrorT]:
+        return self._errors.__iter__()
+
+    def __repr__(self) -> str:
+        return repr(self._errors)
+
+    def __str__(self) -> str:
+        errs = "\n".join([f"\t{err}" for err in self._errors])
+        return f"ExampleErrors with {len(self)} errors:\n{errs}"
+
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, ErrorsList) and self._errors == __value._errors
 
 
 @dataclass
@@ -23,6 +87,10 @@ class MetadataError:
 
     def __str__(self):
         return f"{self.prefix()} {self.message()}"
+
+
+class MetadataErrors(ErrorsList[MetadataError]):
+    pass
 
 
 @dataclass
@@ -46,64 +114,9 @@ class MetadataParseError(MetadataError):
 K = TypeVar("K")
 
 
-class InvalidItemException(Exception):
-    def __init__(self, item: MetadataParseError):
-        super().__init__(self, f"Cannot append {item!r} to ExampleErrors")
-
-
 class DuplicateItemException(Exception):
     def __init__(self, item: MetadataError):
         super().__init__(self, f"Already have item {item!r} in ExampleErrors")
-
-
-class MetadataErrors:
-    """MyPy isn't catching List[Foo].append(List[Foo])"""
-
-    def __init__(self, no_duplicates: bool = False):
-        self.no_duplicates = no_duplicates
-        self._errors: List[MetadataError] = []
-
-    def append(self, item: MetadataError):
-        if not isinstance(item, MetadataError):
-            raise InvalidItemException(item)
-        """
-        It is dangerous to go alone: 🗡️
-        If you're seeing duplicated Errors, and aren't sure why, uncommenting these lines may help you debug it.
-        """
-        # if item in self._errors:
-        #     raise DuplicateItemException(item)
-        self._errors.append(item)
-
-    def extend(self, errors: Iterable[MetadataError]):
-        self._errors.extend(errors)
-
-    def maybe_extend(self, maybe_errors: K | MetadataErrors) -> K | None:
-        if isinstance(maybe_errors, MetadataErrors):
-            self.extend(maybe_errors._errors)
-            return None
-        return maybe_errors
-
-    def __getitem__(self, key: int) -> MetadataError:
-        return self._errors[key]
-
-    def __setitem__(self, key: int, value: MetadataError):
-        self._errors[key] = value
-
-    def __len__(self) -> int:
-        return len(self._errors)
-
-    def __iter__(self) -> Iterator[MetadataError]:
-        return self._errors.__iter__()
-
-    def __repr__(self) -> str:
-        return repr(self._errors)
-
-    def __str__(self) -> str:
-        errs = "\n".join([f"\t{err}" for err in self._errors])
-        return f"ExampleErrors with {len(self)} errors:\n{errs}"
-
-    def __eq__(self, __value: object) -> bool:
-        return isinstance(__value, MetadataErrors) and self._errors == __value._errors
 
 
 @dataclass
