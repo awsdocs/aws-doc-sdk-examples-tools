@@ -7,6 +7,7 @@ from .doc_gen import DocGen
 
 def main(roots: List[str]):
     base = DocGen.empty()
+    all_stats = []
     for root in roots:
         docgen_root = Path(root)
         doc_gen = base.clone().for_root(docgen_root)
@@ -20,6 +21,9 @@ def main(roots: List[str]):
         print(f"Snippets	{stats['snippets']}")
         genai = pformat(dict(stats["genai"]))
         print(f"GenAI	{genai}")
+        stats['root'] = docgen_root.name
+        all_stats.append(stats)
+    return all_stats
 
 
 if __name__ == "__main__":
