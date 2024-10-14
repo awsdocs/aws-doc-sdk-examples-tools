@@ -53,38 +53,3 @@ def collect_stats(roots: List[str]) -> List[Dict[str, Any]]:
 
     return all_stats
 
-def print_stats(stats: Dict[str, Any]):
-    """
-    Prints stats in a formatted manner.
-
-    Args:
-        stats (dict): A dictionary containing collected stats.
-    """
-    logging.info(f"Root: {stats['root']}")
-    logging.info(f"SDKs: {stats['sdks']}")
-    logging.info(f"Services: {stats['services']}")
-    logging.info(f"Examples: {stats['examples']}")
-    logging.info(f"Version: {stats['versions']}")
-    logging.info(f"Snippets: {stats['snippets']}")
-    genai = pformat(dict(stats.get("genai", {})))
-    logging.info(f"GenAI: {genai}")
-
-def main(roots: List[str]):
-    """
-    Collects stats for each root and prints results.
-
-    Args:
-        roots (List[str]): A list of root directory paths as strings.
-    """
-    all_stats = collect_stats(roots)
-    
-    for stats in all_stats:
-        print_stats(stats)
-
-if __name__ == "__main__":
-    from sys import argv
-
-    if len(argv) < 2:
-        logging.error("No root directories provided. Usage: script.py <root1>")
-    else:
-        main(argv[1:])
