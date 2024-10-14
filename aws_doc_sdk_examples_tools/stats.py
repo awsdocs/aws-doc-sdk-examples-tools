@@ -71,7 +71,7 @@ def print_stats(stats: Dict[str, Any]):
 
 def main(roots: List[str]):
     """
-    Main function that collects stats for each root directory and prints the results.
+    Collects stats for each root and prints results.
 
     Args:
         roots (List[str]): A list of root directory paths as strings.
