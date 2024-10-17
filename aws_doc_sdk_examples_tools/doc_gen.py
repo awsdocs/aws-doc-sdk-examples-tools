@@ -292,7 +292,7 @@ class DocGen:
                 for e in self.examples.values()
             ),
             "snippets": len(self.snippets) + len(self.snippet_files),
-            "genai": genai,
+            "genai": dict(genai),
         }
 
 
