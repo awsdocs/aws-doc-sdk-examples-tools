@@ -78,20 +78,23 @@ There are two stages, testing and deployment.
 
 ### 1. Testing
 
-1. **Create a testing branch** from [aws-doc-sdk-examples@main](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main).
-2. **Find the most recent commit SHA in [aws-doc-sdk-examples-tools/commits/main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main/)**.
-3. **Update your testing branch**: With your commit SHA (format: `org/repo@hash`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`), update the following files:
+1. **Merge your changes into** [aws-doc-sdk-examples-tools/commits/main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main).
+2. **Create a testing branch** from [aws-doc-sdk-examples@main](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main).
+3. **Find the commit SHA that matches the latest change from [aws-doc-sdk-examples-tools/commits/main](https://github.com/awsdocs/aws-doc-sdk-examples-tools/commits/main)**.
+4. **Update the following files in your testing branch** with the commit SHA (format: `org/repo@hash`, e.g. `awsdocs/aws-doc-sdk-examples-tools@e7c283e916e8efc9113277e2f38c8fa855a79d0a`):
    - In [.github/workflows/validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml), replace the current tag with the SHA.
    - Add only the commit SHA to the `allow_list` field in [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml).
-4. **Open a Draft PR to main branch**: Do not publish for review. Wait for checks/tests to pass on the PR.
+5. **Open a Draft PR to main branch**: Do not publish for review. Wait for checks/tests to pass on the PR.
 
 ### 2. Deployment
-
-1. **Update the -tools version**: Once the tests pass, update the `setup.py` version and create a tag in the -tools repository at the same SHA you identified earlier.
-  - Run `stamp.sh` to determine the next version and update `setup.py`. Use `--release` to additionally create a tag and push to main.
-    - Determine the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
-1. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
-   - NOTE: Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
+1. **Run `stamp.sh --release` from the `main` branch to automatically perform the following actions**:
+  - Update the `setup.py` version.
+  - Create a tag in the -tools repository at the same SHA you identified earlier.
+    - stamp.sh will create the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
+  - Push the new tag to `main`
+1. **Update your testing PR branch**
+   - Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
+   - Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
    - This is easily accomplished in the Github UI.
 1. **Create a release**: Use the automated ["Create release from tag" button](https://github.com/awsdocs/aws-doc-sdk-examples-tools/releases/new) to create a new release with the new tag.
 1. **Perform internal update process**.
