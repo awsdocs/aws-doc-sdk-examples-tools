@@ -88,17 +88,17 @@ There are two stages, testing and deployment.
 
 ### 2. Deployment
 1. **Run `stamp.sh --release` from the `main` branch to automatically perform the following actions**:
-  - Update the `setup.py` version.
-  - Create a tag in the -tools repository at the same SHA you identified earlier.
-    - stamp.sh will create the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
-  - Push the new tag to `main`
+    - Update the `setup.py` version.
+    - Create a tag in the -tools repository at the same SHA you identified earlier.
+        - stamp.sh will create the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
+    - Push the new tag to `main`
 1. **Update your testing PR branch**
-   - Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
-   - Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
-   - This is easily accomplished in the Github UI.
+    - Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
+    - Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
+    - This is easily accomplished in the Github UI.
 1. **Create a release**: Use the automated ["Create release from tag" button](https://github.com/awsdocs/aws-doc-sdk-examples-tools/releases/new) to create a new release with the new tag.
 1. **Perform internal update process**.
-   - See `update.sh` script in internal package.
+    - See `update.sh` script in internal package.
 
 ## Security
 
