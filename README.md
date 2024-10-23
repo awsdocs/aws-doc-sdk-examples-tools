@@ -87,9 +87,7 @@ There are two stages, testing and deployment.
 
 ### 2. Deployment
 
-1. **Update the -tools version**: Once the tests pass, update the `setup.py` version and create a tag in the -tools repository at the same SHA you identified earlier.
-  - Run `stamp.sh` to determine the next version and update `setup.py`. Use `--release` to additionally create a tag and push to main.
-    - Determine the next [stamp](https://blog.aspect.build/versioning-releases-from-a-monorepo) (which is valid [semver](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers)) number as appropriate for the changes in this release. e.g. `2024.40.2`.
+1. **Update the -tools version**: Once the tests pass, run `stamp.sh --release` to update `setup.py`, create a tag, and push the tag to `main`.
 1. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
    - NOTE: Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
    - This is easily accomplished in the Github UI.
