@@ -87,7 +87,10 @@ There are two stages, testing and deployment.
 
 ### 2. Deployment
 
-1. **Update the -tools version**: Once the tests pass, run `stamp.sh --release` to update `setup.py`, create a tag, and push the tag to `main`.
+1. **Update the -tools version**: Once the tests pass, run `stamp.sh --release`. This will:
+    - update `setup.py`
+    - create a tag
+    - push the tag to `main`.
 1. **Update your testing PR branch**: Remove SHA and add tag to [validate-doc-metadata.yml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.github/workflows/validate-doc-metadata.yml)
    - NOTE: Remove the SHA from [.doc_gen/validation.yaml](https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/.doc_gen/validation.yaml)
    - This is easily accomplished in the Github UI.
