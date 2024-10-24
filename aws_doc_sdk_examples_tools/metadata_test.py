@@ -13,7 +13,6 @@ from typing import List, Set, Tuple
 from . import metadata_errors
 from .metadata_errors import MetadataErrors, ExampleMergeConflict
 from .metadata import (
-    parse,
     DocFilenames,
     SDKPageVersion,
     Example,
@@ -21,9 +20,8 @@ from .metadata import (
     Language,
     Version,
     Excerpt,
-    check_id_format,
 )
-from .doc_gen import DocGen
+from .doc_gen import DocGen, parse_examples, check_id_format
 from .project_validator import ValidationConfig
 from .sdks import Sdk
 from .services import Service, ServiceExpanded
@@ -34,7 +32,7 @@ def load(
 ) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
     with path.open() as file:
         meta = yaml.safe_load(file)
-    return parse(path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
+    return parse_examples(path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
 
 
 SERVICES = {
@@ -117,7 +115,7 @@ medical-imaging_CreateDatastore:
 
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
-    parsed, errors = parse(
+    parsed, errors = parse_examples(
         Path("test_cpp.yaml"), meta, SDKS, SERVICES, set(), DOC_GEN.validation
     )
     assert len(errors) == 0
@@ -215,7 +213,7 @@ medical-imaging_GoodScenario:
 
 def test_parse_strict_titles():
     meta = yaml.safe_load(STRICT_TITLE_META)
-    parsed, errors = parse(
+    parsed, errors = parse_examples(
         Path("test_cpp.yaml"),
         meta,
         SDKS,
@@ -349,7 +347,7 @@ medical-imaging_BadBasics:
 
 def test_parse_strict_title_errors():
     meta = yaml.safe_load(STRICT_TITLE_ERRORS)
-    _, errors = parse(
+    _, errors = parse_examples(
         Path("test_cpp.yaml"),
         meta,
         SDKS,
@@ -396,7 +394,7 @@ cross_DeleteTopic:
 
 def test_parse_cross():
     meta = yaml.safe_load(CROSS_META)
-    actual, errors = parse(
+    actual, errors = parse_examples(
         Path("cross.yaml"),
         meta,
         SDKS,
