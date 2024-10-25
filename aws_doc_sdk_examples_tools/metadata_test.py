@@ -32,7 +32,9 @@ def load(
 ) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
     with path.open() as file:
         meta = yaml.safe_load(file)
-    return parse_examples(path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation)
+    return parse_examples(
+        path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
+    )
 
 
 SERVICES = {
