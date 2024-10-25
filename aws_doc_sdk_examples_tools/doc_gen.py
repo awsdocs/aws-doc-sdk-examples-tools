@@ -8,17 +8,26 @@ from collections import defaultdict
 from dataclasses import dataclass, field, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
 
 # from os import glob
 
 from .metadata import (
     Example,
-    parse as parse_examples,
+    DocFilenames,
+    SDKPages,
+    SDKPageVersion,
+    CrossServicePage,
     validate_no_duplicate_api_examples,
 )
 from .entities import expand_all_entities, EntityErrors
-from .metadata_errors import MetadataErrors, MetadataError
+from .metadata_errors import (
+    MetadataErrors,
+    MetadataError,
+    NameFormat,
+    ActionNameFormat,
+    ServiceNameFormat,
+)
 from .metadata_validator import validate_metadata
 from .project_validator import ValidationConfig
 from .sdks import Sdk, parse as parse_sdks
@@ -29,6 +38,7 @@ from .snippets import (
     collect_snippet_files,
     validate_snippets,
 )
+from .yaml_mapper import example_from_yaml
 
 
 @dataclass
@@ -322,3 +332,91 @@ class DocGenEncoder(json.JSONEncoder):
             return {"__set__": list(obj)}
 
         return super().default(obj)
+
+
+def parse_examples(
+    file: Path,
+    yaml: Dict[str, Any],
+    sdks: Dict[str, Sdk],
+    services: Dict[str, Service],
+    blocks: Set[str],
+    validation: Optional[ValidationConfig],
+    root: Optional[Path] = None,
+) -> Tuple[List[Example], MetadataErrors]:
+    examples: List[Example] = []
+    errors = MetadataErrors()
+    validation = validation or ValidationConfig()
+    for id in yaml:
+        example, example_errors = example_from_yaml(
+            yaml[id], sdks, services, blocks, validation, root or file.parent
+        )
+        check_id_format(
+            id,
+            example.services,
+            validation.strict_titles and example.category == "Api",
+            example_errors,
+        )
+        for error in example_errors:
+            error.file = file
+            error.id = id
+        errors.extend(example_errors)
+        example.file = file
+        example.id = id
+        example.doc_filenames = get_doc_filenames(id, example)
+        examples.append(example)
+
+    return examples, errors
+
+
+def check_id_format(
+    id: str,
+    parsed_services: Dict[str, Set[str]],
+    check_action: bool,
+    errors: MetadataErrors,
+):
+    [service, *rest] = id.split("_")
+    if len(rest) == 0:
+        errors.append(NameFormat(id=id))
+    elif service not in parsed_services and service not in ["cross", "serverless"]:
+        errors.append(
+            ServiceNameFormat(id=id, svc=service, svcs=[*parsed_services.keys()])
+        )
+    elif check_action and (
+        len(rest) > 1 or rest[0] not in parsed_services.get(service, {})
+    ):
+        errors.append(ActionNameFormat(id=id))
+
+
+def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilenames]:
+    base_url = "https://docs.aws.amazon.com/code-library/latest/ug"
+    service_pages = {
+        service_id: f"{base_url}/{service_id}_example_{example_id}_section.html"
+        for service_id in example.services
+    }
+
+    if example.file is not None:
+        is_cross = example.file.match("cross_*")
+    else:
+        is_cross = False
+
+    sdk_pages: SDKPages = {}
+
+    for language in example.languages.values():
+        sdk_pages[language.property] = {}
+        for version in language.versions:
+            if is_cross:
+                sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
+                    cross_service=CrossServicePage(
+                        cross=f"{base_url}/{example_id}_{language.property}_{version.sdk_version}_topic.html"
+                    )
+                )
+            else:
+                anchor = "actions" if example.category == "Actions" else "scenarios"
+                sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
+                    actions_scenarios={
+                        service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"
+                        for service_id in example.services
+                    }
+                )
+
+    return DocFilenames(service_pages, sdk_pages)
