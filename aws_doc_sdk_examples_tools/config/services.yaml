@@ -2760,7 +2760,7 @@ s3:
 s3-control:
   bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
-  blurb: ''
+  blurb: lets you manage S3 resources.
   expanded:
     long: Amazon S3 Control
     short: Amazon S3 Control
@@ -2771,8 +2771,8 @@ s3-control:
   short: '&S3Control;'
   sort: S3 Control
   tags:
-    product_categories: {}
-  version: '2018-08-20'
+    product_categories: {'Storage'}
+  version: s3control-2018-08-20
 sagemaker:
   long: '&SMlong;'
   short: '&SM;'
