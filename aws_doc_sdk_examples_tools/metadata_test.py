@@ -712,6 +712,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     link="perl/example_code/medical-imaging",
                     root=TEST_RESOURCES_PATH,
                 ),
+                metadata_errors.MissingGithubField(
+                    file=ERRORS_METADATA_PATH,
+                    id="medical-imaging_TestExample",
+                    language="Java",
+                    sdk_version=2,
+                ),
                 metadata_errors.InvalidGithubLink(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -947,7 +953,7 @@ def test_no_duplicate_title_abbrev():
                 category="cat",
                 languages={
                     "java": Language(
-                        name="java", property="java", versions=[Version(sdk_version=1)]
+                        name="java", property="java", versions=[Version(sdk_version=1, github="../test_resources/test_path")]
                     )
                 },
                 services={"svc": set()},
@@ -959,7 +965,7 @@ def test_no_duplicate_title_abbrev():
                 category="cat",
                 languages={
                     "java": Language(
-                        name="java", property="java", versions=[Version(sdk_version=1)]
+                        name="java", property="java", versions=[Version(sdk_version=1, github="../test_resources/test_path")]
                     )
                 },
                 services={"svc": set(), "cvs": set()},

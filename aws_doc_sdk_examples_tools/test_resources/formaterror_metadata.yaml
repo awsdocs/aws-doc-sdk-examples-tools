@@ -7,6 +7,7 @@ WrongNameFormat:
     Java:
       versions:
         - sdk_version: 2
+          github: test_path
           block_content: test/block
   services:
     medical-imaging: { TestAction }
@@ -18,6 +19,7 @@ cross_TestExample:
     Java:
       versions:
         - sdk_version: 2
+          github: test_path
           block_content: test/block
           add_services:
             garbage:

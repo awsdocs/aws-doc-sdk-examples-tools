@@ -63,6 +63,7 @@ cross_TestExample_Versions:
     Java:
       versions:
         - sdk_version: 2
+          github: test_path
           block_content: cross_block.xml
           excerpts:
             - description: Optional description.
@@ -81,6 +82,7 @@ cross_TestExample_Missing:
     Java:
       versions:
         - sdk_version: 2
+          github: test_path
           block_content: missing_block_content.xml
   services:
     medical-imaging:
@@ -94,5 +96,6 @@ medical-imagingBadFormat:
     Java:
       versions:
         - sdk_version: 2
+          github: test_path
   services:
     medical-imaging: { TestAction }

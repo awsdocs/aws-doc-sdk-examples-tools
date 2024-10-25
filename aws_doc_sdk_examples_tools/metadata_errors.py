@@ -242,6 +242,12 @@ class InvalidSdkVersion(SdkVersionError):
 
 
 @dataclass
+class MissingGithubField(SdkVersionError):
+    def message(self):
+        return f"has a missing or empty github field. This field should contain the path to the folder that contains the README that describes the example."
+
+
+@dataclass
 class InvalidGithubLink(SdkVersionError):
     link: str = ""
 

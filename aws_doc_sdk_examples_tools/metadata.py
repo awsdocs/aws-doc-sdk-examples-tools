@@ -65,7 +65,9 @@ class Version:
 
     def validate(self, errors: MetadataErrors, root: Path):
         github = self.github
-        if github is not None:
+        if not github:
+            errors.append(metadata_errors.MissingGithubField(sdk_version=self.sdk_version))
+        else:
             _, ext = splitext(github)
             if ext != "":
                 errors.append(
