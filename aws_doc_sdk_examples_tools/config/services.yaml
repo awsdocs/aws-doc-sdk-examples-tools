@@ -42,7 +42,7 @@ acm-pca:
   sort: Private CA
   tags:
     product_categories: {}
-  version: '2017-08-22'
+  version: acm-pca-2017-08-22
 alexa-for-business:
   api_ref: alexa-for-business/latest/APIReference/Welcome.html
   blurb: ''
@@ -57,7 +57,7 @@ alexa-for-business:
   sort: Alexa for Business
   tags:
     product_categories: {}
-  version: '2017-11-09'
+  version: '' # no longer published
 api-gateway:
   long: '&ABPlong;'
   short: '&ABP;'
@@ -102,7 +102,7 @@ apigatewayv2:
   sort: API Gateway HTTP and WebSocket API
   tags:
     product_categories: {'Networking &amp; Content Delivery'}
-  version: '2018-11-29'
+  version: apigatewayv2-2018-11-29
 application-auto-scaling:
   long: '&APP-ASlong;'
   short: '&APP-AS;'
@@ -132,7 +132,7 @@ app-mesh:
   sort: App Mesh
   tags:
     product_categories: {}
-  version: '2019-01-25'
+  version: app-mesh-2019-01-25
 appconfig:
   api_ref: appconfig/2019-10-09/APIReference/Welcome.html
   blurb: ''
@@ -147,7 +147,7 @@ appconfig:
   sort: AppConfig
   tags:
     product_categories: {}
-  version: '2019-10-09'
+  version: appconfig-2019-10-09
 application-discovery-service:
   api_ref: application-discovery/latest/APIReference/Welcome.html
   blurb: ''
@@ -162,7 +162,7 @@ application-discovery-service:
   sort: Application Discovery Service
   tags:
     product_categories: {}
-  version: '2015-11-01'
+  version: discovery-2015-11-01
 apprunner:
   api_ref: apprunner/latest/api/Welcome.html
   blurb: ''
@@ -177,7 +177,7 @@ apprunner:
   sort: App Runner
   tags:
     product_categories: {}
-  version: '2020-05-15'
+  version: apprunner-2020-05-15
 appstream:
   long: '&AAS2long;'
   short: '&AAS2;'
@@ -207,7 +207,7 @@ athena:
   sort: Athena
   tags:
     product_categories: {}
-  version: '2017-05-18'
+  version: athena-2017-05-18
 auditmanager:
   long: '&AMlong;'
   short: '&AM;'
@@ -269,7 +269,7 @@ auto-scaling-plans:
   sort: Auto Scaling Plans
   tags:
     product_categories: {}
-  version: '2018-01-06'
+  version: autoscaling-plans-2018-01-06
 backup:
   api_ref: aws-backup/latest/devguide/api-reference.html
   blurb: ''
@@ -284,7 +284,7 @@ backup:
   sort: Backup
   tags:
     product_categories: {}
-  version: '2018-11-15'
+  version: backup-2018-11-15
 batch:
   long: '&BATCHlong;'
   short: '&BATCH;'
@@ -378,7 +378,7 @@ budgets:
   sort: Budgets
   tags:
     product_categories: {}
-  version: '2016-10-20'
+  version: budgets-2016-10-20
 chime:
   api_ref: chime/latest/APIReference/welcome.html
   blurb: ''
@@ -393,7 +393,7 @@ chime:
   sort: Chime
   tags:
     product_categories: {}
-  version: '2018-05-01'
+  version: chime-2018-05-01
 cloud9:
   api_ref: cloud9/latest/APIReference/Welcome.html
   blurb: ''
@@ -408,7 +408,7 @@ cloud9:
   sort: Cloud9
   tags:
     product_categories: {}
-  version: '2017-09-23'
+  version: cloud9-2017-09-23
 cloudcontrol:
   api_ref: cloudcontrolapi/latest/APIReference/Welcome.html
   blurb: ''
@@ -423,7 +423,7 @@ cloudcontrol:
   sort: Cloud Control API
   tags:
     product_categories: {}
-  version: '2021-09-30'
+  version: cloudcontrol-2021-09-30
 cloudformation:
   long: '&CFNlong;'
   short: '&CFN;'
@@ -468,7 +468,7 @@ cloudsearch-domain:
   sort: Cloudsearch
   tags:
     product_categories: {}
-  version: '2013-01-01'
+  version: cloudsearch-domain-2013-01-01
 cloudtrail:
   api_ref: awscloudtrail/latest/APIReference/Welcome.html
   blurb: helps you monitor your AWS deployments in the cloud by getting a history of AWS API calls for your account.
@@ -483,7 +483,7 @@ cloudtrail:
   sort: CloudTrail
   tags:
     product_categories: {}
-  version: '2013-11-01'
+  version: cloudtrail-2013-11-01
 cloudwatch:
   long: '&CWlong;'
   short: '&CW;'
@@ -543,7 +543,7 @@ codeartifact:
   sort: CodeArtifact
   tags:
     product_categories: {}
-  version: '2018-09-22'
+  version: codeartifact-2018-09-22
 codebuild:
   long: '&ACBlong;'
   short: '&ACB;'
@@ -573,7 +573,7 @@ codecommit:
   sort: CodeCommit
   tags:
     product_categories: {}
-  version: '2015-04-13'
+  version: codecommit-2015-04-13
 codedeploy:
   api_ref: codedeploy/latest/APIReference/Welcome.html
   blurb: ''
@@ -588,7 +588,7 @@ codedeploy:
   sort: CodeDeploy
   tags:
     product_categories: {}
-  version: '2014-10-06'
+  version: codedeploy-2014-10-06
 codeguru-reviewer:
   api_ref: codeguru/latest/reviewer-api/Welcome.html
   blurb: ''
@@ -603,7 +603,7 @@ codeguru-reviewer:
   sort: CodeGuru Reviewer
   tags:
     product_categories: {}
-  version: '2019-09-19'
+  version: codeguru-reviewer-2019-09-19
 codepipeline:
   api_ref: codepipeline/latest/APIReference/Welcome.html
   blurb: ''
@@ -618,7 +618,7 @@ codepipeline:
   sort: CodePipeline
   tags:
     product_categories: {}
-  version: '2015-07-09'
+  version: codepipeline-2015-07-09
 codestar:
   api_ref: codestar/latest/APIReference/Welcome.html
   blurb: ''
@@ -633,7 +633,7 @@ codestar:
   sort: CodeStar
   tags:
     product_categories: {}
-  version: '2017-04-19'
+  version: '' # no longer published
 codestar-connections:
   api_ref: codestar-connections/latest/APIReference/Welcome.html
   blurb: ''
@@ -648,7 +648,7 @@ codestar-connections:
   sort: CodeStart Connections
   tags:
     product_categories: {}
-  version: '2019-12-01'
+  version: codestar-connections-2019-12-01
 codestar-notifications:
   api_ref: codestar-notifications/latest/APIReference/Welcome.html
   blurb: ''
@@ -663,7 +663,7 @@ codestar-notifications:
   sort: CodeStar Notifications
   tags:
     product_categories: {}
-  version: '2019-10-15'
+  version: codestar-notifications-2019-10-15
 cognito:
   long: '&COGlong;'
   short: '&COG;'
@@ -756,7 +756,7 @@ comprehendmedical:
   sort: Comprehend Medical
   tags:
     product_categories: {}
-  version: '2018-10-30'
+  version: comprehendmedical-2018-10-30
 config-service:
   long: '&CClong;'
   short: '&CC;'
@@ -787,7 +787,7 @@ connect:
   sort: Connect
   tags:
     product_categories: {}
-  version: '2017-08-08'
+  version: connect-2017-08-08
 cost-and-usage-report-service:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
@@ -802,7 +802,7 @@ cost-and-usage-report-service:
   sort: Cost and Usage Report
   tags:
     product_categories: {}
-  version: '2017-01-06'
+  version: cur-2017-01-06
 cost-explorer:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
@@ -817,7 +817,7 @@ cost-explorer:
   sort: Cost Explorer Service
   tags:
     product_categories: {}
-  version: '2017-10-25'
+  version: ce-2017-10-25
 data-pipeline:
   api_ref: datapipeline/latest/APIReference/Welcome.html
   blurb: ''
@@ -832,7 +832,7 @@ data-pipeline:
   sort: Data Pipeline
   tags:
     product_categories: {}
-  version: '2012-10-29'
+  version: data-pipeline-2012-10-29
 database-migration-service:
   api_ref: dms/latest/APIReference/Welcome.html
   blurb: ''
@@ -847,7 +847,7 @@ database-migration-service:
   sort: DMS
   tags:
     product_categories: {}
-  version: '2016-01-01'
+  version: dms-2016-01-01
 datasync:
   api_ref: datasync/latest/userguide/API_Reference.html
   blurb: is an online data movement and discovery service that simplifies data migration and helps you quickly, easily, and securely transfer your file or object data to, from, and between AWS storage services.
@@ -862,7 +862,7 @@ datasync:
   sort: DataSync
   tags:
     product_categories: {}
-  version: '2018-11-09'
+  version: datasync-2018-11-09
 dax:
   api_ref: amazondynamodb/latest/APIReference/Welcome.html
   blurb: ''
@@ -877,7 +877,7 @@ dax:
   sort: DAX
   tags:
     product_categories: {}
-  version: '2017-04-19'
+  version: dax-2017-04-19
 detective:
   api_ref: detective/latest/APIReference/Welcome.html
   blurb: ''
@@ -892,7 +892,7 @@ detective:
   sort: Detective
   tags:
     product_categories: {}
-  version: '2018-10-26'
+  version: detective-2018-10-26
 device-farm:
   long: '&ATPlong;'
   short: '&ATP;'
@@ -922,7 +922,7 @@ direct-connect:
   sort: Direct Connect
   tags:
     product_categories: {}
-  version: '2012-10-25'
+  version: direct-connect-2012-10-25
 directory-service:
   api_ref: directoryservice/latest/APIReference/Welcome.html
   blurb: ''
@@ -937,7 +937,7 @@ directory-service:
   sort: Directory Service
   tags:
     product_categories: {}
-  version: '2015-04-16'
+  version: ds-2015-04-16
 dlm:
   api_ref: dlm/latest/APIReference/Welcome.html
   blurb: ''
@@ -952,7 +952,7 @@ dlm:
   sort: Data Lifecycle Manager
   tags:
     product_categories: {}
-  version: '2018-01-12'
+  version: dlm-2018-01-12
 docdb:
   api_ref: documentdb/latest/developerguide/api-reference.html
   blurb: ''
@@ -967,7 +967,7 @@ docdb:
   sort: DocumentDB
   tags:
     product_categories: {}
-  version: '2014-10-31'
+  version: docdb-2014-10-31
 dynamodb:
   long: '&DDBlong;'
   short: '&DDB;'
@@ -997,7 +997,7 @@ dynamodb-streams:
   sort: DynamoDB Streams
   tags:
     product_categories: {}
-  version: '2012-08-10'
+  version: dynamodb-streams-2012-08-10
 ebs:
   long: '&EBSlong;'
   short: '&EBS;'
@@ -1043,7 +1043,7 @@ ec2-instance-connect:
   sort: EC2 Instance Connect
   tags:
     product_categories: {}
-  version: '2018-04-02'
+  version: ec2-instance-connect-2018-04-02
 ecr:
   long: '&ECRlong;'
   short: '&ECR;'
@@ -1073,7 +1073,7 @@ ecr-public:
   sort: ECR Public
   tags:
     product_categories: {}
-  version: '2020-10-30'
+  version: ecr-public-2020-10-30
 ecs:
   long: '&ECSlong;'
   short: '&ECS;'
@@ -1103,7 +1103,7 @@ efs:
   sort: EFS
   tags:
     product_categories: {}
-  version: '2015-02-01'
+  version: efs-2015-02-01
 eks:
   long: '&EKSlong;'
   short: '&EKS;'
@@ -1133,7 +1133,7 @@ elastic-beanstalk:
   sort: Elastic Beanstalk
   tags:
     product_categories: {}
-  version: '2010-12-01'
+  version: elastic-beanstalk-2010-12-01
 elastic-load-balancing:
   api_ref: elasticloadbalancing/2012-06-01/APIReference/Welcome.html
   blurb: automatically distributes your incoming traffic across multiple targets, such as EC2 instances, containers, and IP addresses, in one or more Availability Zones.
@@ -1148,7 +1148,7 @@ elastic-load-balancing:
   sort: Elastic Load Balancing - Version 1
   tags:
     product_categories: {'Networking &amp; Content Delivery'}
-  version: 'elasticloadbalancing-2012-06-01'
+  version: elasticloadbalancing-2012-06-01
 elastic-load-balancing-v2:
   long: '&ELBv2long;'
   short: '&ELBv2;'
@@ -1178,7 +1178,7 @@ elastic-transcoder:
   sort: Elastic Transcoder
   tags:
     product_categories: {}
-  version: '2012-09-25'
+  version: elastic-transcoder-2012-09-25
 elasticache:
   api_ref: AmazonElastiCache/latest/APIReference/Welcome.html
   blurb: ''
@@ -1193,7 +1193,7 @@ elasticache:
   sort: ElastiCache
   tags:
     product_categories: {}
-  version: '2015-02-02'
+  version: elasticache-2015-02-02
 elasticsearch-service:
   api_ref: opensearch-service/latest/APIReference/API_Operations_Amazon_OpenSearch_Service.html
   blurb: ''
@@ -1208,7 +1208,7 @@ elasticsearch-service:
   sort: OpenSearch Service
   tags:
     product_categories: {}
-  version: '2015-01-01'
+  version: es-2015-01-01
 emr:
   long: '&EMRlong;'
   short: '&EMR;'
@@ -1238,7 +1238,7 @@ emr-containers:
   sort: EMR on EKS
   tags:
     product_categories: {}
-  version: '2020-10-01'
+  version: emr-containers-2020-10-01
 eventbridge:
   long: '&EVlong;'
   short: '&EV;'
@@ -1255,18 +1255,18 @@ eventbridge:
     product_categories: {'Application Integration'}
   version: eventbridge-2015-10-07
 firehose:
-  long: "&FHlong;"
-  short: "&FH;"
+  long: '&FHlong;'
+  short: '&FH;'
   sort: Data Firehose
   api_ref: firehose/latest/APIReference/Welcome.html
   expanded:
     long: Amazon Data Firehose
     short: Data Firehose
-  blurb: "is a fully managed service for delivering real-time streaming data to &AWS; destinations and third-party HTTP endpoints."
+  blurb: is a fully managed service for delivering real-time streaming data to &AWS; destinations and third-party HTTP endpoints.
   guide:
     subtitle: User Guide
     url: firehose/latest/dev/what-is-this-service.html
-  version: "firehose-2015-08-04"
+  version: firehose-2015-08-04
   tags:
     product_categories: {'Analytics'}
 forecast:
@@ -1298,7 +1298,7 @@ fis:
   sort: FIS
   tags:
     product_categories: {}
-  version: '2020-12-01'
+  version: fis-2020-12-01
 fms:
   api_ref: fms/2018-01-01/APIReference/Welcome.html
   blurb: ''
@@ -1313,7 +1313,7 @@ fms:
   sort: Firewall Manager
   tags:
     product_categories: {}
-  version: '2018-01-01'
+  version: fms-2018-01-01
 fsx:
   api_ref: fsx/latest/APIReference/welcome.html
   blurb: ''
@@ -1328,7 +1328,7 @@ fsx:
   sort: FSx
   tags:
     product_categories: {'Storage'}
-  version: 'fsx-2018-03-01'
+  version: fsx-2018-03-01
 gamelift:
   api_ref: gamelift/latest/apireference/Welcome.html
   blurb: ''
@@ -1343,7 +1343,7 @@ gamelift:
   sort: GameLift
   tags:
     product_categories: {}
-  version: '2015-10-01'
+  version: gamelift-2015-10-01
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
@@ -1373,7 +1373,7 @@ global-accelerator:
   sort: Global Accelerator
   tags:
     product_categories: {}
-  version: '2018-08-08'
+  version: global-accelerator-2018-08-08
 glue:
   long: '&GLUlong;'
   short: '&GLU;'
@@ -1406,7 +1406,7 @@ grafana:
   sort: Managed Grafana
   tags:
     product_categories: {}
-  version: '2020-08-18'
+  version: grafana-2020-08-18
 greengrass:
   api_ref: greengrass/v1/apireference/api-doc.html
   blurb: ''
@@ -1421,7 +1421,7 @@ greengrass:
   sort: IoT Greengrass
   tags:
     product_categories: {}
-  version: '2017-06-07'
+  version: greengrass-2017-06-07
 greengrassv2:
   api_ref: greengrass/v2/APIReference/Welcome.html
   blurb: ''
@@ -1436,7 +1436,7 @@ greengrassv2:
   sort: IoT Greengrass V2
   tags:
     product_categories: {}
-  version: '2020-11-30'
+  version: greengrassv2-2020-11-30
 guardduty:
   api_ref: guardduty/latest/APIReference/Welcome.html
   blurb: ''
@@ -1451,7 +1451,7 @@ guardduty:
   sort: GuardDuty
   tags:
     product_categories: {}
-  version: '2017-11-28'
+  version: guardduty-2017-11-28
 health:
   api_ref: health/latest/APIReference/Welcome.html
   blurb: ''
@@ -1466,7 +1466,7 @@ health:
   sort: Health
   tags:
     product_categories: {}
-  version: '2016-08-04'
+  version: health-2016-08-04
 healthlake:
   api_ref: healthlake/latest/APIReference/Welcome.html
   blurb: ''
@@ -1481,7 +1481,7 @@ healthlake:
   sort: HealthLake
   tags:
     product_categories: {}
-  version: '2017-07-01'
+  version: healthlake-2017-07-01
 iam:
   bundle: iam
   long: '&IAMlong;'
@@ -1512,7 +1512,7 @@ imagebuilder:
   sort: Image Builder
   tags:
     product_categories: {}
-  version: '2019-12-02'
+  version: imagebuilder-2019-12-02
 inspector:
   api_ref: inspector/latest/APIReference/Welcome.html
   blurb: ''
@@ -1527,7 +1527,7 @@ inspector:
   sort: Inspector
   tags:
     product_categories: {}
-  version: '2016-02-16'
+  version: inspector-2016-02-16
 inspector2:
   api_ref: inspector/v2/APIReference/Welcome.html
   blurb: is a vulnerability discovery service that automates continuous scanning for security vulnerabilities within your Amazon EC2, Amazon ECR, and AWS Lambda environments.
@@ -1573,7 +1573,7 @@ iot-1click-devices-service:
   sort: IoT 1-Click Devices
   tags:
     product_categories: {}
-  version: '2018-05-14'
+  version: iot1click-devices-2018-05-14
 iot-1click-projects:
   api_ref: iot-1-click/latest/projects-apireference/Welcome.html
   blurb: ''
@@ -1588,7 +1588,7 @@ iot-1click-projects:
   sort: IoT 1-Click Projects
   tags:
     product_categories: {}
-  version: '2018-05-14'
+  version: iot1click-projects-2018-05-14
 iot-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
@@ -1603,7 +1603,7 @@ iot-data-plane:
   sort: IoT data
   tags:
     product_categories: {}
-  version: '2015-05-28'
+  version: iot-data-2015-05-28
 iot-events:
   api_ref: iotevents/latest/apireference/Welcome.html
   blurb: ''
@@ -1618,7 +1618,7 @@ iot-events:
   sort: IoT Events
   tags:
     product_categories: {}
-  version: '2018-07-27'
+  version: iot-events-2018-07-27
 iot-events-data:
   api_ref: iotevents/latest/apireference/Welcome.html
   blurb: ''
@@ -1633,7 +1633,7 @@ iot-events-data:
   sort: IoT Events-Data
   tags:
     product_categories: {}
-  version: '2018-10-23'
+  version: iotevents-data-2018-10-23
 iot-jobs-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
@@ -1648,7 +1648,7 @@ iot-jobs-data-plane:
   sort: IoT Jobs SDK release
   tags:
     product_categories: {}
-  version: '2017-09-29'
+  version: iot-jobs-data-2017-09-29
 iot-wireless:
   api_ref: iot-wireless/2020-11-22/apireference/Welcome.html
   blurb: ''
@@ -1663,7 +1663,7 @@ iot-wireless:
   sort: IoT Wireless
   tags:
     product_categories: {}
-  version: '2020-11-22'
+  version: iot-wireless-2020-11-22
 iotanalytics:
   api_ref: iotanalytics/latest/APIReference/Welcome.html
   blurb: ''
@@ -1678,7 +1678,7 @@ iotanalytics:
   sort: IoT Analytics
   tags:
     product_categories: {}
-  version: '2017-11-27'
+  version: iotanalytics-2017-11-27
 iotdeviceadvisor:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
@@ -1693,7 +1693,7 @@ iotdeviceadvisor:
   sort: IoT Core Device Advisor
   tags:
     product_categories: {}
-  version: '2020-09-18'
+  version: iotdeviceadvisor-2020-09-18
 iotsitewise:
   api_ref: iot-sitewise/latest/APIReference/Welcome.html
   blurb: ''
@@ -1708,7 +1708,7 @@ iotsitewise:
   sort: IoT SiteWise
   tags:
     product_categories: {}
-  version: '2019-12-02'
+  version: iotsitewise-2019-12-02
 iotthingsgraph:
   api_ref: iot-twinmaker/latest/apireference/Welcome.html
   blurb: ''
@@ -1723,7 +1723,7 @@ iotthingsgraph:
   sort: IoT Things Graph
   tags:
     product_categories: {}
-  version: '2018-09-06'
+  version: iotthingsgraph-2018-09-06
 ivs:
   api_ref: ivs/latest/APIReference/Welcome.html
   blurb: ''
@@ -1738,7 +1738,7 @@ ivs:
   sort: IVS
   tags:
     product_categories: {}
-  version: '2020-07-14'
+  version: ivs-2020-07-14
 ivs-realtime:
   api_ref: ivs/latest/RealTimeAPIReference/Welcome.html
   blurb: ''
@@ -1753,7 +1753,7 @@ ivs-realtime:
   sort: IVS Real-Time Streaming
   tags:
     product_categories: {}
-  version: '2020-07-14'
+  version: ivs-realtime-2020-07-14
 ivschat:
   api_ref: ivs/latest/ChatAPIReference/Welcome.html
   blurb: ''
@@ -1768,7 +1768,7 @@ ivschat:
   sort: IVS Chat
   tags:
     product_categories: {}
-  version: '2020-07-14'
+  version: ivschat-2020-07-14
 kafka:
   api_ref: MSK/2.0/APIReference/welcome.html
   blurb: ''
@@ -1783,7 +1783,7 @@ kafka:
   sort: MSK
   tags:
     product_categories: {}
-  version: '2018-11-14'
+  version: kafka-2018-11-14
 keyspaces:
   long: '&KEYlong;'
   short: '&KEY;'
@@ -1873,7 +1873,7 @@ lakeformation:
   sort: Lake Formation
   tags:
     product_categories: {}
-  version: '2017-03-31'
+  version: lakeformation-2017-03-31
 lambda:
   long: '&LAMlong;'
   short: '&LAM;'
@@ -1918,7 +1918,7 @@ license-manager:
   sort: License Manager
   tags:
     product_categories: {}
-  version: '2018-08-01'
+  version: license-manager-2018-08-01
 lightsail:
   api_ref: lightsail/2016-11-28/api-reference/Welcome.html
   blurb: ''
@@ -1933,7 +1933,7 @@ lightsail:
   sort: Lightsail
   tags:
     product_categories: {}
-  version: '2016-11-28'
+  version: lightsail-2016-11-28
 lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
@@ -1963,7 +1963,7 @@ machine-learning:
   sort: Machine Learning
   tags:
     product_categories: {'Machine Learning &amp; AI'}
-  version: 'machinelearning-2014-12-12'
+  version: machinelearning-2014-12-12
 macie2:
   api_ref: macie/latest/APIReference/welcome.html
   blurb: ''
@@ -1978,10 +1978,10 @@ macie2:
   sort: Macie
   tags:
     product_categories: {}
-  version: '2020-01-01'
+  version: macie2-2020-01-01
 marketplace:
-  long: "&MKTlong;"
-  short: "&MKT;"
+  long: '&MKTlong;'
+  short: '&MKT;'
   sort: Marketplace
   expanded:
     long: AWS Marketplace
@@ -2040,7 +2040,7 @@ mediaconnect:
   sort: MediaConnect
   tags:
     product_categories: {}
-  version: '2018-11-14'
+  version: mediaconnect-2018-11-14
 mediaconvert:
   long: '&EMClong;'
   short: '&EMC;'
@@ -2100,7 +2100,7 @@ mediapackage-vod:
   sort: MediaPackage VOD
   tags:
     product_categories: {}
-  version: '2018-11-07'
+  version: mediapackage-vod-2018-11-07
 mediastore:
   api_ref: mediastore/latest/apireference/Welcome.html
   blurb: ''
@@ -2115,7 +2115,7 @@ mediastore:
   sort: Elemental MediaStore
   tags:
     product_categories: {}
-  version: '2017-09-01'
+  version: mediastore-2017-09-01
 mediastore-data:
   api_ref: mediastore/latest/apireference/Welcome.html
   blurb: ''
@@ -2130,7 +2130,7 @@ mediastore-data:
   sort: MediaStore Data Plane
   tags:
     product_categories: {}
-  version: '2017-09-01'
+  version: mediastore-data-2017-09-01
 mediatailor:
   api_ref: mediatailor/latest/apireference/Welcome.html
   blurb: ''
@@ -2145,7 +2145,7 @@ mediatailor:
   sort: MediaTailor
   tags:
     product_categories: {}
-  version: '2018-04-23'
+  version: mediatailor-2018-04-23
 medical-imaging:
   long: '&AHIlong;'
   short: '&AHI;'
@@ -2190,7 +2190,7 @@ memorydb:
   sort: MemoryDB
   tags:
     product_categories: {}
-  version: '2021-01-01'
+  version: memorydb-2021-01-01
 networkmanager:
   api_ref: networkmanager/latest/APIReference/Welcome.html
   blurb: ''
@@ -2205,7 +2205,7 @@ networkmanager:
   sort: Network Manager
   tags:
     product_categories: {}
-  version: '2019-07-05'
+  version: networkmanager-2019-07-05
 networkmonitor:
   api_ref: networkmonitor/latest/APIReference/Welcome.html
   blurb: is an AWS active network monitoring service that identifies if a network issues exists within the AWS network or your own company network.
@@ -2235,7 +2235,7 @@ nimble:
   sort: Nimble Studio
   tags:
     product_categories: {}
-  version: '2020-08-01'
+  version: '' # no longer published
 omics:
   api_ref: omics/latest/api/Welcome.html
   blurb: ''
@@ -2250,11 +2250,11 @@ omics:
   sort: HealthOmics
   tags:
     product_categories: {}
-  version: '2022-11-28'
+  version: omics-2022-11-28
 opensearch:
   long: '&ESlong;'
   short: '&ES;'
-  sort: "ES"
+  sort: ES
   expanded:
     long: Amazon OpenSearch Service
     short: OpenSearch
@@ -2280,7 +2280,7 @@ opsworks:
   sort: OpsWorks
   tags:
     product_categories: {}
-  version: '2013-02-18'
+  version: opsworks-2013-02-18
 opsworkscm:
   api_ref: opsworks-cm/latest/APIReference/Welcome.html
   blurb: ''
@@ -2295,7 +2295,7 @@ opsworkscm:
   sort: OpsWorks CM
   tags:
     product_categories: {}
-  version: '2016-11-01'
+  version: opsworkscm-2016-11-01
 organizations:
   long: '&AOlong;'
   short: '&AO;'
@@ -2325,7 +2325,7 @@ outposts:
   sort: Outposts
   tags:
     product_categories: {}
-  version: '2019-12-03'
+  version: outposts-2019-12-03
 payment-cryptography:
   api_ref: payment-cryptography/latest/APIReference/Welcome.html
   blurb: ''
@@ -2340,7 +2340,7 @@ payment-cryptography:
   sort: Payment Cryptography
   tags:
     product_categories: {}
-  version: '2021-09-14'
+  version: payment-cryptography-2021-09-14
 payment-cryptography-data:
   api_ref: payment-cryptography/latest/DataAPIReference/Welcome.html
   blurb: ''
@@ -2355,11 +2355,11 @@ payment-cryptography-data:
   sort: Payment Cryptography Data Plane
   tags:
     product_categories: {}
-  version: '2022-02-03'
+  version: payment-cryptography-data-2022-02-03
 personalize:
   bundle: personalize
-  long: "&PERSlong;"
-  short: "&PERS;"
+  long: '&PERSlong;'
+  short: '&PERS;'
   sort: Personalize
   expanded:
     long: Amazon Personalize
@@ -2374,8 +2374,8 @@ personalize:
   version: personalize-2018-05-22
 personalize-runtime:
   bundle: personalize
-  long: "&PERSRlong;"
-  short: "&PERSR;"
+  long: '&PERSRlong;'
+  short: '&PERSR;'
   sort: Personalize Runtime
   expanded:
     long: Amazon Personalize Runtime
@@ -2390,8 +2390,8 @@ personalize-runtime:
   version: personalize-runtime-2018-05-22
 personalize-events:
   bundle: personalize
-  long: "&PERSElong;"
-  short: "&PERSE;"
+  long: '&PERSElong;'
+  short: '&PERSE;'
   sort: Personalize Events
   expanded:
     long: Amazon Personalize Events
@@ -2418,7 +2418,7 @@ pi:
   sort: RDS Performance Insights
   tags:
     product_categories: {}
-  version: '2018-02-27'
+  version: pi-2018-02-27
 pinpoint:
   bundle: pinpoint
   long: '&PINlong;'
@@ -2495,7 +2495,7 @@ pricing:
   sort: Price List
   tags:
     product_categories: {}
-  version: '2017-10-15'
+  version: pricing-2017-10-15
 proton:
   api_ref: proton/latest/APIReference/Welcome.html
   blurb: ''
@@ -2510,7 +2510,7 @@ proton:
   sort: Proton
   tags:
     product_categories: {}
-  version: '2020-07-20'
+  version: proton-2020-07-20
 qldb:
   long: '&QLDBlong;'
   short: '&QLDB;'
@@ -2540,7 +2540,7 @@ ram:
   sort: Resource Access Manager
   tags:
     product_categories: {}
-  version: '2018-01-04'
+  version: ram-2018-01-04
 rds:
   long: '&RDSlong;'
   short: '&RDS;'
@@ -2618,7 +2618,7 @@ resource-explorer-2:
   sort: Resource Explorer
   tags:
     product_categories: {}
-  version: '2022-07-28'
+  version: resource-explorer-2-2022-07-28
 resource-groups:
   api_ref: ARG/latest/APIReference/Welcome.html
   blurb: ''
@@ -2633,7 +2633,7 @@ resource-groups:
   sort: Resource Groups
   tags:
     product_categories: {}
-  version: '2017-11-27'
+  version: resource-groups-2017-11-27
 resource-groups-tagging-api:
   api_ref: resourcegroupstagging/latest/APIReference/overview.html
   blurb: ''
@@ -2648,7 +2648,7 @@ resource-groups-tagging-api:
   sort: Resource Groups Tagging API
   tags:
     product_categories: {}
-  version: '2017-01-26'
+  version: resource-groups-tagging-api-2017-01-26
 robomaker:
   api_ref: robomaker/latest/dg/API_Reference.html
   blurb: ''
@@ -2663,7 +2663,7 @@ robomaker:
   sort: RoboMaker
   tags:
     product_categories: {}
-  version: '2018-06-29'
+  version: robomaker-2018-06-29
 route-53:
   bundle: route-53
   long: '&R53long;'
@@ -2740,7 +2740,7 @@ route53resolver:
   sort: Route 53 Resolver
   tags:
     product_categories: {}
-  version: '2018-04-01'
+  version: route53resolver-2018-04-01
 s3:
   bundle: s3
   long: '&S3long;'
@@ -2802,7 +2802,7 @@ scheduler:
   api_ref: scheduler/latest/apireference/Welcome.html
   tags:
     product_categories: {'Management &amp; Governance'}
-  version: '2021-06-30'
+  version: scheduler-2021-06-30
 secrets-manager:
   long: '&ASMlong;'
   short: '&ASM;'
@@ -2832,7 +2832,7 @@ securityhub:
   sort: Security Hub
   tags:
     product_categories: {}
-  version: '2018-10-26'
+  version: securityhub-2018-10-26
 securitylake:
   api_ref: security-lake/latest/APIReference/Welcome.html
   blurb: is a fully-managed security data lake service.
@@ -2862,7 +2862,7 @@ serverlessapplicationrepository:
   sort: Serverless Application Repository
   tags:
     product_categories: {}
-  version: '2017-09-08'
+  version: serverlessrepo-2017-09-08
 service-catalog:
   api_ref: servicecatalog/latest/dg/API_Reference.html
   blurb: ''
@@ -2877,7 +2877,7 @@ service-catalog:
   sort: Service Catalog
   tags:
     product_categories: {}
-  version: '2015-12-10'
+  version: service-catalog-2015-12-10
 service-catalog-appregistry:
   api_ref: servicecatalog/latest/dg/API_Reference.html
   blurb: ''
@@ -2892,7 +2892,7 @@ service-catalog-appregistry:
   sort: AppRegistry
   tags:
     product_categories: {}
-  version: '2020-06-24'
+  version: servicecatalog-appregistry-2020-06-24
 service-quotas:
   api_ref: servicequotas/2019-06-24/apireference/Welcome.html
   blurb: ''
@@ -2907,7 +2907,7 @@ service-quotas:
   sort: Service Quotas
   tags:
     product_categories: {}
-  version: '2019-06-24'
+  version: service-quotas-2019-06-24
 servicediscovery:
   api_ref: cloud-map/latest/api/Welcome.html
   blurb: ''
@@ -2922,7 +2922,7 @@ servicediscovery:
   sort: Cloud Map
   tags:
     product_categories: {}
-  version: '2017-03-14'
+  version: servicediscovery-2017-03-14
 ses:
   bundle: ses
   long: '&SESlong;'
@@ -2984,7 +2984,7 @@ shield:
   sort: Shield
   tags:
     product_categories: {}
-  version: '2016-06-02'
+  version: shield-2016-06-02
 signer:
   api_ref: signer/latest/api/Welcome.html
   blurb: ''
@@ -2999,7 +2999,7 @@ signer:
   sort: Signer
   tags:
     product_categories: {}
-  version: '2017-08-25'
+  version: signer-2017-08-25
 snowball:
   long: '&Frozenlong;'
   short: '&Frozen;'
@@ -3075,7 +3075,7 @@ ssm-contacts:
   sort: Incident Manager Contacts
   tags:
     product_categories: {}
-  version: '2021-05-03'
+  version: ssm-contacts-2021-05-03
 ssm-incidents:
   api_ref: incident-manager/latest/APIReference/Welcome.html
   blurb: ''
@@ -3090,7 +3090,7 @@ ssm-incidents:
   sort: Incident Manager
   tags:
     product_categories: {}
-  version: '2018-05-10'
+  version: ssm-incidents-2018-05-10
 storage-gateway:
   api_ref: storagegateway/latest/APIReference/Welcome.html
   blurb: ''
@@ -3105,7 +3105,7 @@ storage-gateway:
   sort: Storage Gateway
   tags:
     product_categories: {}
-  version: '2013-06-30'
+  version: storage-gateway-2013-06-30
 sts:
   bundle: iam
   long: '&STSlong;'
@@ -3151,7 +3151,7 @@ swf:
   sort: SWF
   tags:
     product_categories: {}
-  version: '2012-01-25'
+  version: swf-2012-01-25
 textract:
   long: '&TEXTRACTlong;'
   short: '&TEXTRACT;'
@@ -3242,7 +3242,7 @@ verifiedpermissions:
   sort: Verified Permissions
   tags:
     product_categories: {}
-  version: '2021-12-01'
+  version: verifiedpermissions-2021-12-01
 vpc-lattice:
   api_ref: vpc-lattice/latest/APIReference/Welcome.html
   blurb: ''
@@ -3257,7 +3257,7 @@ vpc-lattice:
   sort: VPC Lattice
   tags:
     product_categories: {}
-  version: '2022-11-30'
+  version: vpc-lattice-2022-11-30
 waf:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAF.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
@@ -3272,7 +3272,7 @@ waf:
   sort: WAF Classic
   tags:
     product_categories: {'Security, Identity, &amp; Compliance'}
-  version: 'waf-2015-08-24'
+  version: waf-2015-08-24
 waf-regional:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAF_Regional.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
@@ -3287,7 +3287,7 @@ waf-regional:
   sort: WAF Classic Regional
   tags:
     product_categories: {'Security, Identity, &amp; Compliance'}
-  version: 'waf-regional-2016-11-28'
+  version: waf-regional-2016-11-28
 wafv2:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAFV2.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
@@ -3302,7 +3302,7 @@ wafv2:
   sort: WAFV2
   tags:
     product_categories: {'Security, Identity, &amp; Compliance'}
-  version: 'wafv2-2019-07-29'
+  version: wafv2-2019-07-29
 workdocs:
   api_ref: workdocs/latest/APIReference/Welcome.html
   blurb: ''
@@ -3317,7 +3317,7 @@ workdocs:
   sort: WorkDocs
   tags:
     product_categories: {}
-  version: '2016-05-01'
+  version: workdocs-2016-05-01
 workmail:
   api_ref: workmail/latest/APIReference/Welcome.html
   blurb: ''
@@ -3332,7 +3332,7 @@ workmail:
   sort: WorkMail
   tags:
     product_categories: {}
-  version: '2017-10-01'
+  version: workmail-2017-10-01
 workmailmessageflow:
   api_ref: workmail/latest/APIReference/Welcome.html
   blurb: ''
@@ -3347,7 +3347,7 @@ workmailmessageflow:
   sort: WorkMail Message Flow
   tags:
     product_categories: {}
-  version: '2019-05-01'
+  version: workmailmessageflow-2019-05-01
 workspaces:
   api_ref: workspaces/latest/api/welcome.html
   blurb: ''
@@ -3362,7 +3362,7 @@ workspaces:
   sort: WorkSpaces
   tags:
     product_categories: {}
-  version: '2015-04-08'
+  version: workspaces-2015-04-08
 xray:
   api_ref: xray/latest/api/Welcome.html
   blurb: ''
@@ -3377,4 +3377,4 @@ xray:
   sort: XRay
   tags:
     product_categories: {}
-  version: '2016-04-12'
+  version: xray-2016-04-12
