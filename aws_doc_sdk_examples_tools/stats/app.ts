@@ -16,10 +16,10 @@ class CodeCommitCloneStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Initialize Lambda function
+    // Create Lambda function
     const cloneLambda = this.initCloneLambda();
 
-    // Set up EventBridge rule to trigger Lambda on CodeCommit repository changes
+    // Create EventBridge rule to trigger Lambda on CodeCommit repository changes
     this.initCodeCommitTrigger(cloneLambda);
   }
 
@@ -47,19 +47,19 @@ class CodeCommitCloneStack extends cdk.Stack {
       })
     );
 
-    // Grant necessary permissions to S3 bucket "codeexamplestats" for Get and Put
+    // Grant necessary permissions to S3 bucket "codeexamplestats" for Get/Put
     lambdaExecutionRole.addToPolicy(
       new iam.PolicyStatement({
         actions: ["s3:GetObject", "s3:PutObject"],
-        resources: [`arn:aws:s3:::codeexamplestats/*`],  // Allow access to all objects in the bucket
+        resources: [`arn:aws:s3:::codeexamplestats/*`],  // Allow all objects in the bucket
       })
     );
 
-    // Define the Lambda function, pointing directly to the source code directory
+    // Define the Lambda function, pointing directly to the source code dir
     const cloneLambda = new lambda.Function(this, "CodeCommitCloneLambda", {
       runtime: lambda.Runtime.PYTHON_3_9,
       handler: "index.lambda_handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "lambda")), // Pointing to the directory of the lambda function code
+      code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
       environment: {
         REPO_NAME: repoName,
       },
@@ -71,7 +71,7 @@ class CodeCommitCloneStack extends cdk.Stack {
   }
 
   private initCodeCommitTrigger(cloneLambda: lambda.Function): void {
-    // Create EventBridge rule for CodeCommit repository updates
+    // EventBridge rule for CodeCommit repo updates
     const codeCommitRule = new events.Rule(this, "CodeCommitUpdateRule", {
       eventPattern: {
         source: ["aws.codecommit"],
@@ -87,7 +87,7 @@ class CodeCommitCloneStack extends cdk.Stack {
       }
     });
 
-    // Add Lambda function as the target of the EventBridge rule
+    // Add Lambda function as target of the EventBridge rule
     codeCommitRule.addTarget(new targets.LambdaFunction(cloneLambda));
   }
 }
@@ -96,7 +96,7 @@ const app = new cdk.App();
 new CodeCommitCloneStack(app, "CodeCommitCloneStack", {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "us-west-2",  // Where codecommit is stored
+    region: "us-west-2",  // Where codecommit is stored (internal requirement)
   },
 });
 app.synth();
