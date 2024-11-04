@@ -100,3 +100,4 @@ new CodeCommitCloneStack(app, "CodeCommitCloneStack", {
   },
 });
 app.synth();
+export { CodeCommitCloneStack };
