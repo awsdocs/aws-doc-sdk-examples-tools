@@ -3182,6 +3182,21 @@ transcribe:
   tags:
     product_categories: {'Machine Learning &amp; AI'}
   version: transcribe-2017-10-26
+transcribe-streaming:
+  long: '&TSCStreaminglong;'
+  short: '&TSCStreaming;'
+  sort: Transcribe Streaming
+  expanded:
+    long: Amazon Transcribe Streaming
+    short: Amazon Transcribe Streaming
+  blurb: produces real-time transcriptions for your media content.
+  guide:
+    subtitle: Developer Guide
+    url: transcribe/latest/dg/streaming.html
+  api_ref: transcribe/latest/APIReference/Welcome.html
+  tags:
+    product_categories: {'Machine Learning &amp; AI'}
+  version: transcribe-streaming-2017-10-26
 transcribe-medical:
   long: '&TSCMlong;'
   short: '&TSCM;'
