@@ -1,0 +1,9 @@
+Basics:
+  title: "Learn the basics of {{.Services.Short}} with an &AWS; SDK"
+  title_abbrev: "Learn the basics"
+  display: "Basics"
+  description: "are code examples that show you how to perform the essential operations within a service."
+TributaryLite:
+  display: "&AWS; community contributions"
+  description: "are examples that were created and are maintained by multiple teams across &AWS;. 
+    To provide feedback, use the mechanism provided in the linked repositories."
