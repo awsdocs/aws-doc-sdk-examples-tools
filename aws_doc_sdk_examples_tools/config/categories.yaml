@@ -1,5 +1,5 @@
 Basics:
-  title: "Learn the basics of {{.Services.Short}} with an &AWS; SDK"
+  title: "Learn the basics of {{.Short}} with an &AWS; SDK"
   title_abbrev: "Learn the basics"
   display: "Basics"
   description: "are code examples that show you how to perform the essential operations within a service."
