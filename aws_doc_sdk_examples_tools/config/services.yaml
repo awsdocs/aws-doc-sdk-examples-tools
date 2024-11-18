@@ -1240,6 +1240,7 @@ emr-containers:
     product_categories: {}
   version: emr-containers-2020-10-01
 eventbridge:
+  bundle: eventbridge
   long: '&EVlong;'
   short: '&EV;'
   sort: EventBridge
@@ -2466,6 +2467,22 @@ pinpoint-sms-voice:
   tags:
     product_categories: {'Business Applications'}
   version: pinpoint-sms-voice-2018-09-05
+pipes:
+  bundle: eventbridge
+  long: '&EVlong; Pipes'
+  short: '&EV; Pipes'
+  sort: Eventbridge Pipes
+  expanded:
+    long: Amazon EventBridge Pipes
+    short: EventBridge Pipes 
+  blurb: connects event sources to targets.
+  guide:
+    subtitle: User Guide
+    url: eventbridge/latest/userguide/eb-pipes.html
+  api_ref: eventbridge/latest/pipes-reference/Welcome.html
+  tags: 
+    product_categories: {'Application Integration'}
+  version: "2015-10-07"
 polly:
   long: '&POLlong;'
   short: '&POL;'
