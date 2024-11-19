@@ -2776,15 +2776,15 @@ s3-control:
 s3-directory-buckets:
   bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
-  blurb: are a high-performance, single-zone Amazon S3 storage class that is purpose-built to deliver consistent, single-digit millisecond data access for your most latency-sensitive applications.
+  blurb: are designed to store data within a single AWS Zone. Directory buckets organize data hierarchically into directories, providing a structure similar to a file system.
   expanded:
     long: Amazon S3 Directory Buckets
-    short: Amazon S3 Directory Buckets
+    short: S3 Directory Buckets
   guide:
     subtitle: User Guide
-    url: AmazonS3/latest/userguide/s3-express-one-zone.html
+    url: AmazonS3/latest/userguide/directory-buckets-overview.html
   long: '&S3; Directory Buckets'
-  short: '&S3; Directory Buckets'
+  short: '&S3only; Directory Buckets'
   sort: S3 Directory Buckets
   tags:
     product_categories: {'Storage'}

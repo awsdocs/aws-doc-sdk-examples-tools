@@ -376,6 +376,7 @@ CLI:
           route-53-domains: route53domains
           s3: s3api
           s3-control: s3control
+          s3-directory-buckets: s3api
           secrets-manager: secretsmanager
           serverlessapplicationrepository: serverlessrepo
           service-catalog: servicecatalog
