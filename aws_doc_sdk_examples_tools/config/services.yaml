@@ -2790,6 +2790,22 @@ s3-control:
   tags:
     product_categories: {'Storage'}
   version: s3control-2018-08-20
+s3-directory-buckets:
+  bundle: s3
+  api_ref: AmazonS3/latest/API/Welcome.html
+  blurb: are designed to store data within a single AWS Zone. Directory buckets organize data hierarchically into directories, providing a structure similar to a file system.
+  expanded:
+    long: Amazon S3 Directory Buckets
+    short: S3 Directory Buckets
+  guide:
+    subtitle: User Guide
+    url: AmazonS3/latest/userguide/directory-buckets-overview.html
+  long: '&S3; Directory Buckets'
+  short: '&S3only; Directory Buckets'
+  sort: S3 Directory Buckets
+  tags:
+    product_categories: {'Storage'}
+  version: s3-2006-03-01
 sagemaker:
   long: '&SMlong;'
   short: '&SM;'

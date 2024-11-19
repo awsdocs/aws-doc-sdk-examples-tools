@@ -122,6 +122,7 @@ Go:
           route-53-domains: route53domains
           route53-recovery-cluster: route53recoverycluster
           s3-control: s3control
+          s3-directory-buckets: s3
           secrets-manager: secretsmanager
           service-catalog: servicecatalog
           service-catalog-appregistry: servicecatalogappregistry
@@ -375,6 +376,7 @@ CLI:
           route-53-domains: route53domains
           s3: s3api
           s3-control: s3control
+          s3-directory-buckets: s3api
           secrets-manager: secretsmanager
           serverlessapplicationrepository: serverlessrepo
           service-catalog: servicecatalog
