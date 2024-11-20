@@ -1240,7 +1240,6 @@ emr-containers:
     product_categories: {}
   version: emr-containers-2020-10-01
 eventbridge:
-  bundle: eventbridge
   long: '&EVlong;'
   short: '&EV;'
   sort: EventBridge
@@ -2468,7 +2467,6 @@ pinpoint-sms-voice:
     product_categories: {'Business Applications'}
   version: pinpoint-sms-voice-2018-09-05
 pipes:
-  bundle: eventbridge
   long: '&EVlong; Pipes'
   short: '&EV; Pipes'
   sort: Eventbridge Pipes
@@ -2791,7 +2789,6 @@ s3-control:
     product_categories: {'Storage'}
   version: s3control-2018-08-20
 s3-directory-buckets:
-  bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
   blurb: are designed to store data within a single AWS Zone. Directory buckets organize data hierarchically into directories, providing a structure similar to a file system.
   expanded:
