@@ -2480,7 +2480,7 @@ pipes:
   api_ref: eventbridge/latest/pipes-reference/Welcome.html
   tags: 
     product_categories: {'Application Integration'}
-  version: "2015-10-07"
+  version: "pipes-2015-10-07"
 polly:
   long: '&POLlong;'
   short: '&POL;'
@@ -2789,6 +2789,7 @@ s3-control:
     product_categories: {'Storage'}
   version: s3control-2018-08-20
 s3-directory-buckets:
+  bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
   blurb: are designed to store data within a single AWS Zone. Directory buckets organize data hierarchically into directories, providing a structure similar to a file system.
   expanded:
