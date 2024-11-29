@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
+from typing import Dict, Literal, List, Optional, Set, Iterable
 from os.path import splitext
 from pathlib import Path
 
@@ -18,9 +18,7 @@ from .metadata_errors import (
     ExampleMergeMismatchedLanguage,
     ExampleMergeConflict,
 )
-from .project_validator import ValidationConfig
-from .services import Service
-from .sdks import Sdk
+from .project_validator import verify_no_invalid_bare_aws
 
 
 @dataclass
@@ -44,8 +42,9 @@ class Excerpt:
     # all: This content was entirely written by GenAI, and has not been reviewed by a human.
     genai: Literal["none", "some", "most", "all"] = "none"
 
-    def validate(self, errors: MetadataErrors):
-        pass
+    def validate(self, errors: MetadataErrors, path: str):
+        if self.description:
+            verify_no_invalid_bare_aws(self.description, path, errors)
 
 
 @dataclass
@@ -63,7 +62,7 @@ class Version:
     # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
 
-    def validate(self, errors: MetadataErrors, root: Path):
+    def validate(self, errors: MetadataErrors, root: Path, path: str):
         github = self.github
         if github is not None:
             _, ext = splitext(github)
@@ -82,8 +81,8 @@ class Version:
                     )
                 )
 
-        for excerpt in self.excerpts:
-            excerpt.validate(errors)
+        for i, excerpt in enumerate(self.excerpts):
+            excerpt.validate(errors, f"{path}[{i}]")
 
 
 @dataclass
@@ -117,10 +116,10 @@ class Language:
             # within the language. If a tributary or writer feels they need to
             # modify an excerpt, they should go modify the excerpt directly.
 
-    def validate(self, errors: MetadataErrors, root: Path):
+    def validate(self, errors: MetadataErrors, root: Path, path: str):
         errs = MetadataErrors()
-        for version in self.versions:
-            version.validate(errs, root)
+        for i, version in enumerate(self.versions):
+            version.validate(errs, root, f"{path}[{i}]")
         for error in errs:
             if isinstance(error, MetadataParseError):
                 error.language = self.name
@@ -189,8 +188,8 @@ class Example:
 
     def validate(self, errors: MetadataErrors, root: Path):
         errs = MetadataErrors()
-        for language in self.languages.values():
-            language.validate(errs, root)
+        for name, language in self.languages.items():
+            language.validate(errs, root, f"{self.file}: {self.id}.languages.{name}")
         for error in errs:
             error.file = self.file
             error.id = self.id

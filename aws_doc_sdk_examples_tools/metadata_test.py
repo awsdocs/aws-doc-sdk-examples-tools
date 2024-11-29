@@ -22,7 +22,7 @@ from .metadata import (
     Excerpt,
 )
 from .doc_gen import DocGen, parse_examples, check_id_format
-from .project_validator import ValidationConfig
+from .project_validator import ValidationConfig, InvalidBareAWS
 from .sdks import Sdk
 from .services import Service, ServiceExpanded
 
@@ -971,6 +971,53 @@ def test_no_duplicate_title_abbrev():
     expected = [
         metadata_errors.DuplicateTitleAbbrev(
             id="a, b", title_abbrev="abbr", language="svc:cat"
+        )
+    ]
+
+    assert expected == [*errors]
+
+
+def test_excerpt_with_bare_aws():
+    errors = MetadataErrors()
+    doc_gen = DocGen(
+        Path(__file__).parent / "test_excerpt_with_bare_aws",
+        errors=errors,
+        examples={
+            "a": Example(
+                id="a",
+                file=Path("a"),
+                title_abbrev="abbr",
+                category="cat",
+                languages={
+                    "java": Language(
+                        name="java",
+                        property="java",
+                        versions=[
+                            Version(
+                                sdk_version=1,
+                                excerpts=[
+                                    Excerpt(
+                                        description="Bare AWS Here",
+                                        snippet_files=[],
+                                        snippet_tags=[],
+                                    )
+                                ],
+                            )
+                        ],
+                    )
+                },
+                services={"svc": set()},
+            ),
+        },
+    )
+    doc_gen.validate()
+
+    expected = [
+        InvalidBareAWS(
+            file=Path("a"),
+            id="a",
+            content="Bare AWS Here",
+            path="a: a.languages.java[0][0]",
         )
     ]
 

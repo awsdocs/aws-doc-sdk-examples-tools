@@ -24,7 +24,7 @@ import re
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Set
+from typing import Dict, List, Set
 
 from .file_utils import get_files
 from .metadata_errors import (
@@ -206,3 +206,20 @@ def verify_no_secret_keys(
     keys -= validation.allow_list
     for word in keys:
         errors.append(PossibleSecretKey(file=file_location, word=word))
+
+
+@dataclass
+class InvalidBareAWS(MetadataError):
+    content: str = ""
+    path: str = ""
+
+    def message(self):
+        return f"Possible bare AWS in {self.path} ({self.content})"
+
+
+BARE_AWS_REGEX = r"\bAWS\s+[A-Za-z0-9]+\b"
+
+
+def verify_no_invalid_bare_aws(content: str, path: str, errors: MetadataErrors):
+    if re.findall(BARE_AWS_REGEX, content):
+        errors.append(InvalidBareAWS(content=content, path=path))

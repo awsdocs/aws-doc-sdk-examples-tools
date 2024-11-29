@@ -5,8 +5,8 @@ from pathlib import Path
 
 from .doc_gen import DocGen, MetadataError, Example
 from .doc_gen_cli import main
-from .metadata import DocFilenames, Sdk, Language, SDKPageVersion, Version
-from .sdks import SdkVersion
+from .metadata import DocFilenames, Language, SDKPageVersion, Version
+from .sdks import Sdk, SdkVersion
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ def mock_example():
             },
             sdk_pages={
                 "cpp": {
-                    1: SDKPageVersion(actions_scenarios={"medical-imaging": f"link"})
+                    1: SDKPageVersion(actions_scenarios={"medical-imaging": "link"})
                 }
             },
         ),
