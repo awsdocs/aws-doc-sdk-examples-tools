@@ -4,8 +4,8 @@
 map(include('example'), key=example_id())
 ---
 example:
-  title: str(upper_start=True, no_end_punc=True)
-  title_abbrev: str(upper_start=True, no_end_punc=True)
+  title: str(required=False, upper_start=True, no_end_punc=True)
+  title_abbrev: str(required=False, upper_start=True, no_end_punc=True)
   synopsis: str(required=False, lower_start=True, end_punc_or_semicolon=True)
   synopsis_list: list(str(upper_start=True, end_punc=True), required=False)
   category: str(required=False, upper_start=True, no_end_punc=True)
@@ -34,6 +34,7 @@ version:
 # The references to code content that will be included in the example's content.
 excerpt:
   description: str(required=False, upper_start=True, end_punc=True)
+  genai: enum('none', 'some', 'most', 'all', required=False)
   snippet_tags: list(str(), required=False)
   snippet_files: list(str(), required=False)
 

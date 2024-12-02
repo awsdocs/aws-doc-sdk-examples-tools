@@ -135,21 +135,21 @@ class StringExtension(String):
             if not valid:
                 self.last_err = "valid string: it must start with a lowercase letter"
         if valid and self.end_punc:
-            valid = value[-1] in "!.?"
+            valid = value.rstrip()[-1] in "!.?"
             if not valid:
                 self.last_err = "valid sentence or phrase: it must end with punctuation"
         if valid and self.no_end_punc:
-            valid = value[-1] not in "!.?"
+            valid = value.rstrip()[-1] not in "!.?"
             if not valid:
                 self.last_err = "valid string: it must not end with punctuation"
         if valid and self.end_punc_or_colon:
-            valid = value[-1] in "!.?:"
+            valid = value.rstrip()[-1] in "!.?:"
             if not valid:
                 self.last_err = (
                     "valid sentence or phrase: it must end with punctuation or a colon"
                 )
         if valid and self.end_punc_or_semicolon:
-            valid = value[-1] in "!.?;"
+            valid = value.rstrip()[-1] in "!.?;"
             if not valid:
                 self.last_err = "valid sentence or phrase: it must end with punctuation or a semicolon"
         if valid:
@@ -206,19 +206,19 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     validators[BlockContent.tag] = BlockContent
     validators[String.tag] = StringExtension
 
-    schema_root = Path(__file__).parent / "config"
+    config_root = Path(__file__).parent / "config"
 
     to_validate = [
         # (schema, metadata_glob)
-        ("sdks_schema.yaml", "sdks.yaml"),
-        ("services_schema.yaml", "services.yaml"),
+        (config_root / "sdks_schema.yaml", config_root, "sdks.yaml"),
+        (config_root / "services_schema.yaml", config_root, "services.yaml"),
         # TODO: Switch between strict schema for aws-doc-sdk-examples and loose schema for tributaries
-        ("example_strict_schema.yaml", "*_metadata.yaml"),
+        (config_root / "example_strict_schema.yaml", doc_gen_root / ".doc_gen" / "metadata", "*_metadata.yaml"),
     ]
-    for schema, metadata in to_validate:
+    for schema, meta_root, metadata in to_validate:
         validate_files(
-            schema_root / schema,
-            (doc_gen_root / "metadata").glob(metadata),
+            schema,
+            meta_root.glob(metadata),
             validators,
             errors,
         )
