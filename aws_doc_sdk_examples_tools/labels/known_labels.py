@@ -1,0 +1,8 @@
+LANGUAGE = "Language"
+VERSION = "Version"
+SDK = "SDK"
+SERVICE = "Service"
+ACTION = "Action"
+CATEGORY = "Category"
+BUNDLE = "Bundle"
+CAVEAT = "Caveat"
