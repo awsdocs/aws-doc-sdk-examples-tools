@@ -1,7 +1,7 @@
 # Yamale Schema for example metadata, which is all .yaml files in the metadata folder
 # with a _metadata.yaml suffix.
 
-map(include('example'), key=example_id())
+map(include('example'), key=str())
 ---
 example:
   title: str(required=False, upper_start=True, no_end_punc=True)
@@ -23,7 +23,7 @@ language:
 
 # Per-language excerpts for the example. Languages and SDK versions are defined in .doc_gen/metadata/sdk_metadata.yaml
 version:
-  sdk_version: int(min=1)
+  sdk_version: any(int(min=1), str())
   github: str(required=False)
   github_name: str(required=False)
   github_note_at_bottom: bool(required=False)
@@ -34,7 +34,7 @@ version:
 
 # The references to code content that will be included in the example's content.
 excerpt:
-  description: str(required=False, upper_start=True, end_punc=True)
+  description: str(required=False)
   genai: enum('none', 'some', 'most', 'all', required=False)
   snippet_tags: list(str(), required=False)
   snippet_files: list(str(), required=False)
