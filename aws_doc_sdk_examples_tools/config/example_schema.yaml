@@ -23,7 +23,7 @@ language:
 
 # Per-language excerpts for the example. Languages and SDK versions are defined in .doc_gen/metadata/sdk_metadata.yaml
 version:
-  sdk_version: any(int(min=1), str())
+  sdk_version: any(int(min=1), str(check_aws=False))
   github: str(required=False)
   github_name: str(required=False)
   github_note_at_bottom: bool(required=False)
