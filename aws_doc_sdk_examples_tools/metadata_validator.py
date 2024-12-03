@@ -169,6 +169,7 @@ def validate_files(
     schema_name: Path,
     meta_names: Iterable[Path],
     validators: Dict[str, Validator],
+    strict: bool,
     errors: MetadataErrors,
 ):
     """Iterate a list of files and validate each one against a schema."""
@@ -177,7 +178,7 @@ def validate_files(
     for meta_name in meta_names:
         try:
             data = yamale.make_data(meta_name)
-            yamale.validate(schema, data)
+            yamale.validate(schema, data, strict=strict)
             print(f"{meta_name.resolve()} validation success! 👍")
         except YamaleError as e:
             errors.append(ValidateYamaleError(file=meta_name, yamale_error=e))
@@ -207,19 +208,25 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     validators[String.tag] = StringExtension
 
     config_root = Path(__file__).parent / "config"
+    if "aws-doc-sdk-examples" in doc_gen_root.name:
+        example_schema = "example_strict_schema.yaml"
+        strict = True
+    else:
+        example_schema = "example_schema.yaml"
+        strict = False
 
     to_validate = [
         # (schema, metadata_glob)
         (config_root / "sdks_schema.yaml", config_root, "sdks.yaml"),
         (config_root / "services_schema.yaml", config_root, "services.yaml"),
-        # TODO: Switch between strict schema for aws-doc-sdk-examples and loose schema for tributaries
-        (config_root / "example_strict_schema.yaml", doc_gen_root / ".doc_gen" / "metadata", "*_metadata.yaml"),
+        (config_root / example_schema, doc_gen_root / ".doc_gen" / "metadata", "*_metadata.yaml"),
     ]
     for schema, meta_root, metadata in to_validate:
         validate_files(
             schema,
             meta_root.glob(metadata),
             validators,
+            strict,
             errors,
         )
 
