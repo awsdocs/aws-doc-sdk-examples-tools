@@ -12,6 +12,7 @@ import argparse
 import datetime
 import os
 import re
+import xml.etree.ElementTree as xml_tree
 import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -122,8 +123,7 @@ class StringExtension(String):
             return True
         valid = True
         if self.check_aws:
-            # All occurrences of AWS must be entities or within a word.
-            valid = len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", value)) == 0
+            valid = self._validate_aws_entity_usage(value)
             if not valid:
                 self.last_err = 'valid string: it contains a non-entity usage of "AWS"'
         if valid and self.upper_start:
@@ -155,6 +155,23 @@ class StringExtension(String):
         if valid:
             valid = super()._is_valid(value)
         return valid
+
+    @staticmethod
+    def _validate_aws_entity_usage(value: str) -> bool:
+        """
+        All occurrences of AWS must be entities or within a word or within a programlisting or code or noloc block.
+
+        Count all bare AWS occurrences within accepted XML tags.
+        Count all bare AWS occurrences overall.
+        If these counts differ, there's an invalid usage.
+        """
+        xtree = xml_tree.fromstring(f"<fake>{value.replace('&', '&amp;')}</fake>")
+        blocks = xtree.findall("programlisting") + xtree.findall("code") + xtree.findall("noloc")
+        aws_in_blocks = 0
+        for element in blocks:
+            aws_in_blocks += len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", element.text))
+        aws_everywhere = len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", value))
+        return aws_everywhere == aws_in_blocks
 
 
 @dataclass
