@@ -167,7 +167,7 @@ class StringExtension(String):
         """
         xval = value.replace('&', '&amp;')
         xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
-        blocks = xtree.findall("programlisting") + xtree.findall("code") + xtree.findall("noloc")
+        blocks = xtree.findall(".//programlisting") + xtree.findall(".//code") + xtree.findall(".//noloc")
         aws_in_blocks = 0
         for element in blocks:
             aws_in_blocks += len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", element.text))
