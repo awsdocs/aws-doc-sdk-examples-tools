@@ -165,7 +165,8 @@ class StringExtension(String):
         Count all bare AWS occurrences overall.
         If these counts differ, there's an invalid usage.
         """
-        xtree = xml_tree.fromstring(f"<fake>{value.replace('&', '&amp;')}</fake>")
+        xval = value.replace('&', '&amp;')
+        xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
         blocks = xtree.findall("programlisting") + xtree.findall("code") + xtree.findall("noloc")
         aws_in_blocks = 0
         for element in blocks:
