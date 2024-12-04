@@ -1,0 +1,38 @@
+sns_EntityFailures:
+  title: Title has AWS using an &AWS; SDK
+  title_abbrev: Title Abbrev has AWS in it
+  synopsis: "Synopsis has AWS in it."
+  synopsis_list:
+    - "Synopsis list has AWS in it."
+  category: Cat
+  languages:
+    Java:
+      versions:
+        - sdk_version: 1
+          github: java/example_code/svc_EntityFailures
+          sdkguide:
+          excerpts:
+            - description: Description has AWS in it.
+              snippet_tags:
+                - java.example_code.svc_EntityFailures.Test
+  services:
+    sns:
+sns_EntitySuccesses:
+  title: Title has &AWS; using an &AWS; SDK
+  title_abbrev: Title Abbrev has &AWS; in it
+  synopsis: "this <programlisting>Synopsis programlisting has AWS in it.</programlisting>."
+  synopsis_list:
+    - "Synopsis list code has <code>AWS</code> in it."
+  category: Cat
+  languages:
+    Java:
+      versions:
+        - sdk_version: 1
+          github: java/example_code/svc_EntityFailures
+          sdkguide:
+          excerpts:
+            - description: This <emphasis><programlisting>Description programlisting has AWS in it</programlisting></emphasis> doesn't it.
+              snippet_tags:
+                - java.example_code.svc_EntityFailures.Test
+  services:
+    sns:

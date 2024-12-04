@@ -203,7 +203,7 @@ def validate_files(
     return errors
 
 
-def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErrors:
+def validate_metadata(doc_gen_root: Path, strict: bool, errors: MetadataErrors) -> MetadataErrors:
     config = Path(__file__).parent / "config"
     with open(config / "sdks.yaml") as sdks_file:
         sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
@@ -226,12 +226,10 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     validators[String.tag] = StringExtension
 
     config_root = Path(__file__).parent / "config"
-    if "aws-doc-sdk-examples" in doc_gen_root.name:
+    if strict:
         example_schema = "example_strict_schema.yaml"
-        strict = True
     else:
         example_schema = "example_schema.yaml"
-        strict = False
 
     to_validate = [
         # (schema, metadata_glob)
@@ -259,9 +257,12 @@ def main():
         help="The folder that contains schema and metadata files.",
         required=False,
     )
+    parser.add_argument(
+        "--strict", default=True, help="Use strict schema.", required=False
+    )
     args = parser.parse_args()
 
-    errors = validate_metadata(Path(args.doc_gen), MetadataErrors())
+    errors = validate_metadata(Path(args.doc_gen), args.strict, MetadataErrors())
 
     if len(errors) == 0:
         print("Validation succeeded! 👍👍👍")
