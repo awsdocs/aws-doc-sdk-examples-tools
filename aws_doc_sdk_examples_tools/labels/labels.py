@@ -25,10 +25,8 @@ class LabelSet(defaultdict):
                 v = self[name]
                 assert v == value
             return True
-        except AssertionError as _e:
-            print(_e)
+        except AssertionError:
             return False
-        # return all(self[k] == v for k, v in other.items())
 
     def __iter__(self) -> Iterator[Label]:
         for k, vs in self.items():

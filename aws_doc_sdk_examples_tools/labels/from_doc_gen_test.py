@@ -6,7 +6,7 @@ from aws_doc_sdk_examples_tools.snippets import Snippet as DocGenSnippet
 
 from . import from_doc_gen
 from . import known_labels
-from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt
+from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt, Context
 
 
 def test_from_doc_gen():
@@ -254,6 +254,7 @@ def test_from_doc_gen():
             ),
             Snippet(
                 id="medical-imaging_TestExample:php:3",
+                context=Context(),
                 excerpts=[
                     Excerpt(description="Optional description."),
                     Excerpt(
