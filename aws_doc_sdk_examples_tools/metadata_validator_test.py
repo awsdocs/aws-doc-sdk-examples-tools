@@ -9,10 +9,13 @@ import pytest
 from .metadata_errors import MetadataErrors
 from .metadata_validator import validate_metadata
 
+
 @pytest.mark.parametrize("strict", [True, False])
 def test_aws_entity_usage(strict):
     errors = MetadataErrors()
-    validate_metadata(Path(Path(__file__).parent / "test_resources/doc_gen_test"), strict, errors)
+    validate_metadata(
+        Path(Path(__file__).parent / "test_resources/doc_gen_test"), strict, errors
+    )
 
     e_str = str(errors)
     assert "Title has AWS" in e_str
@@ -26,4 +29,3 @@ def test_aws_entity_usage(strict):
     assert "Synopsis programlisting has AWS" not in e_str
     assert "Synopsis list code has <code>AWS" not in e_str
     assert "Description programlisting has AWS" not in e_str
-

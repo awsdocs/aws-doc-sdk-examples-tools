@@ -165,12 +165,18 @@ class StringExtension(String):
         Count all bare AWS occurrences overall.
         If these counts differ, there's an invalid usage.
         """
-        xval = value.replace('&', '&amp;')
+        xval = value.replace("&", "&amp;")
         xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
-        blocks = xtree.findall(".//programlisting") + xtree.findall(".//code") + xtree.findall(".//noloc")
+        blocks = (
+            xtree.findall(".//programlisting")
+            + xtree.findall(".//code")
+            + xtree.findall(".//noloc")
+        )
         aws_in_blocks = 0
         for element in blocks:
-            aws_in_blocks += len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", element.text))
+            aws_in_blocks += len(
+                re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", str(element.text))
+            )
         aws_everywhere = len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", value))
         return aws_everywhere == aws_in_blocks
 
@@ -203,7 +209,9 @@ def validate_files(
     return errors
 
 
-def validate_metadata(doc_gen_root: Path, strict: bool, errors: MetadataErrors) -> MetadataErrors:
+def validate_metadata(
+    doc_gen_root: Path, strict: bool, errors: MetadataErrors
+) -> MetadataErrors:
     config = Path(__file__).parent / "config"
     with open(config / "sdks.yaml") as sdks_file:
         sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
@@ -235,7 +243,11 @@ def validate_metadata(doc_gen_root: Path, strict: bool, errors: MetadataErrors) 
         # (schema, metadata_glob)
         (config_root / "sdks_schema.yaml", config_root, "sdks.yaml"),
         (config_root / "services_schema.yaml", config_root, "services.yaml"),
-        (config_root / example_schema, doc_gen_root / ".doc_gen" / "metadata", "*_metadata.yaml"),
+        (
+            config_root / example_schema,
+            doc_gen_root / ".doc_gen" / "metadata",
+            "*_metadata.yaml",
+        ),
     ]
     for schema, meta_root, metadata in to_validate:
         validate_files(
