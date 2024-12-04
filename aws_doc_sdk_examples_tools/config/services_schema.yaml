@@ -3,8 +3,8 @@
 map(include('service'), key=regex('^[-a-z0-9]+$', name='service slug'))
 ---
 service:
-  long: include('long_entity_regex')
-  short: include('entity_regex')
+  long: str()
+  short: str()
   sort: regex('^[^&]\\w', name='non-entity')
   chapter_override: include('chapter_override', required=False)
   expanded:
@@ -16,7 +16,7 @@ service:
     url: include('doc_url')
   api_client: service_name(required=False)
   api_ref: include('doc_url')
-  version: service_version()
+  version: str()
   caveat: str(required=False, upper_start=True, end_punc=True)
   bundle: service_name(required=False)
   tags: map(key=enum('product_categories'))

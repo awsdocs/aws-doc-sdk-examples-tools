@@ -12,6 +12,7 @@ import argparse
 import datetime
 import os
 import re
+import xml.etree.ElementTree as xml_tree
 import yaml
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -122,8 +123,7 @@ class StringExtension(String):
             return True
         valid = True
         if self.check_aws:
-            # All occurrences of AWS must be entities or within a word.
-            valid = len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", value)) == 0
+            valid = self._validate_aws_entity_usage(value)
             if not valid:
                 self.last_err = 'valid string: it contains a non-entity usage of "AWS"'
         if valid and self.upper_start:
@@ -135,26 +135,50 @@ class StringExtension(String):
             if not valid:
                 self.last_err = "valid string: it must start with a lowercase letter"
         if valid and self.end_punc:
-            valid = value[-1] in "!.?"
+            valid = value.rstrip()[-1] in "!.?"
             if not valid:
                 self.last_err = "valid sentence or phrase: it must end with punctuation"
         if valid and self.no_end_punc:
-            valid = value[-1] not in "!.?"
+            valid = value.rstrip()[-1] not in "!.?"
             if not valid:
                 self.last_err = "valid string: it must not end with punctuation"
         if valid and self.end_punc_or_colon:
-            valid = value[-1] in "!.?:"
+            valid = value.rstrip()[-1] in "!.?:"
             if not valid:
                 self.last_err = (
                     "valid sentence or phrase: it must end with punctuation or a colon"
                 )
         if valid and self.end_punc_or_semicolon:
-            valid = value[-1] in "!.?;"
+            valid = value.rstrip()[-1] in "!.?;"
             if not valid:
                 self.last_err = "valid sentence or phrase: it must end with punctuation or a semicolon"
         if valid:
             valid = super()._is_valid(value)
         return valid
+
+    @staticmethod
+    def _validate_aws_entity_usage(value: str) -> bool:
+        """
+        All occurrences of AWS must be entities or within a word or within a programlisting or code or noloc block.
+
+        Count all bare AWS occurrences within accepted XML tags.
+        Count all bare AWS occurrences overall.
+        If these counts differ, there's an invalid usage.
+        """
+        xval = value.replace("&", "&amp;")
+        xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
+        blocks = (
+            xtree.findall(".//programlisting")
+            + xtree.findall(".//code")
+            + xtree.findall(".//noloc")
+        )
+        aws_in_blocks = 0
+        for element in blocks:
+            aws_in_blocks += len(
+                re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", str(element.text))
+            )
+        aws_everywhere = len(re.findall("(?<![&0-9a-zA-Z])AWS(?![;0-9a-zA-Z])", value))
+        return aws_everywhere == aws_in_blocks
 
 
 @dataclass
@@ -169,6 +193,7 @@ def validate_files(
     schema_name: Path,
     meta_names: Iterable[Path],
     validators: Dict[str, Validator],
+    strict: bool,
     errors: MetadataErrors,
 ):
     """Iterate a list of files and validate each one against a schema."""
@@ -177,14 +202,16 @@ def validate_files(
     for meta_name in meta_names:
         try:
             data = yamale.make_data(meta_name)
-            yamale.validate(schema, data)
+            yamale.validate(schema, data, strict=strict)
             print(f"{meta_name.resolve()} validation success! 👍")
         except YamaleError as e:
             errors.append(ValidateYamaleError(file=meta_name, yamale_error=e))
     return errors
 
 
-def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErrors:
+def validate_metadata(
+    doc_gen_root: Path, strict: bool, errors: MetadataErrors
+) -> MetadataErrors:
     config = Path(__file__).parent / "config"
     with open(config / "sdks.yaml") as sdks_file:
         sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
@@ -206,20 +233,28 @@ def validate_metadata(doc_gen_root: Path, errors: MetadataErrors) -> MetadataErr
     validators[BlockContent.tag] = BlockContent
     validators[String.tag] = StringExtension
 
-    schema_root = Path(__file__).parent / "config"
+    config_root = Path(__file__).parent / "config"
+    if strict:
+        example_schema = "example_strict_schema.yaml"
+    else:
+        example_schema = "example_schema.yaml"
 
     to_validate = [
         # (schema, metadata_glob)
-        ("sdks_schema.yaml", "sdks.yaml"),
-        ("services_schema.yaml", "services.yaml"),
-        # TODO: Switch between strict schema for aws-doc-sdk-examples and loose schema for tributaries
-        ("example_strict_schema.yaml", "*_metadata.yaml"),
+        (config_root / "sdks_schema.yaml", config_root, "sdks.yaml"),
+        (config_root / "services_schema.yaml", config_root, "services.yaml"),
+        (
+            config_root / example_schema,
+            doc_gen_root / ".doc_gen" / "metadata",
+            "*_metadata.yaml",
+        ),
     ]
-    for schema, metadata in to_validate:
+    for schema, meta_root, metadata in to_validate:
         validate_files(
-            schema_root / schema,
-            (doc_gen_root / "metadata").glob(metadata),
+            schema,
+            meta_root.glob(metadata),
             validators,
+            strict,
             errors,
         )
 
@@ -234,9 +269,12 @@ def main():
         help="The folder that contains schema and metadata files.",
         required=False,
     )
+    parser.add_argument(
+        "--strict", default=True, help="Use strict schema.", required=False
+    )
     args = parser.parse_args()
 
-    errors = validate_metadata(Path(args.doc_gen), MetadataErrors())
+    errors = validate_metadata(Path(args.doc_gen), args.strict, MetadataErrors())
 
     if len(errors) == 0:
         print("Validation succeeded! 👍👍👍")

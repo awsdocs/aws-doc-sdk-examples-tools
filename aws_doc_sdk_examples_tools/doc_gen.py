@@ -270,7 +270,7 @@ class DocGen:
             service.validate(self.errors)
         for example in self.examples.values():
             example.validate(self.errors, self.root)
-        validate_metadata(self.root, self.errors)
+        validate_metadata(self.root, self.validation.strict_titles, self.errors)
         validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(
             [*self.examples.values()],
