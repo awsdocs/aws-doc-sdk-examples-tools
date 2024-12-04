@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Iterable, Iterator, List, Optional
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 
 from . import known_labels
@@ -49,8 +49,28 @@ class Labeled:
 
 
 @dataclass
+class Context:
+    ...
+
+
+Range = Tuple[int, int]
+
+
+@dataclass
+class Excerpt:
+    description: str = ""
+    # Relative path within the context
+    path: str = ""
+    # Range within the file [start, end)
+    range: Optional[Range] = None
+    content: str = ""
+
+
+@dataclass
 class Snippet(Labeled):
     id: str = ""
+    context: Optional[Context] = None
+    excerpts: List[Excerpt] = field(default_factory=list)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -60,16 +80,30 @@ class Snippet(Labeled):
 
 
 @dataclass
+class Expanded:
+    long: str
+    short: str
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Expanded) and self.long == other.long and self.short == other.short
+
+    def __hash__(self):
+        return hash((self.long, self.short))
+
+
+@dataclass
 class Sdk(Labeled):
     language: str = ""
     version: str = ""
+    name: Optional[Expanded] = None
+    guide: str = ""
 
     def __post_init__(self):
-        self.labels = [Label(name=known_labels.SDK, value=f"{self.language}:{self.version}")]
+        self.labels = [*self.labels, Label(name=known_labels.SDK, value=f"{self.language}:{self.version}")]
         self._label_set = LabelSet(self.labels)
 
     def __eq__(self, other):
-        return self.language == other.language and self.version == other.version
+        return isinstance(other, Sdk) and self.language == other.language and self.version == other.version
 
     def __hash__(self):
         return hash((self.language, self.version))
@@ -77,18 +111,20 @@ class Sdk(Labeled):
 
 @dataclass
 class Service(Labeled):
-    name: str = ""
-    long: str = ""
-    short: str = ""
+    id: str = ""
+    name: Optional[Expanded] = None
+    expanded: Optional[Expanded] = None
     sort: str = ""
     version: str = ""
-    # expanded: Optional[ServiceExpanded] = None
     api_ref: Optional[str] = None
-    blurb: Optional[str] = None
     # guide: Optional[ServiceGuide] = None
 
+    def __post_init__(self):
+        self.labels = [*self.labels, Label(name=known_labels.SERVICE, value=f"{self.id}")]
+        self._label_set = LabelSet(self.labels)
+
     def __eq__(self, other):
-        return self.name == other.name
+        return isinstance(other, Service) and self.name == other.name
 
     def __hash__(self):
         return hash((self.name))
@@ -106,7 +142,7 @@ class Example(Labeled):
     synopsis_list: List[str] = field(default_factory=list)
 
     def __eq__(self, other):
-        return self.id == other.id
+        return isinstance(other, Example) and self.id == other.id
 
     def __hash__(self):
         return hash((self.id))

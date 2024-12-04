@@ -18,27 +18,27 @@ def test_LabelSet_cover():
     ls_snippet = LabelSet([Label(name="sdk", value="rust:1"), Label(name="service", value="ec2"), Label(name="action", value="DescribeInstance")])
     ls_sdk_rust = LabelSet([Label(name="sdk", value="rust:1")])
     ls_sdk_java = LabelSet([Label(name="sdk", value="java:2")])
-    ls_example_describeinstance = LabelSet([Label(name="service", value="ec2"), Label(name="action", value="DescribeInstance")])
+    ls_example_describe_instance = LabelSet([Label(name="service", value="ec2"), Label(name="action", value="DescribeInstance")])
 
     assert ls_snippet.covers(ls_snippet) is True
     assert ls_snippet.covers(ls_sdk_rust) is True
     assert ls_snippet.covers(ls_sdk_java) is False
-    assert ls_snippet.covers(ls_example_describeinstance) is True
+    assert ls_snippet.covers(ls_example_describe_instance) is True
 
     assert ls_sdk_rust.covers(ls_snippet) is False
     assert ls_sdk_rust.covers(ls_sdk_rust) is True
     assert ls_sdk_rust.covers(ls_sdk_java) is False
-    assert ls_sdk_rust.covers(ls_example_describeinstance) is False
+    assert ls_sdk_rust.covers(ls_example_describe_instance) is False
 
     assert ls_sdk_java.covers(ls_snippet) is False
     assert ls_sdk_java.covers(ls_sdk_rust) is False
     assert ls_sdk_java.covers(ls_sdk_java) is True
-    assert ls_sdk_java.covers(ls_example_describeinstance) is False
+    assert ls_sdk_java.covers(ls_example_describe_instance) is False
 
-    assert ls_example_describeinstance.covers(ls_snippet) is False
-    assert ls_example_describeinstance.covers(ls_sdk_rust) is False
-    assert ls_example_describeinstance.covers(ls_sdk_java) is False
-    assert ls_example_describeinstance.covers(ls_example_describeinstance) is True
+    assert ls_example_describe_instance.covers(ls_snippet) is False
+    assert ls_example_describe_instance.covers(ls_sdk_rust) is False
+    assert ls_example_describe_instance.covers(ls_sdk_java) is False
+    assert ls_example_describe_instance.covers(ls_example_describe_instance) is True
 
 
 def test_select():
