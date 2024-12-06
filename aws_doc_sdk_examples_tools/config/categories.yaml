@@ -1,4 +1,4 @@
-standard_categories: {"Hello", "Actions", "Basics", "Scenarios"}
+standard_categories: ["Hello", "Basics", "Actions", "Scenarios"]
 categories:
   Hello:
     display: "Hello"
