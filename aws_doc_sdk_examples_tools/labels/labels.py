@@ -47,6 +47,12 @@ class Labeled:
 
 
 @dataclass
+class Link:
+    title: str
+    url: str
+
+
+@dataclass
 class Context:
     ...
 
@@ -79,8 +85,8 @@ class Snippet(Labeled):
 
 @dataclass
 class Expanded:
-    long: str
-    short: str
+    long: str = ""
+    short: str = ""
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Expanded) and self.long == other.long and self.short == other.short
@@ -90,10 +96,18 @@ class Expanded:
 
 
 @dataclass
+class ApiRef:
+    uid: str
+    name: str
+    link_template: Optional[str] = None
+
+@dataclass
 class Sdk(Labeled):
     language: str = ""
     version: str = ""
-    name: Optional[Expanded] = None
+    name: Expanded = field(default_factory=Expanded)
+    title_override: Optional[Expanded] = None
+    api_ref: Optional[ApiRef] = None
     guide: str = ""
 
     def __post_init__(self):
@@ -110,12 +124,12 @@ class Sdk(Labeled):
 @dataclass
 class Service(Labeled):
     id: str = ""
-    name: Optional[Expanded] = None
-    expanded: Optional[Expanded] = None
+    name: Expanded = field(default_factory=Expanded)
+    expanded: Expanded = field(default_factory=Expanded)
     sort: str = ""
     version: str = ""
     api_ref: Optional[str] = None
-    # guide: Optional[ServiceGuide] = None
+    guide: Optional[Link] = None
 
     def __post_init__(self):
         self.labels = [*self.labels, Label(name=known_labels.SERVICE, value=f"{self.id}")]
@@ -131,13 +145,11 @@ class Service(Labeled):
 @dataclass
 class Example(Labeled):
     id: str = ""
-    title: Optional[str] = ""
-    title_abbrev: Optional[str] = ""
-    synopsis: Optional[str] = ""
+    title: Expanded = field(default_factory=Expanded)
     category: Optional[str] = None
-    # guide_topic: Optional[Url] = None
+    guide_topic: Optional[Link] = None
     # doc_filenames: Optional[DocFilenames] = None
-    synopsis_list: List[str] = field(default_factory=list)
+    synopsis: List[str] = field(default_factory=list)
 
     def __eq__(self, other):
         return isinstance(other, Example) and self.id == other.id
@@ -152,4 +164,3 @@ def select(items: Iterable[Labeled], for_labels_in: Labeled):
         if item.covers(for_labels_in):
             return_set.add(item)
     return frozenset(return_set)
-    # return frozenset(item for item in items if item.covers(for_labels_in))

@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Set
+from typing import Dict, Iterable, List, Set, Optional
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.metadata import Example as DocGenExample
@@ -6,7 +6,7 @@ from aws_doc_sdk_examples_tools.snippets import Snippet as DocGenSnippet
 from aws_doc_sdk_examples_tools.sdks import Sdk as DocGenSdk
 from aws_doc_sdk_examples_tools.services import Service as DocGenService
 
-from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt
+from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt, Link, ApiRef
 from . import known_labels
 
 
@@ -37,11 +37,26 @@ def _sdk(id: str, doc_gen_sdk: DocGenSdk) -> Iterable[Sdk]:
         labels: List[Label] = []
         if v.caveat:
             labels.append(Label(name="caveat", value=v.caveat))
+        title_override = None
+        if v.title_override:
+            title_override = Expanded(
+                long=v.title_override.title or "",
+                short=v.title_override.title_abbrev or "",
+            )
+        api_ref = None
+        if v.api_ref:
+            api_ref = ApiRef(
+                uid=v.api_ref.uid,
+                name=v.api_ref.name,
+                link_template=v.api_ref.link_template,
+            )
         sdk = Sdk(
             language=doc_gen_sdk.property,
             version=str(v.version),
             name=Expanded(long=v.long, short=v.short),
-            labels=labels
+            labels=labels,
+            title_override=title_override,
+            api_ref=api_ref
         )
         yield sdk
 
@@ -59,6 +74,13 @@ def _service(id: str, doc_gen_service: DocGenService) -> Service :
     if doc_gen_service.expanded:
         expanded = Expanded(long=doc_gen_service.expanded.long, short=doc_gen_service.expanded.short)
 
+    guide: Optional[Link] = None
+    if doc_gen_service.guide:
+        guide = Link(
+            title=doc_gen_service.guide.subtitle,
+            url=doc_gen_service.guide.url
+        )
+
     service = Service(
         id=id,
         sort=doc_gen_service.sort,
@@ -66,6 +88,7 @@ def _service(id: str, doc_gen_service: DocGenService) -> Service :
         expanded=expanded,
         version=str(doc_gen_service.version),
         labels=labels,
+        guide=guide,
     )
     return service
 
@@ -76,14 +99,27 @@ def _examples(examples: Dict[str, DocGenExample]) -> Set[Example]:
 
 def _example(id: str, doc_gen_example: DocGenExample) -> Example:
     labels = doc_gen_example_labels(doc_gen_example)
+    synopsis = []
+    if doc_gen_example.synopsis:
+        synopsis.append(doc_gen_example.synopsis)
+    if doc_gen_example.synopsis_list:
+        synopsis.extend(doc_gen_example.synopsis_list)
+    guide_topic: Optional[Link] = None
+    if doc_gen_example.guide_topic:
+        guide_topic = Link(
+            title=doc_gen_example.guide_topic.title,
+            url=doc_gen_example.guide_topic.url or doc_gen_example.guide_topic.title,
+        )
 
     example = Example(
         id=id,
-        title=doc_gen_example.title,
-        title_abbrev=doc_gen_example.title_abbrev,
-        synopsis=doc_gen_example.synopsis or "",
-        synopsis_list=doc_gen_example.synopsis_list,
+        title=Expanded(
+            long=doc_gen_example.title or "",
+            short=doc_gen_example.title_abbrev or "",
+        ),
+        synopsis=synopsis,
         labels=labels,
+        guide_topic=guide_topic
     )
 
     return example
@@ -110,6 +146,7 @@ def _snippets(doc_gen_examples: Iterable[DocGenExample], doc_gen_snippets: Dict[
             lang = lang.lower()
             for version in language.versions:
                 excerpts: List[Excerpt] = []
+
                 if version.block_content:
                     excerpts.append(Excerpt(description=version.block_content))
                 for excerpt in version.excerpts:
@@ -119,6 +156,7 @@ def _snippets(doc_gen_examples: Iterable[DocGenExample], doc_gen_snippets: Dict[
                         doc_gen_snippet = doc_gen_snippets.get(tag, None)
                         if doc_gen_snippet:
                             excerpts.append(Excerpt(path=doc_gen_snippet.file, range=(doc_gen_snippet.line_start, doc_gen_snippet.line_end), content=doc_gen_snippet.code))
+
                 labels: List[Label] = [
                     *example_labels,
                     Label(name=known_labels.SDK, value=f"{lang}:{version.sdk_version}"),

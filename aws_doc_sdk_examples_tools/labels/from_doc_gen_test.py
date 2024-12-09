@@ -6,7 +6,7 @@ from aws_doc_sdk_examples_tools.snippets import Snippet as DocGenSnippet
 
 from . import from_doc_gen
 from . import known_labels
-from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt, Context
+from .labels import Sdk, Service, Example, Snippet, Expanded, Label, Excerpt, Context, Link, ApiRef
 
 
 def test_from_doc_gen():
@@ -94,10 +94,11 @@ def test_from_doc_gen():
                 version="3",
                 language="javascript",
                 name=Expanded(long="&JSBlong; V3", short="&JSB; V3"),
-                #   api_ref:
-                #     uid: "AWSJavaScriptSDK",
-                #     name: "&guide-jsb-api;",
-                #     link_template: "AWSJavaScriptSDK/v3/latest/clients/client-{{.Service}}/classes/{{.OperationLower}}command.html",
+                api_ref=ApiRef(
+                    uid="AWSJavaScriptSDK",
+                    name="&guide-jsb-api;",
+                    link_template="AWSJavaScriptSDK/v3/latest/clients/client-{{.Service}}/classes/{{.OperationLower}}command.html",
+                ),
                 guide="&guide-jsb-dev;",
             ),
             Sdk(
@@ -118,9 +119,10 @@ def test_from_doc_gen():
                 version="3",
                 language="csharp",
                 name=Expanded(long="&NETlong;", short="&NET;"),
-                #   title_override:
-                #     title: "Additional &NET; code examples",
-                #     title_abbrev: "Additional code examples",
+                title_override=Expanded(
+                    long="Additional &NET; code examples",
+                    short="Additional code examples",
+                ),
                 guide="&guide-net-dev;",
             ),
             Sdk(
@@ -166,9 +168,10 @@ def test_from_doc_gen():
                     ),
                 ],
                 api_ref="AmazonS3/latest/API/Welcome.html",
-                #   guide:
-                #     subtitle: User Guide
-                #     url: AmazonS3/latest/userguide/Welcome.html
+                guide=Link(
+                    title="User Guide",
+                    url="AmazonS3/latest/userguide/Welcome.html"
+                )
             ),
             Service(
                 id="medical-imaging",
@@ -206,16 +209,19 @@ def test_from_doc_gen():
         [
             Example(
                 id="medical-imaging_TestExample",
-                title="Check whether a phone number is opted out using an &AWS; SDK",
-                title_abbrev="Check whether a phone number is opted out",
-                synopsis="check whether a phone number is opted out using some of the &AWS; SDKs that are available.",
-                synopsis_list=[
+                title=Expanded(
+                    long="Check whether a phone number is opted out using an &AWS; SDK",
+                    short="Check whether a phone number is opted out",
+                ),
+                synopsis=[
+                    "check whether a phone number is opted out using some of the &AWS; SDKs that are available.",
                     "Check the one thing.",
                     "Do some other thing.",
                 ],
-                # guide_topic:
-                #     title: Test guide topic title
-                #     url: test-guide/url
+                guide_topic=Link(
+                    title="Test guide topic title",
+                    url="test-guide/url"
+                ),
                 labels=[
                     Label(name=known_labels.CATEGORY, value="Usage"),
                     Label(name=known_labels.SERVICE, value="medical-imaging"),
