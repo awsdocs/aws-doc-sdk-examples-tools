@@ -10,43 +10,75 @@ from dataclasses import dataclass, field
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
     MetadataErrors,
-    MetadataParseError,
-    check_mapping,
 )
+
+
+@dataclass
+class TitleInfo:
+    title: str
+    title_abbrev: str
+    synopsis: Optional[str] = field(default=None)
+    title_suffixes: Dict[str, str] = field(default_factory=dict)
+
+    @classmethod
+    def from_yaml(cls, yaml: Dict[str, str]) -> [TitleInfo, None]:
+        if yaml is None:
+            return None
+
+        title = yaml.get("title")
+        title_suffixes = yaml.get("title_suffixes", {})
+        title_abbrev = yaml.get("title_abbrev")
+        synopsis = yaml.get("synopsis")
+
+        return cls(title=title, title_suffixes=title_suffixes, title_abbrev=title_abbrev, synopsis=synopsis)
+
+
+@dataclass
+class CategoryWithNoDisplayError(metadata_errors.MetadataError):
+    def message(self):
+        return "Category has no display value"
 
 
 @dataclass
 class Category:
     key: str
-    title: str
-    title_abbrev: str
     display: str
-    description: str
+    defaults: Optional[TitleInfo] = field(default=None)
+    overrides: Optional[TitleInfo] = field(default=None)
+    description: Optional[str] = field(default=None)
+
+    def validate(self, errors: MetadataErrors):
+        if not self.display:
+            errors.append(CategoryWithNoDisplayError(id=self.key))
 
     @classmethod
     def from_yaml(cls, key: str, yaml: Dict[str, Any]) -> tuple[Category, MetadataErrors]:
         errors = MetadataErrors()
-        display = yaml.get("display", "")
-        description = yaml.get("description", "")
-        title = yaml.get("title", "")
-        title_abbrev = yaml.get("title_abbrev", "")
+        display = yaml.get("display")
+        defaults = TitleInfo.from_yaml(yaml.get("defaults"))
+        overrides = TitleInfo.from_yaml(yaml.get("overrides"))
+        description = yaml.get("description")
 
-        return cls(key=key, display=display, description=description, title=title, title_abbrev=title_abbrev), errors
+        return cls(key=key, display=display, defaults=defaults, overrides=overrides, description=description), errors
 
 
-def parse(file: Path, yaml: Dict[str, Any]) -> tuple[Dict[str, Category], MetadataErrors]:
+def parse(file: Path, yaml: Dict[str, Any]) -> tuple[List[str], Dict[str, Category], MetadataErrors]:
     categories: Dict[str, Category] = {}
     errors = MetadataErrors()
 
-    for key in yaml:
-        category, errs = Category.from_yaml(key, yaml[key])
-        categories[key] = category
-        for error in errs:
-            error.file = file
-            error.id = key
-        errors.extend(errs)
+    standard_cats = yaml.get("standard_categories", [])
+    for key, yaml_cat in yaml.get("categories", {}).items():
+        if yaml_cat is None:
+            errors.append(metadata_errors.MissingCategoryBody(id=key, file=file))
+        else:
+            category, cat_errs = Category.from_yaml(key, yaml_cat)
+            categories[key] = category
+            for error in cat_errs:
+                error.file = file
+                error.id = key
+            errors.extend(cat_errs)
 
-    return categories, errors
+    return standard_cats, categories, errors
 
 
 if __name__ == "__main__":
@@ -56,5 +88,6 @@ if __name__ == "__main__":
     path = Path(__file__).parent / "config" / "categories.yaml"
     with open(path) as file:
         meta = yaml.safe_load(file)
-    categories, errors = parse(path, meta)
-    pp(categories)
+    standard_cats, cats, errs = parse(path, meta)
+    pp(standard_cats)
+    pp(cats)

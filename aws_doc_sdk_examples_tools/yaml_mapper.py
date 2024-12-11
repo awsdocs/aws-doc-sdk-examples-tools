@@ -42,7 +42,7 @@ def example_from_yaml(
     parsed_services = parse_services(yaml.get("services", {}), errors, services)
     category = yaml.get("category", "")
     if category == "":
-        category = "Api" if len(parsed_services) == 1 else "Cross"
+        category = "Api" if len(parsed_services) == 1 else "Scenarios"
     is_action = category == "Api"
     is_basics = category == "Basics"
 

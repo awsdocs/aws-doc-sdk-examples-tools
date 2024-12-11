@@ -3,8 +3,8 @@ categories:
   Hello:
     display: "Hello"
     overrides:
-      title: "Hello {{.ServiceEntity.Short}};"
-      title_abbrev: "Hello {{.ServiceEntity.Short}};"
+      title: "Hello {{.ServiceEntity.Short}}"
+      title_abbrev: "Hello {{.ServiceEntity.Short}}"
       synopsis: "get started using {{.ServiceEntity.Short}}."
   Actions:
     display: "Actions"

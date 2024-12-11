@@ -140,7 +140,7 @@ def test_parse():
     example = Example(
         file=Path("test_cpp.yaml"),
         id="medical-imaging_CreateDatastore",
-        category="Cross",
+        category="Scenarios",
         services={
             "medical-imaging": set(["Operation1", "Operation2"]),
             "api-gateway": set(["Operation1", "Operation2"]),
