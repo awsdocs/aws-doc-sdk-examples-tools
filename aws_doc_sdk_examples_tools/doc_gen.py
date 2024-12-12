@@ -430,7 +430,7 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
                     )
                 )
             else:
-                anchor = "actions" if example.category == "Actions" else "scenarios"
+                anchor = "actions" if example.category == "Api" else "scenarios"
                 sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
                     actions_scenarios={
                         service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"

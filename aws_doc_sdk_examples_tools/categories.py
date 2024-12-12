@@ -67,6 +67,10 @@ def parse(file: Path, yaml: Dict[str, Any]) -> tuple[List[str], Dict[str, Catego
     errors = MetadataErrors()
 
     standard_cats = yaml.get("standard_categories", [])
+    # Work around inconsistency where some tools use 'Actions' and DocGen uses 'Api' to refer to single-action examples.
+    for i in range(len(standard_cats)):
+        if standard_cats[i] == "Actions":
+            standard_cats[i] = "Api"
     for key, yaml_cat in yaml.get("categories", {}).items():
         if yaml_cat is None:
             errors.append(metadata_errors.MissingCategoryBody(id=key, file=file))

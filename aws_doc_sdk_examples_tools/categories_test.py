@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 import pytest
 import yaml
 
@@ -10,12 +10,11 @@ from aws_doc_sdk_examples_tools import metadata_errors
 from .categories import (
     parse,
     Category,
-    CategoryWithNoDisplayError,
     TitleInfo,
 )
 
 
-def load(path: str) -> Tuple[Dict[str, Category], metadata_errors.MetadataErrors]:
+def load(path: str) -> Tuple[List[str], Dict[str, Category], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
@@ -24,7 +23,7 @@ def load(path: str) -> Tuple[Dict[str, Category], metadata_errors.MetadataErrors
 
 
 def test_empty_categories():
-    _, errs = load("empty_categories.yaml")
+    _, _, errs = load("empty_categories.yaml")
     assert [*errs] == [
         metadata_errors.MissingCategoryBody(
             file=Path(__file__).parent / "test_resources/empty_categories.yaml",
@@ -34,7 +33,7 @@ def test_empty_categories():
 
 
 def test_categories():
-    categories, _ = load("categories.yaml")
+    _, categories, _ = load("categories.yaml")
     assert categories == {
         "Actions": Category(
             key="Actions",
