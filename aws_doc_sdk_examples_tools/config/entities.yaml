@@ -14,4 +14,5 @@ expanded_override:
   "&kms-keys;": "KMS keys"
   "&kms-keys-long;": "AWS KMS keys"
   "&S3long;": "Amazon Simple Storage Service"
+  "&S3only;": "S3"
   "&SLN;": "Amazon States Language"
