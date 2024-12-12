@@ -15,18 +15,18 @@ from .metadata_errors import (
 
 @dataclass
 class TitleInfo:
-    title: str
-    title_abbrev: str
+    title: Optional[str] = field(default=None)
+    title_abbrev: Optional[str] = field(default=None)
     synopsis: Optional[str] = field(default=None)
     title_suffixes: Dict[str, str] = field(default_factory=dict)
 
     @classmethod
-    def from_yaml(cls, yaml: Dict[str, str]) -> [TitleInfo, None]:
+    def from_yaml(cls, yaml: Dict[str, str]) -> Optional[TitleInfo]:
         if yaml is None:
             return None
 
         title = yaml.get("title")
-        title_suffixes = yaml.get("title_suffixes", {})
+        title_suffixes: Dict[str, str] = yaml.get("title_suffixes", {})
         title_abbrev = yaml.get("title_abbrev")
         synopsis = yaml.get("synopsis")
 
@@ -54,7 +54,7 @@ class Category:
     @classmethod
     def from_yaml(cls, key: str, yaml: Dict[str, Any]) -> tuple[Category, MetadataErrors]:
         errors = MetadataErrors()
-        display = yaml.get("display")
+        display = str(yaml.get("display"))
         defaults = TitleInfo.from_yaml(yaml.get("defaults"))
         overrides = TitleInfo.from_yaml(yaml.get("overrides"))
         description = yaml.get("description")
