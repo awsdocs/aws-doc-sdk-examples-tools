@@ -18,15 +18,15 @@ class TitleInfo:
     title: Optional[str] = field(default=None)
     title_abbrev: Optional[str] = field(default=None)
     synopsis: Optional[str] = field(default=None)
-    title_suffixes: Dict[str, str] = field(default_factory=dict)
+    title_suffixes: str | Dict[str, str] = field(default_factory=dict)
 
     @classmethod
-    def from_yaml(cls, yaml: Dict[str, str]) -> Optional[TitleInfo]:
+    def from_yaml(cls, yaml: Dict[str, str] | None) -> Optional[TitleInfo]:
         if yaml is None:
             return None
 
         title = yaml.get("title")
-        title_suffixes: Dict[str, str] = yaml.get("title_suffixes", {})
+        title_suffixes: str | Dict[str, str] = yaml.get("title_suffixes", {})
         title_abbrev = yaml.get("title_abbrev")
         synopsis = yaml.get("synopsis")
 
