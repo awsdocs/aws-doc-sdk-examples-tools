@@ -33,7 +33,13 @@ def load(
     with path.open() as file:
         meta = yaml.safe_load(file)
     return parse_examples(
-        path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
+        path,
+        meta,
+        doc_gen.sdks,
+        doc_gen.services,
+        doc_gen.standard_categories,
+        blocks,
+        doc_gen.validation,
     )
 
 
@@ -88,12 +94,14 @@ SDKS = {
     "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript"),
     "PHP": Sdk(name="PHP", versions=[], guide="", property="php"),
 }
+STANDARD_CATS = ["Api"]
 DOC_GEN = DocGen(
     root=Path(),
     errors=metadata_errors.MetadataErrors(),
     validation=ValidationConfig(),
     services=SERVICES,
     sdks=SDKS,
+    standard_categories=STANDARD_CATS,
 )
 
 GOOD_SINGLE_CPP = """
@@ -118,7 +126,13 @@ medical-imaging_CreateDatastore:
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
     parsed, errors = parse_examples(
-        Path("test_cpp.yaml"), meta, SDKS, SERVICES, set(), DOC_GEN.validation
+        Path("test_cpp.yaml"),
+        meta,
+        SDKS,
+        SERVICES,
+        STANDARD_CATS,
+        set(),
+        DOC_GEN.validation,
     )
     assert len(errors) == 0
     assert len(parsed) == 1
@@ -140,7 +154,7 @@ def test_parse():
     example = Example(
         file=Path("test_cpp.yaml"),
         id="medical-imaging_CreateDatastore",
-        category="Cross",
+        category="Scenarios",
         services={
             "medical-imaging": set(["Operation1", "Operation2"]),
             "api-gateway": set(["Operation1", "Operation2"]),
@@ -220,6 +234,7 @@ def test_parse_strict_titles():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(),
         ValidationConfig(strict_titles=True),
     )
@@ -259,7 +274,7 @@ def test_parse_strict_titles():
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="cpp_1_medical-imaging_code_examples",
-                                anchor="scenarios",
+                                anchor="actions",
                             ),
                         }
                     )
@@ -354,6 +369,7 @@ def test_parse_strict_title_errors():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(),
         ValidationConfig(strict_titles=True),
     )
@@ -401,6 +417,7 @@ def test_parse_cross():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(["cross_DeleteTopic_block.xml"]),
         DOC_GEN.validation,
     )
@@ -599,12 +616,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     field="languages",
                     file=EMPTY_METADATA_PATH,
                     id="medical-imaging_EmptyExample",
-                ),
-                metadata_errors.ServiceNameFormat(
-                    file=EMPTY_METADATA_PATH,
-                    id="medical-imaging_EmptyExample",
-                    svc="medical-imaging",
-                    svcs=[],
                 ),
             ],
             [],

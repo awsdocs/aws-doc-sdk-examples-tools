@@ -12,6 +12,7 @@ from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
 
 # from os import glob
 
+from .categories import Category, parse as parse_categories
 from .metadata import (
     Example,
     DocFilenames,
@@ -55,6 +56,8 @@ class DocGen:
     validation: ValidationConfig = field(default_factory=ValidationConfig)
     sdks: Dict[str, Sdk] = field(default_factory=dict)
     services: Dict[str, Service] = field(default_factory=dict)
+    standard_categories: List[str] = field(default_factory=list)
+    categories: Dict[str, Category] = field(default_factory=dict)
     snippets: Dict[str, Snippet] = field(default_factory=dict)
     snippet_files: Set[str] = field(default_factory=set)
     examples: Dict[str, Example] = field(default_factory=dict)
@@ -202,6 +205,19 @@ class DocGen:
             pass
 
         try:
+            categories_path = config / "categories.yaml"
+            with categories_path.open(encoding="utf-8") as file:
+                meta = yaml.safe_load(file)
+                standard_categories, categories, errs = parse_categories(
+                    categories_path, meta
+                )
+                self.standard_categories = standard_categories
+                self.categories = categories
+                self.errors.extend(errs)
+        except Exception:
+            pass
+
+        try:
             entities_config_path = config / "entities.yaml"
             with entities_config_path.open(encoding="utf-8") as file:
                 entities_config = yaml.safe_load(file)
@@ -236,6 +252,7 @@ class DocGen:
                 yaml.safe_load(file),
                 self.sdks,
                 self.services,
+                self.standard_categories,
                 self.cross_blocks,
                 self.validation,
                 self.root,
@@ -268,6 +285,8 @@ class DocGen:
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
+        for category in self.categories.values():
+            category.validate(self.errors)
         for example in self.examples.values():
             example.validate(self.errors, self.root)
         validate_metadata(self.root, self.validation.strict_titles, self.errors)
@@ -339,6 +358,7 @@ def parse_examples(
     yaml: Dict[str, Any],
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
+    standard_categories: List[str],
     blocks: Set[str],
     validation: Optional[ValidationConfig],
     root: Optional[Path] = None,
@@ -350,12 +370,13 @@ def parse_examples(
         example, example_errors = example_from_yaml(
             yaml[id], sdks, services, blocks, validation, root or file.parent
         )
-        check_id_format(
-            id,
-            example.services,
-            validation.strict_titles and example.category == "Api",
-            example_errors,
-        )
+        if example.category in standard_categories:
+            check_id_format(
+                id,
+                example.services,
+                validation.strict_titles and example.category == "Api",
+                example_errors,
+            )
         for error in example_errors:
             error.file = file
             error.id = id
@@ -411,7 +432,7 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
                     )
                 )
             else:
-                anchor = "actions" if example.category == "Actions" else "scenarios"
+                anchor = "actions" if example.category == "Api" else "scenarios"
                 sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
                     actions_scenarios={
                         service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"

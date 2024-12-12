@@ -1,0 +1,21 @@
+categories:
+  Actions:
+    display: "Actions test"
+    overrides:
+      title: "Title override"
+      title_suffixes:
+        cli: " with a CLI"
+        sdk: " with an &AWS; SDK"
+        sdk_cli: " with an &AWS; SDK or CLI"
+      title_abbrev: "Title abbrev override"
+      synopsis: "synopsis test."
+    description: "test description."
+  Basics:
+    display: "Basics"
+    defaults:
+      title: "Title default"
+      title_abbrev: "Title abbrev default"
+    description: "default description."
+  TributaryLite:
+    display: "Tea light"
+    description: "light your way."

@@ -371,6 +371,12 @@ class URLMissingTitle(SdkVersionError):
 
 
 @dataclass
+class MissingCategoryBody(MetadataParseError):
+    def message(self):
+        return "category definition missing body"
+
+
+@dataclass
 class ExampleMergeMismatchedId(MetadataError):
     other_id: str = ""
     other_file: Optional[Path] = None
