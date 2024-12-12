@@ -33,7 +33,13 @@ def load(
     with path.open() as file:
         meta = yaml.safe_load(file)
     return parse_examples(
-        path, meta, doc_gen.sdks, doc_gen.services, doc_gen.standard_categories, blocks, doc_gen.validation
+        path,
+        meta,
+        doc_gen.sdks,
+        doc_gen.services,
+        doc_gen.standard_categories,
+        blocks,
+        doc_gen.validation,
     )
 
 
@@ -120,7 +126,13 @@ medical-imaging_CreateDatastore:
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
     parsed, errors = parse_examples(
-        Path("test_cpp.yaml"), meta, SDKS, SERVICES, STANDARD_CATS, set(), DOC_GEN.validation
+        Path("test_cpp.yaml"),
+        meta,
+        SDKS,
+        SERVICES,
+        STANDARD_CATS,
+        set(),
+        DOC_GEN.validation,
     )
     assert len(errors) == 0
     assert len(parsed) == 1

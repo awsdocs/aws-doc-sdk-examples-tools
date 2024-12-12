@@ -14,7 +14,9 @@ from .categories import (
 )
 
 
-def load(path: str) -> Tuple[List[str], Dict[str, Category], metadata_errors.MetadataErrors]:
+def load(
+    path: str,
+) -> Tuple[List[str], Dict[str, Category], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
@@ -63,7 +65,7 @@ def test_categories():
             key="TributaryLite",
             display="Tea light",
             description="light your way.",
-        )
+        ),
     }
 
 

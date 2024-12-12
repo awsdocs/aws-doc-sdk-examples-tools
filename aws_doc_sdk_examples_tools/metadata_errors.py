@@ -369,6 +369,7 @@ class URLMissingTitle(SdkVersionError):
     def message(self):
         return f"URL {self.url} is missing a title"
 
+
 @dataclass
 class MissingCategoryBody(MetadataParseError):
     def message(self):

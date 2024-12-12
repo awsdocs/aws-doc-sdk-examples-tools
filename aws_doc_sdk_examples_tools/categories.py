@@ -30,7 +30,12 @@ class TitleInfo:
         title_abbrev = yaml.get("title_abbrev")
         synopsis = yaml.get("synopsis")
 
-        return cls(title=title, title_suffixes=title_suffixes, title_abbrev=title_abbrev, synopsis=synopsis)
+        return cls(
+            title=title,
+            title_suffixes=title_suffixes,
+            title_abbrev=title_abbrev,
+            synopsis=synopsis,
+        )
 
 
 @dataclass
@@ -52,17 +57,30 @@ class Category:
             errors.append(CategoryWithNoDisplayError(id=self.key))
 
     @classmethod
-    def from_yaml(cls, key: str, yaml: Dict[str, Any]) -> tuple[Category, MetadataErrors]:
+    def from_yaml(
+        cls, key: str, yaml: Dict[str, Any]
+    ) -> tuple[Category, MetadataErrors]:
         errors = MetadataErrors()
         display = str(yaml.get("display"))
         defaults = TitleInfo.from_yaml(yaml.get("defaults"))
         overrides = TitleInfo.from_yaml(yaml.get("overrides"))
         description = yaml.get("description")
 
-        return cls(key=key, display=display, defaults=defaults, overrides=overrides, description=description), errors
+        return (
+            cls(
+                key=key,
+                display=display,
+                defaults=defaults,
+                overrides=overrides,
+                description=description,
+            ),
+            errors,
+        )
 
 
-def parse(file: Path, yaml: Dict[str, Any]) -> tuple[List[str], Dict[str, Category], MetadataErrors]:
+def parse(
+    file: Path, yaml: Dict[str, Any]
+) -> tuple[List[str], Dict[str, Category], MetadataErrors]:
     categories: Dict[str, Category] = {}
     errors = MetadataErrors()
 

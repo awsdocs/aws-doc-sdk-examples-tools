@@ -208,7 +208,9 @@ class DocGen:
             categories_path = config / "categories.yaml"
             with categories_path.open(encoding="utf-8") as file:
                 meta = yaml.safe_load(file)
-                standard_categories, categories, errs = parse_categories(categories_path, meta)
+                standard_categories, categories, errs = parse_categories(
+                    categories_path, meta
+                )
                 self.standard_categories = standard_categories
                 self.categories = categories
                 self.errors.extend(errs)
