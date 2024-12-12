@@ -6,7 +6,7 @@ from .metadata_errors import ErrorsList
 
 
 @dataclass
-class EntityError:
+class EntityError(Exception):
     """
     Base error. Do not use directly.
     """
