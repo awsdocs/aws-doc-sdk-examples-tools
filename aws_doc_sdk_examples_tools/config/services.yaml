@@ -1559,36 +1559,6 @@ iot:
   tags:
     product_categories: {'IoT'}
   version: iot-2015-05-28
-iot-1click-devices-service:
-  api_ref: iot-1click-devices-service/latest/APIReference/Welcome.html
-  blurb: ''
-  expanded:
-    long: AWS IoT 1-Click Devices
-    short: AWS IoT 1-Click Devices
-  guide:
-    subtitle: Developer Guide
-    url: iot-1-click/1.0/devices-apireference/what-is-iot.html
-  long: '&ITOCDevlong;'
-  short: '&ITOCDev;'
-  sort: IoT 1-Click Devices
-  tags:
-    product_categories: {}
-  version: iot1click-devices-2018-05-14
-iot-1click-projects:
-  api_ref: iot-1-click/latest/projects-apireference/Welcome.html
-  blurb: ''
-  expanded:
-    long: AWS IoT 1-Click Projects
-    short: AWS IoT 1-Click Projects
-  guide:
-    subtitle: Developer Guide
-    url: iot-1-click/latest/developerguide/what-is-1click.html
-  long: '&ITOCProjlong;'
-  short: '&ITOCProj;'
-  sort: IoT 1-Click Projects
-  tags:
-    product_categories: {}
-  version: iot1click-projects-2018-05-14
 iot-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
