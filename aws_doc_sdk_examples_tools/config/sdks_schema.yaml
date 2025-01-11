@@ -1,6 +1,6 @@
 # Yamale Schema for SDK metadata, which is the sdks.yaml file in the metadata folder.
 
-map(include('sdk'), key=enum('Bash', 'C++', 'CLI', 'Go', 'Java', 'JavaScript', 'Kotlin', '.NET', 'PHP', 'PowerShell', 'Python', 'Ruby', 'Rust', 'SAP ABAP', 'Swift'))
+map(include('sdk'), key=enum('Bash', 'C++', 'CLI', 'CloudFormation JSON', 'CloudFormation YAML', 'Go', 'Java', 'JavaScript', 'Kotlin', '.NET', 'PHP', 'PowerShell', 'Python', 'Ruby', 'Rust', 'SAP ABAP', 'Swift'))
 ---
 sdk:
   property: include('syntax_enum')
@@ -30,6 +30,6 @@ title_override:
   title: str()
   title_abbrev: str()
 
-syntax_enum: enum('bash', 'cli', 'none', 'cpp', 'go', 'java', 'javascript', 'kotlin', 'csharp', 'php', 'powershell', 'python', 'ruby', 'rust', 'sap-abap', 'sh', 'swift')
+syntax_enum: enum('bash', 'cli', 'none', 'cpp', 'go', 'java', 'javascript', 'json, 'kotlin', 'csharp', 'php', 'powershell', 'python', 'ruby', 'rust', 'sap-abap', 'sh', 'swift', 'yaml')
 entity_regex: regex('^&[-_a-zA-Z0-9]+;$', name='valid entity')
 entity_with_version_regex: regex('^&[-_a-zA-Z0-9]+;', name='valid entity with version')
