@@ -7,7 +7,6 @@ from pathlib import Path
 import logging
 
 from .doc_gen import DocGen, DocGenEncoder
-from .entities import EntityErrors
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,6 +26,12 @@ def main():
         default="doc_gen.json",
         type=str,
         help="Output a JSON version of the computed DocGen with some properties stripped out. Includes any errors.",
+    )
+    parser.add_argument(
+        "--write-snippets",
+        default="doc_gen_snippets.json",
+        type=str,
+        help="Output a JSON version of the computed DocGen with only snippets and snippet files. Separates snippet content from metadata content.",
     )
 
     parser.add_argument(
@@ -60,6 +65,19 @@ def main():
 
     with open(args.write_json, "w") as out:
         out.write(serialized)
+
+    for root in args.from_root:
+        merged_doc_gen.collect_snippets(Path(root))
+
+    serialized_snippets = json.dumps(
+        {
+            "snippets": merged_doc_gen.snippets,
+            "snippet_files": merged_doc_gen.snippet_files,
+        },
+        cls=DocGenEncoder,
+    )
+    with open(args.write_snippets, "w") as out:
+        out.write(serialized_snippets)
 
 
 if __name__ == "__main__":
