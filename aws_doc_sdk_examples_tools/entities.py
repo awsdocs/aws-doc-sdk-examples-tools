@@ -2,16 +2,16 @@ from typing import Optional, Dict, Set, Tuple
 from dataclasses import dataclass
 import re
 
-from .metadata_errors import ErrorsList
+from .metadata_errors import ErrorsList, MetadataError
 
 
 @dataclass
-class EntityError(Exception):
+class EntityError(MetadataError):
     """
     Base error. Do not use directly.
     """
 
-    entity: Optional[str]
+    entity: Optional[str] = None
 
     def message(self) -> str:
         return ""
@@ -54,4 +54,4 @@ def expand_entity(
     if expanded is not None:
         return entity.replace(entity, expanded), None
     else:
-        return entity, MissingEntityError(entity)
+        return entity, MissingEntityError(entity=entity)

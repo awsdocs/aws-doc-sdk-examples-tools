@@ -80,13 +80,16 @@ def sample_doc_gen() -> DocGen:
         root=Path("/test/root"),
         errors=metadata_errors,
         prefix="test_prefix",
-        entities={"&S3long;": "Amazon Simple Storage Service", "&S3;": "Amazon S3"},
+        entities={
+            "&S3long;": "Amazon Simple Storage Service",
+            "&S3;": "Amazon S3",
+            "&PYLong;": "Python SDK v1",
+            "&PYShort;": "Python V1",
+        },
         sdks={
             "python": Sdk(
                 name="python",
-                versions=[
-                    SdkVersion(version=1, long="Python SDK v1", short="Python v1")
-                ],
+                versions=[SdkVersion(version=1, long="&PYLong;", short="&PYShort;")],
                 guide="Python Guide",
                 property="python",
             )
@@ -123,6 +126,15 @@ def test_expand_entities(sample_doc_gen: DocGen):
     assert not errors
 
 
+def test_expand_entity_fields(sample_doc_gen: DocGen):
+    error_count = len(sample_doc_gen.errors)
+    sample_doc_gen.expand_entity_fields(sample_doc_gen)
+    assert sample_doc_gen.services["s3"].long == "Amazon Simple Storage Service"
+    assert sample_doc_gen.sdks["python"].versions[0].long == "Python SDK v1"
+    # The fixture has an error, so make sure we don't have _more_ errors.
+    assert error_count == len(sample_doc_gen.errors)
+
+
 def test_doc_gen_encoder(sample_doc_gen: DocGen):
     encoded = json.dumps(sample_doc_gen, cls=DocGenEncoder)
     decoded = json.loads(encoded)
@@ -137,7 +149,7 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     assert decoded["sdks"]["python"]["name"] == "python"
     assert decoded["sdks"]["python"]["guide"] == "Python Guide"
     assert decoded["sdks"]["python"]["versions"][0]["version"] == 1
-    assert decoded["sdks"]["python"]["versions"][0]["long"] == "Python SDK v1"
+    assert decoded["sdks"]["python"]["versions"][0]["long"] == "&PYLong;"
 
     # Verify service information
     assert "services" in decoded

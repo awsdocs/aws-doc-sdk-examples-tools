@@ -48,43 +48,13 @@ def main():
         unmerged_doc_gen = DocGen.from_root(Path(root))
         merged_doc_gen.merge(unmerged_doc_gen)
 
+    if not args.skip_entity_expansion:
+        # Replace entities
+        merged_doc_gen.expand_entity_fields(merged_doc_gen)
+
     if args.strict and merged_doc_gen.errors:
         logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
         exit(1)
-
-    if not args.skip_entity_expansion:
-        # Replace entities
-        for example in merged_doc_gen.examples.values():
-            errors = EntityErrors()
-            title, title_errors = merged_doc_gen.expand_entities(example.title)
-            errors.extend(title_errors)
-
-            title_abbrev, title_abbrev_errors = merged_doc_gen.expand_entities(
-                example.title_abbrev
-            )
-            errors.extend(title_abbrev_errors)
-
-            synopsis, synopsis_errors = merged_doc_gen.expand_entities(example.synopsis)
-            errors.extend(synopsis_errors)
-
-            synopsis_list = []
-            for synopsis in example.synopsis_list:
-                expanded_synopsis, synopsis_errors = merged_doc_gen.expand_entities(
-                    synopsis
-                )
-                synopsis_list.append(expanded_synopsis)
-                errors.extend(synopsis_errors)
-
-            if args.strict and errors:
-                logging.error(
-                    f"Errors expanding entities for example: {example}. {errors}"
-                )
-                exit(1)
-
-            example.title = title
-            example.title_abbrev = title_abbrev
-            example.synopsis = synopsis
-            example.synopsis_list = synopsis_list
 
     serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
 

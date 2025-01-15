@@ -9,7 +9,7 @@ from .metadata_errors import InvalidItemException
 
 def test_entity_errors_append():
     errors = EntityErrors()
-    errors.append(MissingEntityError("entity1"))
+    errors.append(MissingEntityError(entity="entity1"))
     assert len(errors._errors) == 1
     assert errors._errors[0].entity == "entity1"
 
