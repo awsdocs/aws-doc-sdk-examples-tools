@@ -76,6 +76,7 @@ def test_doc_gen_strict_option(strict, should_raise, patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=strict,
         skip_entity_expansion=False,
     )
@@ -94,6 +95,7 @@ def test_skip_entity_expansion(patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=False,
         skip_entity_expansion=True,
     )
@@ -111,6 +113,7 @@ def test_default_entity_expansion(patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=False,
         skip_entity_expansion=False,
     )
