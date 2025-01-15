@@ -5,7 +5,7 @@ import yaml
 import json
 
 from collections import defaultdict
-from dataclasses import dataclass, field, is_dataclass, asdict
+from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
@@ -89,6 +89,24 @@ class DocGen:
 
     def expand_entities(self, text: str) -> Tuple[str, EntityErrors]:
         return expand_all_entities(text, self.entities)
+
+    def expand_entity_fields(self, obj: object):
+        if isinstance(obj, list):
+            for o in obj:
+                self.expand_entity_fields(o)
+        if isinstance(obj, dict):
+            for val in obj.values():
+                self.expand_entity_fields(val)
+        if is_dataclass(obj) and not isinstance(obj, type):
+            for f in fields(obj):
+                val = getattr(obj, f.name)
+                if isinstance(val, str):
+                    [expanded, errs] = self.expand_entities(val)
+                    if errs:
+                        self.errors.extend(errs)
+                    else:
+                        setattr(obj, f.name, expanded)
+                self.expand_entity_fields(val)
 
     def merge(self, other: "DocGen") -> MetadataErrors:
         """Merge fields from other into self, prioritizing self fields."""
@@ -332,7 +350,7 @@ class DocGen:
 # and arguably not useful either.
 class DocGenEncoder(json.JSONEncoder):
     def default(self, obj):
-        if is_dataclass(obj):
+        if is_dataclass(obj) and not isinstance(obj, type):
             return asdict(obj)
 
         if isinstance(obj, Path):
