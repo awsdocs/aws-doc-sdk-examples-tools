@@ -66,18 +66,19 @@ def main():
     with open(args.write_json, "w") as out:
         out.write(serialized)
 
-    for root in args.from_root:
-        merged_doc_gen.collect_snippets(Path(root))
+    if args.write_snippets:
+        for root in args.from_root:
+            merged_doc_gen.collect_snippets(Path(root))
 
-    serialized_snippets = json.dumps(
-        {
-            "snippets": merged_doc_gen.snippets,
-            "snippet_files": merged_doc_gen.snippet_files,
-        },
-        cls=DocGenEncoder,
-    )
-    with open(args.write_snippets, "w") as out:
-        out.write(serialized_snippets)
+        serialized_snippets = json.dumps(
+            {
+                "snippets": merged_doc_gen.snippets,
+                "snippet_files": merged_doc_gen.snippet_files,
+            },
+            cls=DocGenEncoder,
+        )
+        with open(args.write_snippets, "w") as out:
+            out.write(serialized_snippets)
 
 
 if __name__ == "__main__":
