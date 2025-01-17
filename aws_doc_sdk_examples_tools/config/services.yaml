@@ -2206,6 +2206,21 @@ nimble:
   tags:
     product_categories: {}
   version: '' # no longer published
+observabilityadmin:
+  api_ref: cloudwatch/latest/observabilityadmin/Welcome.html
+  blurb: lets you discover and understand the state of telemetry configuration in CloudWatch for your AWS Organization or account.
+  expanded:
+    long: Amazon CloudWatch Observability Admin
+    short: CloudWatch Observability Admin
+  guide:
+    subtitle: User Guide
+    url: AmazonCloudWatch/latest/monitoring/telemetry-config-cloudwatch.html
+  long: '&CWlong; Observability Admin'
+  short: '&CW; Observability Admin'
+  sort: CloudWatch Observability Admin
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: observabilityadmin-2018-05-10
 omics:
   api_ref: omics/latest/api/Welcome.html
   blurb: ''
