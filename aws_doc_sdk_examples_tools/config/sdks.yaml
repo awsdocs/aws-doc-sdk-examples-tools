@@ -231,15 +231,12 @@ Kotlin:
         uid: "DotNetSDKV3"
         name: "&guide-net-api;"
     4:
-      long: "&NETlong;"
-      short: "&NET;"
+      long: "&NETlong; (v4)"
+      short: "&NET; (v4)"
       expanded:
-        long: "AWS SDK for .NET"
-        short: "SDK for .NET"
+        long: "AWS SDK for .NET (v4)"
+        short: "SDK for .NET (v4)"
       guide: "sdk-for-net/v3/developer-guide/welcome.html"
-      api_ref:
-        uid: "DotNetSDKV3"
-        name: "&guide-net-api;"
   guide: "&guide-net-dev;"
 PHP:
   property: php
