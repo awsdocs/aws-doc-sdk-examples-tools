@@ -172,10 +172,11 @@ class DocGen:
     def clone(self) -> "DocGen":
         return DocGen(
             root=self.root,
-            errors=MetadataErrors(),
             validation=self.validation.clone(),
             sdks={**self.sdks},
+            entities=self.entities,
             services={**self.services},
+            errors=MetadataErrors(),
             snippets={},
             snippet_files=set(),
             cross_blocks=set(),
