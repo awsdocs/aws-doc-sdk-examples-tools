@@ -179,6 +179,7 @@ class DocGen:
             snippets={},
             snippet_files=set(),
             cross_blocks=set(),
+            entities=self.entities,
             examples={},
         )
 
