@@ -3168,6 +3168,21 @@ swf:
   tags:
     product_categories: {}
   version: swf-2012-01-25
+synthetics:
+  api_ref: AmazonSynthetics/latest/APIReference/Welcome.html
+  blurb: ''
+  guide:
+    subtitle: Synthetic monitoring (canaries)
+    url: AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
+  expanded:
+    long: Amazon CloudWatch Synthetics
+    short: CloudWatch Synthetics
+  long: '&CWlong; Synthetics'
+  short: '&CW; Synthetics'
+  sort: CloudWatch Synthetics
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: synthetics-2017-10-11
 textract:
   long: '&TEXTRACTlong;'
   short: '&TEXTRACT;'
