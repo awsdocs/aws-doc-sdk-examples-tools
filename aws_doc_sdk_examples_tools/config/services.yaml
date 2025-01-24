@@ -2214,7 +2214,7 @@ oam:
     short: CloudWatch Observability Access Monitor
   guide:
     subtitle: Prescriptive Guidance
-    url: rescriptive-guidance/latest/patterns/centralize-monitoring-by-using-amazon-cloudwatch-observability-access-manager.htmlp
+    url: prescriptive-guidance/latest/patterns/centralize-monitoring-by-using-amazon-cloudwatch-observability-access-manager.html
   long: '&CWlong; Observability Access Monitor'
   short: '&CW; Observability Access Monitor'
   sort: CloudWatch Observability Access Monitor
