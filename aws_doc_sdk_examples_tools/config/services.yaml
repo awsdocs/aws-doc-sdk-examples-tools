@@ -938,6 +938,21 @@ directory-service:
   tags:
     product_categories: {}
   version: ds-2015-04-16
+directory-service-data:
+  api_ref: directoryservicedata/latest/DirectoryServiceDataAPIReference/Welcome.html
+  blurb: ''
+  expanded:
+    long: AWS Directory Service Data
+    short: AWS Directory Service Data
+  guide:
+    subtitle: Administration Guide
+    url: directoryservice/latest/admin-guide/what_is.html
+  long: '&ADSlong; Data'
+  short: '&ADS; Data'
+  sort: Directory Service Data
+  tags:
+    product_categories: {}
+  version: directory-service-data-2023-05-31
 dlm:
   api_ref: dlm/latest/APIReference/Welcome.html
   blurb: ''
