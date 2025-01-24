@@ -2221,6 +2221,21 @@ nimble:
   tags:
     product_categories: {}
   version: '' # no longer published
+oam:
+  api_ref: OAM/latest/APIReference/Welcome.html
+  blurb: ''
+  expanded:
+    long: Amazon CloudWatch Observability Access Monitor
+    short: CloudWatch Observability Access Monitor
+  guide:
+    subtitle: Prescriptive Guidance
+    url: prescriptive-guidance/latest/patterns/centralize-monitoring-by-using-amazon-cloudwatch-observability-access-manager.html
+  long: '&CWlong; Observability Access Monitor'
+  short: '&CW; Observability Access Monitor'
+  sort: CloudWatch Observability Access Monitor
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: oam-2022-06-10
 observabilityadmin:
   api_ref: cloudwatch/latest/observabilityadmin/Welcome.html
   blurb: lets you discover and understand the state of telemetry configuration in CloudWatch for your AWS Organization or account.
