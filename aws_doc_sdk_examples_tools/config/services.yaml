@@ -1260,15 +1260,15 @@ entityresolution:
   sort: AWS Entity Resolution
   expanded:
     long: AWS Entity Resolution
-    short: Entity Resolution
+    short: AWS Entity Resolution
   blurb: helps organizations extract, link, and organize information from multiple data sources.
   guide:
-    subtitle: Developer Guide
-    url: https://docs.aws.amazon.com/entityresolution/latest/userguide/what-is-service.html
+    subtitle: User Guide
+    url: https://docs.aws.amazon.com/entityresolution/latest/apireference/Welcome.html
   api_ref: https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/entityresolution/EntityResolutionAsyncClient.html
   tags:
-    product_categories: {}
-  version: entityresolution-2018-11-29
+    product_categories: {'Analytics'}
+  version: entityresolution-2018-05-10
 eventbridge:
   long: '&EVlong;'
   short: '&EV;'
