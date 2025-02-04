@@ -2220,7 +2220,7 @@ networkflowmonitor:
   api_ref: networkflowmonitor/2.0/APIReference/Welcome.html
   tags:
     product_categories: {'Management &amp; Governance'}
-  version: networkflowmonitor-2025-02-04
+  version: networkflowmonitor-2023-04-19
 nimble:
   api_ref: nimble-studio/latest/APIReference/Welcome.html
   blurb: ''
