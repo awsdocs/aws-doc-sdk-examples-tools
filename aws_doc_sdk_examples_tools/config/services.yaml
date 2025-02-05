@@ -2206,6 +2206,21 @@ networkmonitor:
   tags:
     product_categories: {'Management &amp; Governance'}
   version: networkmonitor-2023-08-01
+networkflowmonitor:
+  long: '&NFMlong;'
+  short: '&NFM;'
+  sort: Network Flow Monitor
+  expanded:
+    long: Network Flow Monitor
+    short: Network Flow Monitor
+  blurb: uses fully-managed agents to monitor network flows and provide performance and availability metrics.
+  guide:
+    subtitle: User Guide
+    url: AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html
+  api_ref: networkflowmonitor/2.0/APIReference/Welcome.html
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: networkflowmonitor-2023-04-19
 nimble:
   api_ref: nimble-studio/latest/APIReference/Welcome.html
   blurb: ''
