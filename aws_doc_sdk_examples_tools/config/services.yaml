@@ -1257,7 +1257,7 @@ emr-containers:
 entityresolution:
   long: '&ERlong;'
   short: '&ER;'
-  sort: AWS Entity Resolution
+  sort: Entity Resolution
   expanded:
     long: AWS Entity Resolution
     short: AWS Entity Resolution
