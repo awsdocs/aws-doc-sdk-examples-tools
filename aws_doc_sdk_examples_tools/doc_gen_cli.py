@@ -54,7 +54,7 @@ def main():
         merged_doc_gen.merge(unmerged_doc_gen)
 
     merged_doc_gen.validate()
-    merged_doc_gen.fill_fields()
+    merged_doc_gen.fill_missing_fields()
 
     if not args.skip_entity_expansion:
         # Replace entities

@@ -240,7 +240,7 @@ def test_doc_gen_load_snippets():
 
 
 def test_fill_fields(sample_doc_gen: DocGen):
-    sample_doc_gen.fill_fields()
+    sample_doc_gen.fill_missing_fields()
     example = sample_doc_gen.examples["s3_PutObject"]
     assert example.title == "<code>PutObject</code>"
     assert example.title_abbrev == "ExcerptPartsUsage"

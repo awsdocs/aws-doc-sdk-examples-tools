@@ -149,7 +149,7 @@ class Example:
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
 
-    def fill_title(self, categories: Dict[str, Category], service, action):
+    def fill_display_fields(self, categories: Dict[str, Category], service, action):
         category = self.choose_category(categories)
         if category:
             self.title = category.evaluate(

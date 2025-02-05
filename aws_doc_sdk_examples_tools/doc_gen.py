@@ -321,7 +321,7 @@ class DocGen:
             self.root,
         )
 
-    def fill_fields(self):
+    def fill_missing_fields(self):
         for example in self.examples.values():
             service_id = example.service_main or next(
                 k for (k, _) in example.services.items()
@@ -330,7 +330,9 @@ class DocGen:
                 next((k for k in example.services[service_id]), None)
                 or example.id.split("_", 1)[1]
             )
-            example.fill_title(self.categories, self.services[service_id].short, action)
+            example.fill_display_fields(
+                self.categories, self.services[service_id].short, action
+            )
 
     def stats(self):
         values = self.examples.values()
