@@ -2211,7 +2211,7 @@ networkflowmonitor:
   short: '&NFM;'
   sort: Network Flow Monitor
   expanded:
-    long: Amazon Network Flow Monitor
+    long: Network Flow Monitor
     short: Network Flow Monitor
   blurb: uses fully-managed agents to monitor network flows and provide performance and availability metrics.
   guide:
