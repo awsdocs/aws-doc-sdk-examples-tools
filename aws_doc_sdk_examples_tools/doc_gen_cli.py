@@ -53,6 +53,9 @@ def main():
         unmerged_doc_gen = DocGen.from_root(Path(root))
         merged_doc_gen.merge(unmerged_doc_gen)
 
+    merged_doc_gen.validate()
+    merged_doc_gen.fill_fields()
+
     if not args.skip_entity_expansion:
         # Replace entities
         merged_doc_gen.expand_entity_fields(merged_doc_gen)
