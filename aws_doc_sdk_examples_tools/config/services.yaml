@@ -1254,6 +1254,21 @@ emr-containers:
   tags:
     product_categories: {}
   version: emr-containers-2020-10-01
+entityresolution:
+  long: '&ERlong;'
+  short: '&ER;'
+  sort: Entity Resolution
+  expanded:
+    long: AWS Entity Resolution
+    short: AWS Entity Resolution
+  blurb: helps organizations extract, link, and organize information from multiple data sources.
+  guide:
+    subtitle: User Guide
+    url: entityresolution/latest/userguide/what-is-service.html
+  api_ref: entityresolution/latest/apireference/Welcome.html
+  tags:
+    product_categories: {'Analytics'}
+  version: entityresolution-2018-05-10
 eventbridge:
   long: '&EVlong;'
   short: '&EV;'
