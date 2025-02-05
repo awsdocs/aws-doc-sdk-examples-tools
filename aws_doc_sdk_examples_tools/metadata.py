@@ -6,11 +6,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
+from typing import Dict, Literal, List, Optional, Set, Iterable
 from os.path import splitext
 from pathlib import Path
 
 from . import metadata_errors
+from .categories import Category
 from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
@@ -18,9 +19,6 @@ from .metadata_errors import (
     ExampleMergeMismatchedLanguage,
     ExampleMergeConflict,
 )
-from .project_validator import ValidationConfig
-from .services import Service
-from .sdks import Sdk
 
 
 @dataclass
@@ -132,9 +130,9 @@ class Example:
     id: str
     file: Optional[Path]
     languages: Dict[str, Language]
-    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
+    # Human readable title.
     title: Optional[str] = field(default="")
-    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
+    # Used in the TOC.
     title_abbrev: Optional[str] = field(default="")
     synopsis: Optional[str] = field(default="")
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
@@ -150,6 +148,30 @@ class Example:
     doc_filenames: Optional[DocFilenames] = field(default=None)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
+
+    def fill_display_fields(self, categories: Dict[str, Category], service, action):
+        category = self.choose_category(categories)
+        if category:
+            self.title = category.evaluate(
+                self.title, lambda x: x.title, service, action
+            )
+            self.title_abbrev = category.evaluate(
+                self.title_abbrev, lambda x: x.title_abbrev, service, action
+            )
+            self.synopsis = category.evaluate(
+                self.synopsis, lambda x: x.synopsis, service, action
+            )
+
+    def choose_category(self, categories: Dict[str, Category]) -> Optional[Category]:
+        """Find a category for an example. This logic is taken from directories and zexii.
+
+        Original Zexii code at https://code.amazon.com/packages/GoAmzn-AWSDocsCodeExampleDocBuilder/blobs/1321fffadd8ff02e6acbae4a1f42b81006cdfa72/--/zexi/zonbook/category.go#L31-L50.
+        """
+        if self.category in categories:
+            return categories[self.category]
+        if len(self.services) == 1:
+            return categories["Actions"]
+        return categories["Scenarios"]
 
     def merge(self, other: Example, errors: MetadataErrors):
         """Combine `other` Example into self example.
@@ -184,7 +206,7 @@ class Example:
                     err.id = self.id
                     err.file = self.file
                     if hasattr(err, "other_file"):
-                        err.other_file = other.file
+                        err.other_file = other.file  # type: ignore
                 errors.extend(merge_errs)
 
     def validate(self, errors: MetadataErrors, root: Path):

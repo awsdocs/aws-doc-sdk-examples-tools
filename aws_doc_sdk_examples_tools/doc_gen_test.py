@@ -9,8 +9,10 @@ import pytest
 from pathlib import Path
 import json
 
-from .metadata_errors import MetadataErrors, MetadataError
+from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
+from .metadata import Example
+from .metadata_errors import MetadataErrors, MetadataError
 from .sdks import Sdk, SdkVersion
 from .services import Service, ServiceExpanded
 from .snippets import Snippet
@@ -115,7 +117,25 @@ def sample_doc_gen() -> DocGen:
             )
         },
         snippet_files={"test.py"},
-        examples={},
+        examples={
+            "s3_PutObject": Example(
+                "s3_PutObject",
+                file=Path("filea.txt"),
+                languages={},
+                services={"s3": set(["PutObject"])},
+            )
+        },
+        categories={
+            "Actions": Category(
+                "Actions",
+                "Actions",
+                defaults=TitleInfo(
+                    title="<code>{{.Action}}</code>",
+                    synopsis="{{.ServiceEntity.Short}} {{.Action}}",
+                ),
+                overrides=TitleInfo(title_abbrev="ExcerptPartsUsage"),
+            )
+        },
         cross_blocks={"test_block"},
     )
 
@@ -183,7 +203,29 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
 
     # Verify examples (empty in this case)
     assert "examples" in decoded
-    assert decoded["examples"] == {}
+    assert decoded["examples"] == {
+        "s3_PutObject": {
+            "category": None,
+            "doc_filenames": None,
+            "file": "filea.txt",
+            "guide_topic": None,
+            "id": "s3_PutObject",
+            "languages": {},
+            "service_main": None,
+            "services": {
+                "s3": {
+                    "__set__": [
+                        "PutObject",
+                    ],
+                },
+            },
+            "source_key": None,
+            "synopsis": "",
+            "synopsis_list": [],
+            "title": "",
+            "title_abbrev": "",
+        },
+    }
 
 
 def test_doc_gen_load_snippets():
@@ -195,3 +237,11 @@ def test_doc_gen_load_snippets():
     doc_gen.collect_snippets()
     assert doc_gen.snippet_files == set(["snippet_file.txt"])
     assert doc_gen.snippets["snippet_file.txt"].code == "Line A\nLine C\n"
+
+
+def test_fill_fields(sample_doc_gen: DocGen):
+    sample_doc_gen.fill_missing_fields()
+    example = sample_doc_gen.examples["s3_PutObject"]
+    assert example.title == "<code>PutObject</code>"
+    assert example.title_abbrev == "ExcerptPartsUsage"
+    assert example.synopsis == "&S3; PutObject"

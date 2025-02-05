@@ -3,14 +3,32 @@
 
 from __future__ import annotations
 
+import re
+
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass, field
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .metadata_errors import (
     MetadataErrors,
 )
+
+
+def fake_gotmpl(tmpl: Optional[str], service: str, action: str):
+    if not tmpl:
+        return
+    values = {
+        ".ServiceEntity.Short": service,
+        ".Action": action,
+    }
+    return re.sub(
+        r"{{(?P<name>[.\w]+)}}",
+        lambda x: values[
+            x.groupdict()["name"]
+        ],  # This will be a KeyError if the replacement isn't in the values dict
+        tmpl,
+    )
 
 
 @dataclass
@@ -44,6 +62,9 @@ class CategoryWithNoDisplayError(metadata_errors.MetadataError):
         return "Category has no display value"
 
 
+empty_title_info = TitleInfo()
+
+
 @dataclass
 class Category:
     key: str
@@ -51,6 +72,23 @@ class Category:
     defaults: Optional[TitleInfo] = field(default=None)
     overrides: Optional[TitleInfo] = field(default=None)
     description: Optional[str] = field(default=None)
+
+    def evaluate(
+        self,
+        value: Optional[str],
+        field: Callable[[TitleInfo], Optional[str]],
+        service: str,
+        action: str,
+    ):
+        overrides = field(self.overrides or empty_title_info)
+        if overrides:
+            return fake_gotmpl(overrides, service, action)
+        if value:
+            return value
+        defaults = field(self.defaults or empty_title_info)
+        if defaults:
+            return fake_gotmpl(defaults, service, action)
+        return ""
 
     def validate(self, errors: MetadataErrors):
         if not self.display:

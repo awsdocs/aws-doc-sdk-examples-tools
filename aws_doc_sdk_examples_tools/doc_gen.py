@@ -150,6 +150,9 @@ class DocGen:
         self.snippet_files.update(other.snippet_files)
         self.cross_blocks.update(other.cross_blocks)
         self.extend_examples(other.examples.values(), warnings)
+        for name, category in other.categories.items():
+            if name not in self.categories:
+                self.categories[name] = category
 
         return warnings
 
@@ -317,6 +320,19 @@ class DocGen:
             self.errors,
             self.root,
         )
+
+    def fill_missing_fields(self):
+        for example in self.examples.values():
+            service_id = example.service_main or next(
+                k for (k, _) in example.services.items()
+            )
+            action = (
+                next((k for k in example.services[service_id]), None)
+                or example.id.split("_", 1)[1]
+            )
+            example.fill_display_fields(
+                self.categories, self.services[service_id].short, action
+            )
 
     def stats(self):
         values = self.examples.values()
