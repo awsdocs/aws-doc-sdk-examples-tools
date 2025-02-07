@@ -324,8 +324,11 @@ class DocGen:
     def fill_missing_fields(self):
         for example in self.examples.values():
             service_id = example.service_main or next(
-                k for (k, _) in example.services.items()
+                (k for (k, _) in example.services.items()), None
             )
+            if service_id is None:
+                # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
+                continue
             action = (
                 next((k for k in example.services[service_id]), None)
                 or example.id.split("_", 1)[1]
