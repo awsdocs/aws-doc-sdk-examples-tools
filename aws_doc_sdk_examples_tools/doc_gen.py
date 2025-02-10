@@ -330,9 +330,12 @@ class DocGen:
                 # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
                 continue
             action = (
-                next((k for k in example.services[service_id]), None)
+                next((k for k in example.services.get(service_id, [])), None)
                 or example.id.split("_", 1)[1]
             )
+            if action is None:
+                # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
+                continue
             example.fill_display_fields(
                 self.categories, self.services[service_id].short, action
             )
