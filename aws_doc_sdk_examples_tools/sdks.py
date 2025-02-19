@@ -182,6 +182,7 @@ if __name__ == "__main__":
     from pathlib import Path
 
     path = Path(__file__).parent.parent.parent / ".doc_gen" / "metadata" / "sdks.yaml"
+
     with open(path) as file:
         meta = yaml.safe_load(file)
     examples, errors = parse(path, meta)

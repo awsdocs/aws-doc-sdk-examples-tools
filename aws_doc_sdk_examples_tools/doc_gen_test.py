@@ -10,7 +10,7 @@ from pathlib import Path
 import json
 
 from .categories import Category, TitleInfo
-from .doc_gen import DocGen, DocGenEncoder
+from .doc_gen import DocGen, DocGenEncoder, FileLoader
 from .metadata import Example
 from .metadata_errors import MetadataErrors, MetadataError
 from .sdks import Sdk, SdkVersion
@@ -65,7 +65,7 @@ def test_merge(a: DocGen, b: DocGen, d: DocGen):
 def test_incremental():
     errors = MetadataErrors()
     doc_gen = DocGen(Path(), errors).for_root(
-        Path(__file__).parent / "test_resources", incremental=False
+        Path(__file__).parent / "test_resources", loader=FileLoader(), incremental=False
     )
     assert len(doc_gen.examples) == 0
     doc_gen.process_metadata(doc_gen.root / "awsentity_metadata.yaml")
@@ -231,7 +231,7 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
 def test_doc_gen_load_snippets():
     errors = MetadataErrors()
     doc_gen = DocGen(Path(), errors).for_root(
-        Path(__file__).parent / "test_resources", incremental=False
+        Path(__file__).parent / "test_resources", loader=FileLoader(), incremental=False
     )
     doc_gen.process_metadata(doc_gen.root / "valid_metadata.yaml")
     doc_gen.collect_snippets()

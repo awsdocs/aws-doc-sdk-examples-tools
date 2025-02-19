@@ -2,14 +2,16 @@ from typing import List
 from pathlib import Path
 from pprint import pformat
 
-from .doc_gen import DocGen
+from .doc_gen import DocGen, FileLoader
 
 
 def main(roots: List[str]):
     base = DocGen.empty()
     for root in roots:
         docgen_root = Path(root)
-        doc_gen = base.clone().for_root(docgen_root)
+        doc_gen = base.clone().for_root(
+            docgen_root, loader=FileLoader(Path(root) / ".doc_gen" / "config")
+        )
         doc_gen.collect_snippets()
         print(f"Root	{docgen_root.name}")
         stats = doc_gen.stats()

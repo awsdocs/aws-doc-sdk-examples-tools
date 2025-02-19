@@ -6,7 +6,7 @@ from ast import literal_eval
 from pathlib import Path
 from sys import exit
 
-from .doc_gen import DocGen
+from .doc_gen import DocGen, FileLoader
 from .project_validator import check_files, verify_sample_files, ValidationConfig
 
 
@@ -32,11 +32,22 @@ def main():
         "must have them.",
         required=False,
     )
+    parser.add_argument(
+        "--local_loader",
+        action="store_true",
+        default=False,
+        help="Use LocalConfigLoader, instead of GithubConfigLoader",
+        required=False,
+    )
     args = parser.parse_args()
     root_path = Path(args.root).resolve()
 
+    loader = FileLoader() if args.local_loader else None
+
     doc_gen = DocGen.from_root(
-        root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles)
+        root=root_path,
+        loader=loader,
+        validation=ValidationConfig(strict_titles=args.strict_titles),
     )
     doc_gen.collect_snippets(snippets_root=root_path)
     doc_gen.validate()
