@@ -3,7 +3,9 @@
 
 import yaml
 import json
+import requests
 
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
@@ -45,6 +47,46 @@ from .yaml_mapper import example_from_yaml
 @dataclass
 class DocGenMergeWarning(MetadataError):
     pass
+
+
+class ConfigLoader(ABC):
+    @abstractmethod
+    def load(self, filename: str) -> Tuple[Path, Any]:
+        pass
+
+
+class NoneLoader(ConfigLoader):
+    def load(self, filename: str) -> Tuple[Path, Any]:
+        return Path(filename), yaml.safe_load("")
+
+
+class FileLoader(ConfigLoader):
+    def __init__(self, root: Optional[Path] = None):
+        self.config = root or Path(__file__).parent / "config"
+
+    def load(self, filename: str) -> Tuple[Path, Any]:
+        path = self.config / filename
+        print(f"Opening {path}")
+        with path.open(encoding="utf-8") as file:
+            return path, yaml.safe_load(file)
+
+
+class GitHubLoader(ConfigLoader):
+    def __init__(self, repo: Optional[str] = None, commit: Optional[str] = None):
+        self.repo = repo or "awsdocs/aws-doc-sdk-examples-tools"
+        self.commit = (
+            commit or "refs/heads/main"
+        )  # or refs/tags/2025.07.0 or a specific SHA
+        self.path = f"{self.repo}/{self.commit}/aws_doc_sdk_examples_tools/config"
+
+    def load(self, filename: str) -> Tuple[Path, Any]:
+        path = f"{self.path}/{filename}"
+        url = f"https://raw.githubusercontent.com/{path}"
+        print(f"Requesting {url}")
+        r = requests.get(url)
+        if r.status_code == 200:
+            return Path(path), yaml.safe_load(r.text)
+        raise Exception(f"Failed to request {url} ({r.status_code} {r.text})")
 
 
 @dataclass
@@ -170,7 +212,9 @@ class DocGen:
 
     @classmethod
     def default(cls) -> "DocGen":
-        return DocGen.empty().for_root(Path(__file__).parent, incremental=True)
+        return DocGen.empty().for_root(
+            Path(__file__).parent, GitHubLoader(), incremental=True
+        )
 
     def clone(self) -> "DocGen":
         return DocGen(
@@ -186,12 +230,8 @@ class DocGen:
             examples={},
         )
 
-    def for_root(
-        self, root: Path, config: Optional[Path] = None, incremental=False
-    ) -> "DocGen":
+    def for_root(self, root: Path, loader: ConfigLoader, incremental=False) -> "DocGen":
         self.root = root
-
-        config = config or Path(__file__).parent / "config"
 
         try:
             with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
@@ -203,46 +243,37 @@ class DocGen:
             pass
 
         try:
-            sdk_path = config / "sdks.yaml"
-            with sdk_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks(sdk_path, meta)
-                self.sdks = sdks
-                self.errors.extend(errs)
+            sdk_path, meta = loader.load("sdks.yaml")
+            sdks, errs = parse_sdks(sdk_path, meta)
+            self.sdks = sdks
+            self.errors.extend(errs)
         except Exception:
             pass
 
         try:
-            services_path = config / "services.yaml"
-            with services_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                services, service_errors = parse_services(services_path, meta)
-                self.services = services
-                for service in self.services.values():
-                    if service.expanded:
-                        self.entities[service.long] = service.expanded.long
-                        self.entities[service.short] = service.expanded.short
-                self.errors.extend(service_errors)
+            services_path, meta = loader.load("services.yaml")
+            services, service_errors = parse_services(services_path, meta)
+
+            self.services = services
+            for service in self.services.values():
+                if service.expanded:
+                    self.entities[service.long] = service.expanded.long
+                    self.entities[service.short] = service.expanded.short
+            self.errors.extend(service_errors)
         except Exception:
             pass
 
         try:
-            categories_path = config / "categories.yaml"
-            with categories_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                standard_categories, categories, errs = parse_categories(
-                    categories_path, meta
-                )
-                self.standard_categories = standard_categories
-                self.categories = categories
-                self.errors.extend(errs)
+            path, meta = loader.load("categories.yaml")
+            standard_categories, categories, errs = parse_categories(path, meta)
+            self.standard_categories = standard_categories
+            self.categories = categories
+            self.errors.extend(errs)
         except Exception:
             pass
 
         try:
-            entities_config_path = config / "entities.yaml"
-            with entities_config_path.open(encoding="utf-8") as file:
-                entities_config = yaml.safe_load(file)
+            path, entities_config = loader.load("entities.yaml")
             for entity, expanded in entities_config["expanded_override"].items():
                 self.entities[entity] = expanded
         except Exception:
@@ -294,12 +325,13 @@ class DocGen:
     def from_root(
         cls,
         root: Path,
-        config: Optional[Path] = None,
+        loader: Optional[ConfigLoader] = None,
         validation: ValidationConfig = ValidationConfig(),
         incremental: bool = False,
     ) -> "DocGen":
+        loader = loader or GitHubLoader()
         return DocGen.empty(validation=validation).for_root(
-            root, config, incremental=incremental
+            root, loader, incremental=incremental
         )
 
     def validate(self):
