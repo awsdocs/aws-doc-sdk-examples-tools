@@ -66,7 +66,6 @@ class FileLoader(ConfigLoader):
 
     def load(self, filename: str) -> Tuple[Path, Any]:
         path = self.config / filename
-        print(f"Opening {path}")
         with path.open(encoding="utf-8") as file:
             return path, yaml.safe_load(file)
 
@@ -82,7 +81,6 @@ class GitHubLoader(ConfigLoader):
     def load(self, filename: str) -> Tuple[Path, Any]:
         path = f"{self.path}/{filename}"
         url = f"https://raw.githubusercontent.com/{path}"
-        print(f"Requesting {url}")
         r = requests.get(url)
         if r.status_code == 200:
             return Path(path), yaml.safe_load(r.text)
@@ -122,11 +120,12 @@ class DocGen:
         self.snippets = snippets
         self.errors.extend(errs)
 
-    def languages(self) -> Set[str]:
-        languages: Set[str] = set()
+    def languages(self) -> List[str]:
+        languages: List[str] = []
         for sdk_name, sdk in self.sdks.items():
             for version in sdk.versions:
-                languages.add(f"{sdk_name}:{version.version}")
+                languages.append(f"{sdk_name}:{version.version}")
+        languages.sort()
         return languages
 
     def expand_entities(self, text: str) -> Tuple[str, EntityErrors]:
