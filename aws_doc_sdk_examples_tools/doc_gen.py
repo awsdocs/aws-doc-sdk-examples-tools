@@ -10,7 +10,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
+from typing import Dict, Iterable, Optional, Set, Tuple, List, Any, Union
 
 # from os import glob
 
@@ -324,11 +324,14 @@ class DocGen:
     def from_root(
         cls,
         root: Path,
-        loader: Optional[ConfigLoader] = None,
+        loader: Optional[Union[ConfigLoader, Path]] = None,
         validation: ValidationConfig = ValidationConfig(),
         incremental: bool = False,
     ) -> "DocGen":
-        loader = loader or GitHubLoader()
+        if not loader:
+            loader = GitHubLoader()
+        if isinstance(loader, Path):
+            loader = FileLoader(loader)
         return DocGen.empty(validation=validation).for_root(
             root, loader, incremental=incremental
         )
