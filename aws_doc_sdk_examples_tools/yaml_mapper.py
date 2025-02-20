@@ -24,7 +24,6 @@ def example_from_yaml(
     services: Dict[str, Service],
     blocks: Set[str],
     validation: ValidationConfig,
-    root: Path,
 ) -> Tuple[Example, MetadataErrors]:
     errors = MetadataErrors()
 
@@ -39,7 +38,7 @@ def example_from_yaml(
         errors.append(guide_topic)
         guide_topic = None
 
-    parsed_services = parse_services(yaml.get("services", {}), errors, services)
+    parsed_services = parse_services(yaml.get("services", {}), errors)
     category = yaml.get("category", "")
     if category == "":
         category = "Api" if len(parsed_services) == 1 else "Scenarios"
@@ -84,7 +83,7 @@ def example_from_yaml(
     else:
         for name in yaml_languages:
             language, errs = language_from_yaml(
-                name, yaml_languages[name], sdks, services, blocks, is_action, root
+                name, yaml_languages[name], sdks, blocks, is_action
             )
             languages[language.name] = language
             errors.extend(errs)
@@ -145,10 +144,8 @@ def language_from_yaml(
     name: str,
     yaml: Any,
     sdks: Dict[str, Sdk],
-    services: Dict[str, Service],
     blocks: Set[str],
     is_action: bool,
-    root: Path,
 ) -> Tuple[Language, MetadataErrors]:
     errors = MetadataErrors()
     if name not in sdks:
@@ -164,9 +161,7 @@ def language_from_yaml(
 
     versions: List[Version] = []
     for version in yaml_versions:
-        vers, version_errors = version_from_yaml(
-            version, services, blocks, is_action, root
-        )
+        vers, version_errors = version_from_yaml(version, blocks, is_action)
         errors.extend(version_errors)
         versions.append(vers)
 
@@ -177,26 +172,21 @@ def language_from_yaml(
     return Language(name, property, versions), errors
 
 
-def parse_services(
-    yaml: Any, errors: MetadataErrors, known_services: Dict[str, Service]
-) -> Dict[str, Set[str]]:
+def parse_services(yaml: Any, errors: MetadataErrors) -> Dict[str, Set[str]]:
     if yaml is None:
         return {}
     services: Dict[str, Set[str]] = {}
     for name in yaml:
-        if name not in known_services:
-            errors.append(metadata_errors.UnknownService(service=name))
-        else:
-            service: Union[Dict[str, None], Set[str], None] = yaml.get(name)
-            # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
-            if service is None:
-                service = set()
-            if isinstance(service, dict):
-                service = set(service.keys())
-            if isinstance(service, set):
-                # Make a copy of the set for ourselves
-                service = set(service)
-            services[name] = set(service)
+        service: Union[Dict[str, None], Set[str], None] = yaml.get(name)
+        # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
+        if service is None:
+            service = set()
+        if isinstance(service, dict):
+            service = set(service.keys())
+        if isinstance(service, set):
+            # Make a copy of the set for ourselves
+            service = set(service)
+        services[name] = set(service)
     return services
 
 
@@ -216,10 +206,8 @@ def url_from_yaml(
 
 def version_from_yaml(
     yaml: Dict[str, Any],
-    services: Dict[str, Service],
     cross_content_blocks: Set[str],
     is_action: bool,
-    root: Path,
 ) -> Tuple["Version", MetadataErrors]:
     errors = MetadataErrors()
 
@@ -255,7 +243,7 @@ def version_from_yaml(
         elif url is not None:
             errors.append(url)
 
-    add_services = parse_services(yaml.get("add_services", {}), errors, services)
+    add_services = parse_services(yaml.get("add_services", {}), errors)
     if add_services and is_action:
         errors.append(metadata_errors.APIExampleCannotAddService())
 
