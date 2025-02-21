@@ -677,11 +677,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                 #     sdk_version=2,
                 #     tag="this.snippet.does.not.exist",
                 # ),
-                metadata_errors.UnknownService(
-                    file=ERRORS_METADATA_PATH,
-                    id="medical-imaging_TestExample2",
-                    service="garbled",
-                ),
                 metadata_errors.FieldError(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -723,6 +718,11 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     link="perl/example_code/medical-imaging",
                     root=TEST_RESOURCES_PATH,
                 ),
+                metadata_errors.UnknownService(
+                    file=ERRORS_METADATA_PATH,
+                    id="medical-imaging_TestExample2",
+                    service="garbled",
+                ),
                 metadata_errors.InvalidGithubLink(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -739,6 +739,8 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=FORMATTER_METADATA_PATH,
                     id="WrongNameFormat",
                 ),
+            ],
+            [
                 metadata_errors.UnknownService(
                     file=FORMATTER_METADATA_PATH,
                     id="cross_TestExample",
@@ -747,7 +749,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     service="garbage",
                 ),
             ],
-            [],
         ),
     ],
 )
@@ -761,7 +762,7 @@ def test_common_errors(
     assert expected_errors == [*actual]
     validations = MetadataErrors()
     for example in examples:
-        example.validate(validations, root.parent)
+        example.validate(validations, DOC_GEN.services, root.parent)
     assert validation_errors == [*validations]
 
 
@@ -975,6 +976,10 @@ def test_no_duplicate_title_abbrev():
                 },
                 services={"svc": set(), "cvs": set()},
             ),
+        },
+        services={
+            "svc": Service(long="Service", short="svc", version="1", sort="svc"),
+            "cvs": Service(long="CVS", short="cvs", version="2", sort="cvs"),
         },
     )
     doc_gen.validate()

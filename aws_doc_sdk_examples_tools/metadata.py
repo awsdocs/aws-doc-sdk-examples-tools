@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Literal, List, Optional, Set, Iterable
+from typing import Container, Dict, Literal, List, Optional, Set, Iterable
 from os.path import splitext
 from pathlib import Path
 
@@ -209,8 +209,17 @@ class Example:
                         err.other_file = other.file  # type: ignore
                 errors.extend(merge_errs)
 
-    def validate(self, errors: MetadataErrors, root: Path):
+    def validate(
+        self, errors: MetadataErrors, known_services: Container[str], root: Path
+    ):
         errs = MetadataErrors()
+        for service in self.services.keys():
+            if service not in known_services:
+                errors.append(
+                    metadata_errors.UnknownService(
+                        id=self.id, file=self.file, service=service
+                    )
+                )
         for language in self.languages.values():
             language.validate(errs, root)
         for error in errs:
