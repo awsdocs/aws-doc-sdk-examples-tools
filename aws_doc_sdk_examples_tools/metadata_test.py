@@ -484,7 +484,6 @@ def test_verify_load_successful():
                 github="test_path",
                 block_content="test block",
                 excerpts=[],
-                add_services={},
                 sdkguide=None,
                 more_info=[],
             ),
@@ -498,7 +497,6 @@ def test_verify_load_successful():
             Version(
                 sdk_version=3,
                 block_content=None,
-                add_services={"s3": set()},
                 excerpts=[
                     Excerpt(
                         description="Descriptive",
@@ -533,7 +531,6 @@ def test_verify_load_successful():
                         snippet_files=["snippet_file.txt"],
                     )
                 ],
-                add_services={},
                 more_info=[],
             )
         ],
@@ -646,11 +643,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     language="Perl",
                     sdk_version=1,
                 ),
-                metadata_errors.APIExampleCannotAddService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     sdk_version=1,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.ServiceNameFormat(
                     file=ERRORS_METADATA_PATH,
@@ -690,6 +688,13 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     id="cross_TestExample_Versions",
                     language="Java",
                     sdk_version=2,
+                ),
+                metadata_errors.AddServicesHasBeenDeprecated(
+                    file=ERRORS_METADATA_PATH,
+                    id="cross_TestExample_Versions",
+                    language="Java",
+                    sdk_version=2,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.MissingCrossContent(
                     file=ERRORS_METADATA_PATH,
@@ -739,16 +744,15 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=FORMATTER_METADATA_PATH,
                     id="WrongNameFormat",
                 ),
-            ],
-            [
-                metadata_errors.UnknownService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=FORMATTER_METADATA_PATH,
                     id="cross_TestExample",
                     language="Java",
                     sdk_version=2,
-                    service="garbage",
+                    add_services={"garbage": set()},
                 ),
             ],
+            [],
         ),
     ],
 )

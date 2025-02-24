@@ -244,8 +244,10 @@ def version_from_yaml(
             errors.append(url)
 
     add_services = parse_services(yaml.get("add_services", {}), errors)
-    if add_services and is_action:
-        errors.append(metadata_errors.APIExampleCannotAddService())
+    if add_services:
+        errors.append(
+            metadata_errors.AddServicesHasBeenDeprecated(add_services=add_services)
+        )
 
     if block_content is not None and block_content not in cross_content_blocks:
         errors.append(metadata_errors.MissingCrossContent(block=block_content))
@@ -260,7 +262,6 @@ def version_from_yaml(
             block_content,
             excerpts,
             github,
-            add_services,
             sdkguide,
             more_info,
         ),

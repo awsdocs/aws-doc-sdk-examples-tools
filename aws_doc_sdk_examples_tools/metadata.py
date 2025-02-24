@@ -55,7 +55,6 @@ class Version:
     excerpts: List[Excerpt] = field(default_factory=list)
     # Link to the source code for this example. TODO rename.
     github: Optional[str] = field(default=None)
-    add_services: Dict[str, Set[str]] = field(default_factory=dict)
     # Deprecated. Replace with guide_topic list.
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places.
