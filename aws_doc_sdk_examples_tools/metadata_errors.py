@@ -267,14 +267,6 @@ class InvalidSdkGuideStart(SdkVersionError):
 
 
 @dataclass
-class APIExampleCannotAddService(SdkVersionError):
-    def message(self):
-        return (
-            "is an API example but lists additional services in the add_services field."
-        )
-
-
-@dataclass
 class AddServicesHasBeenDeprecated(SdkVersionError):
     add_services: Dict[str, Set[str]] = field(default_factory=dict)
 
