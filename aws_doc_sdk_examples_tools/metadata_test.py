@@ -484,7 +484,6 @@ def test_verify_load_successful():
                 github="test_path",
                 block_content="test block",
                 excerpts=[],
-                add_services={},
                 sdkguide=None,
                 more_info=[],
             ),
@@ -498,7 +497,6 @@ def test_verify_load_successful():
             Version(
                 sdk_version=3,
                 block_content=None,
-                add_services={"s3": set()},
                 excerpts=[
                     Excerpt(
                         description="Descriptive",
@@ -533,7 +531,6 @@ def test_verify_load_successful():
                         snippet_files=["snippet_file.txt"],
                     )
                 ],
-                add_services={},
                 more_info=[],
             )
         ],
@@ -646,11 +643,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     language="Perl",
                     sdk_version=1,
                 ),
-                metadata_errors.APIExampleCannotAddService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     sdk_version=1,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.ServiceNameFormat(
                     file=ERRORS_METADATA_PATH,
@@ -677,11 +675,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                 #     sdk_version=2,
                 #     tag="this.snippet.does.not.exist",
                 # ),
-                metadata_errors.UnknownService(
-                    file=ERRORS_METADATA_PATH,
-                    id="medical-imaging_TestExample2",
-                    service="garbled",
-                ),
                 metadata_errors.FieldError(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -695,6 +688,13 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     id="cross_TestExample_Versions",
                     language="Java",
                     sdk_version=2,
+                ),
+                metadata_errors.AddServicesHasBeenDeprecated(
+                    file=ERRORS_METADATA_PATH,
+                    id="cross_TestExample_Versions",
+                    language="Java",
+                    sdk_version=2,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.MissingCrossContent(
                     file=ERRORS_METADATA_PATH,
@@ -723,6 +723,11 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     link="perl/example_code/medical-imaging",
                     root=TEST_RESOURCES_PATH,
                 ),
+                metadata_errors.UnknownService(
+                    file=ERRORS_METADATA_PATH,
+                    id="medical-imaging_TestExample2",
+                    service="garbled",
+                ),
                 metadata_errors.InvalidGithubLink(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -739,12 +744,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=FORMATTER_METADATA_PATH,
                     id="WrongNameFormat",
                 ),
-                metadata_errors.UnknownService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=FORMATTER_METADATA_PATH,
                     id="cross_TestExample",
                     language="Java",
                     sdk_version=2,
-                    service="garbage",
+                    add_services={"garbage": set()},
                 ),
             ],
             [],
@@ -761,7 +766,7 @@ def test_common_errors(
     assert expected_errors == [*actual]
     validations = MetadataErrors()
     for example in examples:
-        example.validate(validations, root.parent)
+        example.validate(validations, DOC_GEN.services, root.parent)
     assert validation_errors == [*validations]
 
 
@@ -975,6 +980,10 @@ def test_no_duplicate_title_abbrev():
                 },
                 services={"svc": set(), "cvs": set()},
             ),
+        },
+        services={
+            "svc": Service(long="Service", short="svc", version="1", sort="svc"),
+            "cvs": Service(long="CVS", short="cvs", version="2", sort="cvs"),
         },
     )
     doc_gen.validate()

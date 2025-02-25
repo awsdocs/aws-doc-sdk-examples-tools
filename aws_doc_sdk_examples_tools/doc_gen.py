@@ -121,6 +121,7 @@ class DocGen:
         for name, service in other.services.items():
             if name not in self.services:
                 self.services[name] = service
+            else:
                 warnings.append(
                     DocGenMergeWarning(
                         file=other.root, id=f"conflict in service {name}"
@@ -129,6 +130,7 @@ class DocGen:
         for name, snippet in other.snippets.items():
             if name not in self.snippets:
                 self.snippets[name] = snippet
+            else:
                 warnings.append(
                     DocGenMergeWarning(
                         file=other.root, id=f"conflict in snippet {name}"
@@ -177,7 +179,7 @@ class DocGen:
             root=self.root,
             validation=self.validation.clone(),
             sdks={**self.sdks},
-            entities=self.entities,
+            entities={**self.entities},
             services={**self.services},
             errors=MetadataErrors(),
             snippets={},
@@ -277,7 +279,6 @@ class DocGen:
                 self.standard_categories,
                 self.cross_blocks,
                 self.validation,
-                self.root,
             )
             self.extend_examples(examples, self.errors)
             self.errors.extend(errs)
@@ -310,7 +311,7 @@ class DocGen:
         for category in self.categories.values():
             category.validate(self.errors)
         for example in self.examples.values():
-            example.validate(self.errors, self.root)
+            example.validate(self.errors, self.services, self.root)
         validate_metadata(self.root, self.validation.strict_titles, self.errors)
         validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(
@@ -323,22 +324,25 @@ class DocGen:
 
     def fill_missing_fields(self):
         for example in self.examples.values():
+            id_service, id_action = example.id.split("_", 1)
             service_id = example.service_main or next(
                 (k for (k, _) in example.services.items()), None
             )
             if service_id is None:
                 # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
-                continue
+                service_id = id_service
             action = (
                 next((k for k in example.services.get(service_id, [])), None)
                 or example.id.split("_", 1)[1]
             )
             if action is None:
                 # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
-                continue
-            example.fill_display_fields(
-                self.categories, self.services[service_id].short, action
-            )
+                action = id_action
+            if service_id in self.services:
+                service_name = self.services[service_id].short
+            else:
+                service_name = service_id
+            example.fill_display_fields(self.categories, service_name, action)
 
     def stats(self):
         values = self.examples.values()
@@ -402,14 +406,13 @@ def parse_examples(
     standard_categories: List[str],
     blocks: Set[str],
     validation: Optional[ValidationConfig],
-    root: Optional[Path] = None,
 ) -> Tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
     validation = validation or ValidationConfig()
     for id in yaml:
         example, example_errors = example_from_yaml(
-            yaml[id], sdks, services, blocks, validation, root or file.parent
+            yaml[id], sdks, services, blocks, validation
         )
         if example.category in standard_categories:
             check_id_format(

@@ -24,8 +24,6 @@ medical-imaging_TestExample:
               genai: some
               snippet_tags:
                 - medical-imaging.JavaScript.datastore.createDatastoreV3
-          add_services:
-            s3:
     PHP:
       versions:
         - sdk_version: 3

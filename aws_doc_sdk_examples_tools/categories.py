@@ -88,7 +88,7 @@ class Category:
         defaults = field(self.defaults or empty_title_info)
         if defaults:
             return fake_gotmpl(defaults, service, action)
-        return ""
+        return f"{service} {action}"
 
     def validate(self, errors: MetadataErrors):
         if not self.display:

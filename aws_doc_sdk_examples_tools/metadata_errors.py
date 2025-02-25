@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Iterator, Iterable, List, TypeVar, Generic
+from typing import Optional, Iterator, Iterable, List, TypeVar, Generic, Dict, Set
 
 
 ErrorT = TypeVar("ErrorT")
@@ -267,11 +267,11 @@ class InvalidSdkGuideStart(SdkVersionError):
 
 
 @dataclass
-class APIExampleCannotAddService(SdkVersionError):
+class AddServicesHasBeenDeprecated(SdkVersionError):
+    add_services: Dict[str, Set[str]] = field(default_factory=dict)
+
     def message(self):
-        return (
-            "is an API example but lists additional services in the add_service field."
-        )
+        return "lists additional services in add_services, which has been deprecated."
 
 
 @dataclass
