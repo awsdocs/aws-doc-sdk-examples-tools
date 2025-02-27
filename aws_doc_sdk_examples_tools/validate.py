@@ -32,12 +32,27 @@ def main():
         "must have them.",
         required=False,
     )
+    parser.add_argument(
+        "--config",
+        help="The path to the local config folder to use for validation in addition to the root config.",
+    )
     args = parser.parse_args()
     root_path = Path(args.root).resolve()
 
-    doc_gen = DocGen.from_root(
-        root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles)
-    )
+    if args.config:
+        config_path = Path(args.config).resolve()
+        doc_gen = DocGen.default()
+        doc_gen.merge(
+            DocGen.from_root(
+                root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles), config=config_path
+            )
+        )
+        doc_gen.root = root_path
+    else:
+        doc_gen = DocGen.from_root(
+            root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles), config=args.config
+        )
+
     doc_gen.collect_snippets(snippets_root=root_path)
     doc_gen.validate()
     if not args.doc_gen_only:
