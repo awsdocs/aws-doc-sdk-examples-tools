@@ -12,7 +12,7 @@ import json
 from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
 from .metadata import Example
-from .metadata_errors import MetadataErrors, MetadataError
+from .metadata_errors import MetadataErrors, MetadataError, UnknownLanguage
 from .sdks import Sdk, SdkVersion
 from .services import Service, ServiceExpanded
 from .snippets import Snippet
@@ -245,3 +245,12 @@ def test_fill_fields(sample_doc_gen: DocGen):
     assert example.title == "<code>PutObject</code>"
     assert example.title_abbrev == "ExcerptPartsUsage"
     assert example.synopsis == "&S3; PutObject"
+
+
+def test_language_not_in_sdks():
+    errors = MetadataErrors()
+    doc_gen = DocGen(Path(), errors).for_root(
+        Path(__file__).parent / "test_resources", incremental=False
+    )
+    doc_gen.process_metadata(doc_gen.root / "bad_language_example.yaml")
+    assert isinstance(doc_gen.errors[0], UnknownLanguage)

@@ -208,7 +208,7 @@ class DocGen:
             sdk_path = config / "sdks.yaml"
             with sdk_path.open(encoding="utf-8") as file:
                 meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks(sdk_path, meta)
+                sdks, errs = parse_sdks(sdk_path, meta, self.validation.strict_titles)
                 self.sdks = sdks
                 self.errors.extend(errs)
         except Exception:
