@@ -20,7 +20,9 @@ from .sdks import (
 )
 
 
-def load(path: str, strict: bool = True) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
+def load(
+    path: str, strict: bool = True
+) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:

@@ -401,7 +401,9 @@ class ExampleMergeConflict(LanguageError):
         return f"conflict from {self.other_file}: example already exists for this language and SDK version"
 
 
-def check_mapping(mapping: str | None, field: str, strict: bool = True) -> str | MetadataParseError:
+def check_mapping(
+    mapping: str | None, field: str, strict: bool = True
+) -> str | MetadataParseError:
     if not mapping:
         return MissingField(field=field)
     if strict and not re.match("&[-_a-zA-Z0-9]+;", mapping):
