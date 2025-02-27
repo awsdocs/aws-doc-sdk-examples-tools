@@ -141,7 +141,9 @@ class Sdk:
             errors.append(SdkWithNoVersionsError(id=self.name))
 
     @classmethod
-    def from_yaml(cls, name: str, yaml: Dict[str, Any], strict: bool) -> tuple[Sdk, MetadataErrors]:
+    def from_yaml(
+        cls, name: str, yaml: Dict[str, Any], strict: bool
+    ) -> tuple[Sdk, MetadataErrors]:
         errors = MetadataErrors()
         property = yaml.get("property", "")
         guide = check_mapping(yaml.get("guide"), "guide")
@@ -162,7 +164,9 @@ class Sdk:
         return cls(name=name, versions=versions, guide=guide, property=property), errors
 
 
-def parse(file: Path, yaml: Dict[str, Any], strict: bool = True) -> tuple[Dict[str, Sdk], MetadataErrors]:
+def parse(
+    file: Path, yaml: Dict[str, Any], strict: bool = True
+) -> tuple[Dict[str, Sdk], MetadataErrors]:
     sdks: Dict[str, Sdk] = {}
     errors = MetadataErrors()
 

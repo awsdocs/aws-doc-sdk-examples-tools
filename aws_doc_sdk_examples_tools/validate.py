@@ -44,13 +44,17 @@ def main():
         doc_gen = DocGen.default()
         doc_gen.merge(
             DocGen.from_root(
-                root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles), config=config_path
+                root=root_path,
+                validation=ValidationConfig(strict_titles=args.strict_titles),
+                config=config_path,
             )
         )
         doc_gen.root = root_path
     else:
         doc_gen = DocGen.from_root(
-            root=root_path, validation=ValidationConfig(strict_titles=args.strict_titles), config=args.config
+            root=root_path,
+            validation=ValidationConfig(strict_titles=args.strict_titles),
+            config=args.config,
         )
 
     doc_gen.collect_snippets(snippets_root=root_path)
