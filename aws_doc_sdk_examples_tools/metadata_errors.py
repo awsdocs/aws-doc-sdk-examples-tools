@@ -401,10 +401,10 @@ class ExampleMergeConflict(LanguageError):
         return f"conflict from {self.other_file}: example already exists for this language and SDK version"
 
 
-def check_mapping(mapping: str | None, field: str) -> str | MetadataParseError:
+def check_mapping(mapping: str | None, field: str, strict: bool = True) -> str | MetadataParseError:
     if not mapping:
         return MissingField(field=field)
-    if not re.match("&[-_a-zA-Z0-9]+;", mapping):
+    if strict and not re.match("&[-_a-zA-Z0-9]+;", mapping):
         return MappingMustBeEntity(field=field, value=mapping)
 
     return mapping

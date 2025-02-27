@@ -20,12 +20,12 @@ from .sdks import (
 )
 
 
-def load(path: str) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
+def load(path: str, strict: bool = True) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
         meta = yaml.safe_load(file)
-    return parse(filename, meta)
+    return parse(filename, meta, strict)
 
 
 def test_empty_sdks():
@@ -164,6 +164,32 @@ def test_sdks():
         ),
     }
     assert actual == expected
+
+
+def test_pseudo_sdks():
+    actual, errs = load("pseudo_sdks.yaml", False)
+    expected = {
+        "IAMPolicy": Sdk(
+            name="IAMPolicy",
+            property="policy",
+            guide="&guide-iam-user;",
+            versions=[
+                SdkVersion(
+                    version=1,
+                    long="IAM policy long",
+                    short="IAM policy short",
+                    guide="IAM/latest/UserGuide/introduction.html",
+                    api_ref=SdkApiRef(
+                        uid="IAMPolicy",
+                        name="&SAZR;",
+                        link_template="https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html",
+                    ),
+                )
+            ],
+        ),
+    }
+    assert actual == expected
+    assert len(errs) == 0
 
 
 if __name__ == "__main__":

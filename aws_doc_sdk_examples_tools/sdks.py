@@ -66,11 +66,11 @@ class SdkVersion:
 
     @classmethod
     def from_yaml(
-        cls, version: int, yaml: Dict[str, Any]
+        cls, version: int, yaml: Dict[str, Any], strict: bool
     ) -> tuple[SdkVersion, MetadataErrors]:
         errors = MetadataErrors()
-        long = check_mapping(yaml.get("long"), "long")
-        short = check_mapping(yaml.get("short"), "short")
+        long = check_mapping(yaml.get("long"), "long", strict)
+        short = check_mapping(yaml.get("short"), "short", strict)
         guide = yaml.get("guide")
         caveat = yaml.get("caveat")
         bookmark = yaml.get("bookmark")
@@ -141,7 +141,7 @@ class Sdk:
             errors.append(SdkWithNoVersionsError(id=self.name))
 
     @classmethod
-    def from_yaml(cls, name: str, yaml: Dict[str, Any]) -> tuple[Sdk, MetadataErrors]:
+    def from_yaml(cls, name: str, yaml: Dict[str, Any], strict: bool) -> tuple[Sdk, MetadataErrors]:
         errors = MetadataErrors()
         property = yaml.get("property", "")
         guide = check_mapping(yaml.get("guide"), "guide")
@@ -154,7 +154,7 @@ class Sdk:
         sdk_versions = sdk_versions or {}
         for version in sdk_versions:
             (sdk_version, errs) = SdkVersion.from_yaml(
-                int(version), sdk_versions[version]
+                int(version), sdk_versions[version], strict
             )
             versions.append(sdk_version)
             errors.extend(errs)
@@ -162,12 +162,12 @@ class Sdk:
         return cls(name=name, versions=versions, guide=guide, property=property), errors
 
 
-def parse(file: Path, yaml: Dict[str, Any]) -> tuple[Dict[str, Sdk], MetadataErrors]:
+def parse(file: Path, yaml: Dict[str, Any], strict: bool = True) -> tuple[Dict[str, Sdk], MetadataErrors]:
     sdks: Dict[str, Sdk] = {}
     errors = MetadataErrors()
 
     for name in yaml:
-        sdk, errs = Sdk.from_yaml(name, yaml[name])
+        sdk, errs = Sdk.from_yaml(name, yaml[name], strict)
         sdks[name] = sdk
         for error in errs:
             error.file = file
