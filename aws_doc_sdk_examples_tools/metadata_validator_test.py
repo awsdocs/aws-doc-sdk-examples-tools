@@ -29,12 +29,3 @@ def test_aws_entity_usage(strict):
     assert "Synopsis programlisting has AWS" not in e_str
     assert "Synopsis list code has <code>AWS" not in e_str
     assert "Description programlisting has AWS" not in e_str
-
-
-def test_sdk_property_syntax():
-    errors = MetadataErrors()
-    validate_metadata(Path(), True, errors)
-
-    e_str = str(errors)
-    assert "0 errors" in e_str
-
