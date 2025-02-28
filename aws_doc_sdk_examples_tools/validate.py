@@ -38,28 +38,35 @@ def main():
     )
     args = parser.parse_args()
     root_path = Path(args.root).resolve()
+    config_path = Path(args.config).resolve() if args.config else None
+    return validate(root_path, config_path, args.strict_titles, args.doc_gen_only)
 
-    if args.config:
-        config_path = Path(args.config).resolve()
+
+def validate(
+    root_path: Path, config_path: Path, strict: bool, doc_gen_only: bool
+) -> int:
+    if config_path is not None:
         doc_gen = DocGen.default()
-        doc_gen.merge(
-            DocGen.from_root(
-                root=root_path,
-                validation=ValidationConfig(strict_titles=args.strict_titles),
-                config=config_path,
-            )
+        doc_gen_local = DocGen.from_root(
+            root=root_path,
+            validation=ValidationConfig(strict_titles=strict),
+            config=config_path,
+            incremental=True,
         )
+        doc_gen.merge(doc_gen_local)
         doc_gen.root = root_path
+        doc_gen.errors = doc_gen_local.errors
+        metadata = doc_gen.root / ".doc_gen/metadata"
+        doc_gen.find_and_process_metadata(metadata)
     else:
         doc_gen = DocGen.from_root(
             root=root_path,
-            validation=ValidationConfig(strict_titles=args.strict_titles),
-            config=args.config,
+            validation=ValidationConfig(strict_titles=strict),
         )
 
     doc_gen.collect_snippets(snippets_root=root_path)
     doc_gen.validate()
-    if not args.doc_gen_only:
+    if not doc_gen_only:
         check_files(doc_gen.root, doc_gen.validation, doc_gen.errors)
         verify_sample_files(doc_gen.root, doc_gen.validation, doc_gen.errors)
 
