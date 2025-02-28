@@ -262,10 +262,13 @@ class DocGen:
             pass
 
         if not incremental:
-            for path in metadata.glob("*_metadata.yaml"):
-                self.process_metadata(path)
+            self.find_and_process_metadata(metadata)
 
         return self
+
+    def find_and_process_metadata(self, metadata_path: Path):
+        for path in metadata_path.glob("*_metadata.yaml"):
+            self.process_metadata(path)
 
     def process_metadata(self, path: Path) -> "DocGen":
         if path in self._loaded:
