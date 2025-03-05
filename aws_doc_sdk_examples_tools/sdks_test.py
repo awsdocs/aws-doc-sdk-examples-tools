@@ -73,8 +73,10 @@ def test_sdks():
     expected = {
         "C++": Sdk(
             name="C++",
+            display="C++",
             property="cpp",
             guide="&guide-cpp-dev;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(
                     version=1, long="&CPPlong;", short="&CPP;", bookmark="code-examples"
@@ -83,8 +85,10 @@ def test_sdks():
         ),
         "Go": Sdk(
             name="Go",
+            display="Go",
             property="go",
             guide="&guide-go-dev;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(version=1, long="&Golong; V1", short="&Go; V1"),
                 SdkVersion(version=2, long="&Golong; V2", short="&Go; V2"),
@@ -92,8 +96,10 @@ def test_sdks():
         ),
         "Java": Sdk(
             name="Java",
+            display="Java",
             property="java",
             guide="&guide-javav2-dev;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(version=1, long="&Javalong;", short="&Java;"),
                 SdkVersion(version=2, long="&JavaV2long;", short="&Java;"),
@@ -101,8 +107,10 @@ def test_sdks():
         ),
         "JavaScript": Sdk(
             name="JavaScript",
+            display="JavaScript",
             property="javascript",
             guide="&guide-jsb-dev;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(version=2, long="&JSBlong; V2", short="&JSB; V2"),
                 SdkVersion(
@@ -119,8 +127,10 @@ def test_sdks():
         ),
         "Kotlin": Sdk(
             name="Kotlin",
+            display="Kotlin",
             property="kotlin",
             guide="&NO_GUIDE;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(
                     version=1,
@@ -132,8 +142,10 @@ def test_sdks():
         ),
         ".NET": Sdk(
             name=".NET",
+            display=".NET",
             property="csharp",
             guide="&guide-net-dev;",
+            is_pseudo_sdk=False,
             versions=[
                 SdkVersion(
                     version=3,
@@ -148,20 +160,26 @@ def test_sdks():
         ),
         "PHP": Sdk(
             name="PHP",
+            display="PHP",
             property="php",
             guide="&guide-php-dev;",
+            is_pseudo_sdk=False,
             versions=[SdkVersion(version=3, long="&PHPlong;", short="&PHP;")],
         ),
         "Python": Sdk(
             name="Python",
+            display="Python",
             property="python",
             guide="&guide-python3-gsg;",
+            is_pseudo_sdk=False,
             versions=[SdkVersion(version=3, long="&Python3long;", short="&Python3;")],
         ),
         "Ruby": Sdk(
             name="Ruby",
+            display="Ruby",
             property="ruby",
             guide="&guide-ruby-dev;",
+            is_pseudo_sdk=False,
             versions=[SdkVersion(version=3, long="&Rubylong;", short="&Ruby;")],
         ),
     }
@@ -173,13 +191,16 @@ def test_pseudo_sdks():
     expected = {
         "IAMPolicy": Sdk(
             name="IAMPolicy",
+            display="IAM policy grammar",
             property="policy",
             guide="&guide-iam-user;",
+            is_pseudo_sdk=True,
             versions=[
                 SdkVersion(
                     version=1,
                     long="IAM policy long",
                     short="IAM policy short",
+                    suppress_version_heading=True,
                     guide="IAM/latest/UserGuide/introduction.html",
                     api_ref=SdkApiRef(
                         uid="IAMPolicy",

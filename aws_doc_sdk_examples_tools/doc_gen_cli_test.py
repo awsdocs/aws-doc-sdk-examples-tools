@@ -60,9 +60,11 @@ def mock_doc_gen(mock_example):
     doc_gen.sdks = {
         "JavaScript": Sdk(
             name="JavaScript",
+            display="JavaScript",
             versions=[SdkVersion(version=3, long="&JS;", short="&JSlong")],
             guide="",
             property="javascript",
+            is_pseudo_sdk=False,
         )
     }
     doc_gen.examples = {"ex": mock_example}

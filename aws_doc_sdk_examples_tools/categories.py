@@ -57,6 +57,25 @@ class TitleInfo:
 
 
 @dataclass
+class Prefix:
+    one: Optional[str]
+    many: Optional[str]
+
+    @classmethod
+    def from_yaml(cls, yaml: Optional[Dict[str, str]]) -> Optional[Prefix]:
+        if yaml is None:
+            return None
+
+        one = yaml.get("one")
+        many = yaml.get("many")
+
+        return cls(
+            one=one,
+            many=many,
+        )
+
+
+@dataclass
 class CategoryWithNoDisplayError(metadata_errors.MetadataError):
     def message(self):
         return "Category has no display value"
@@ -72,6 +91,8 @@ class Category:
     defaults: Optional[TitleInfo] = field(default=None)
     overrides: Optional[TitleInfo] = field(default=None)
     description: Optional[str] = field(default=None)
+    synopsis_prefix: Optional[Prefix] = field(default=None)
+    more_info: Optional[str] = field(default=None)
 
     def evaluate(
         self,
@@ -103,6 +124,8 @@ class Category:
         defaults = TitleInfo.from_yaml(yaml.get("defaults"))
         overrides = TitleInfo.from_yaml(yaml.get("overrides"))
         description = yaml.get("description")
+        synopsis_prefix = Prefix.from_yaml(yaml.get("synopsis_prefix"))
+        more_info = yaml.get("more_info")
 
         return (
             cls(
@@ -111,6 +134,8 @@ class Category:
                 defaults=defaults,
                 overrides=overrides,
                 description=description,
+                synopsis_prefix=synopsis_prefix,
+                more_info=more_info,
             ),
             errors,
         )

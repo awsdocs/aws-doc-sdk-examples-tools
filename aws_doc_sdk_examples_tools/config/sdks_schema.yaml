@@ -3,10 +3,12 @@
 map(include('sdk'), key=enum('Bash', 'C++', 'CLI', 'Go', 'Java', 'JavaScript', 'Kotlin', '.NET', 'PHP', 'PowerShell', 'Python', 'Ruby', 'Rust', 'SAP ABAP', 'Swift'))
 ---
 sdk:
+  display: str(required=False)
   property: include('syntax_enum')
   syntax: include('syntax_enum', required=False)
   sdk: map(include('version'), key=int(min=1))
   guide: include('entity_regex')
+  is_pseudo_sdk: bool(required=False)
 
 version:
   long: include('entity_with_version_regex')
@@ -14,6 +16,7 @@ version:
   expanded:
     long: str(upper_start=True, end_punc=False, check_aws=False)
     short: str(upper_start=True, end_punc=False, check_aws=False)
+  suppress_version_heading: bool(required=False)
   guide: str()
   caveat: str(required=False, upper_start=True, end_punc=True)
   bookmark: str(required=False)
