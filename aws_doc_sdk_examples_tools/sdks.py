@@ -58,6 +58,7 @@ class SdkVersion:
     long: str
     short: str
     expanded: Optional[SdkVersionExpanded] = field(default=None)
+    suppress_version_heading: bool = field(default=False)
     guide: Optional[str] = field(default=None)
     api_ref: Optional[SdkApiRef] = field(default=None)
     caveat: Optional[str] = field(default=None)
@@ -71,6 +72,7 @@ class SdkVersion:
         errors = MetadataErrors()
         long = check_mapping(yaml.get("long"), "long", strict)
         short = check_mapping(yaml.get("short"), "short", strict)
+        suppress_version_heading = yaml.get("suppress_version_heading", False)
         guide = yaml.get("guide")
         caveat = yaml.get("caveat")
         bookmark = yaml.get("bookmark")
@@ -113,6 +115,7 @@ class SdkVersion:
                 long=long,
                 short=short,
                 expanded=expanded,
+                suppress_version_heading=suppress_version_heading,
                 guide=guide,
                 api_ref=api_ref,
                 caveat=caveat,
@@ -132,9 +135,11 @@ class SdkWithNoVersionsError(metadata_errors.MetadataError):
 @dataclass
 class Sdk:
     name: str
+    display: str
     versions: List[SdkVersion]
     guide: str
     property: str
+    is_pseudo_sdk: bool
 
     def validate(self, errors: MetadataErrors):
         if len(self.versions) == 0:
@@ -145,8 +150,10 @@ class Sdk:
         cls, name: str, yaml: Dict[str, Any], strict: bool
     ) -> tuple[Sdk, MetadataErrors]:
         errors = MetadataErrors()
+        display = yaml.get("display", name)
         property = yaml.get("property", "")
         guide = check_mapping(yaml.get("guide"), "guide")
+        is_pseudo_sdk = yaml.get("is_pseudo_sdk", False)
         if isinstance(guide, MetadataParseError):
             errors.append(guide)
             guide = ""
@@ -161,7 +168,17 @@ class Sdk:
             versions.append(sdk_version)
             errors.extend(errs)
 
-        return cls(name=name, versions=versions, guide=guide, property=property), errors
+        return (
+            cls(
+                name=name,
+                display=display,
+                versions=versions,
+                guide=guide,
+                property=property,
+                is_pseudo_sdk=is_pseudo_sdk,
+            ),
+            errors,
+        )
 
 
 def parse(

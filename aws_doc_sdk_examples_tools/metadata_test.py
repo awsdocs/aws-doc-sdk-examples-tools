@@ -89,10 +89,38 @@ SERVICES = {
     ),
 }
 SDKS = {
-    "C++": Sdk(name="C++", versions=[], guide="", property="cpp"),
-    "Java": Sdk(name="Java", versions=[], guide="", property="java"),
-    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript"),
-    "PHP": Sdk(name="PHP", versions=[], guide="", property="php"),
+    "C++": Sdk(
+        name="C++",
+        display="C++",
+        versions=[],
+        guide="",
+        property="cpp",
+        is_pseudo_sdk=False,
+    ),
+    "Java": Sdk(
+        name="Java",
+        display="Java",
+        versions=[],
+        guide="",
+        property="java",
+        is_pseudo_sdk=False,
+    ),
+    "JavaScript": Sdk(
+        name="JavaScript",
+        display="JavaScript",
+        versions=[],
+        guide="",
+        property="javascript",
+        is_pseudo_sdk=False,
+    ),
+    "PHP": Sdk(
+        name="PHP",
+        display="PHP",
+        versions=[],
+        guide="",
+        property="php",
+        is_pseudo_sdk=False,
+    ),
 }
 STANDARD_CATS = ["Api"]
 DOC_GEN = DocGen(

@@ -11,6 +11,7 @@ from .categories import (
     parse,
     Category,
     TitleInfo,
+    Prefix,
 )
 
 
@@ -65,6 +66,8 @@ def test_categories():
             key="TributaryLite",
             display="Tea light",
             description="light your way.",
+            synopsis_prefix=Prefix(one="Tea light is", many="Tea lights are"),
+            more_info="This is more tea light info.",
         ),
     }
 

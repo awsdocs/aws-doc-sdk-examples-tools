@@ -26,7 +26,14 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+                    "a": Sdk(
+                        name="a",
+                        display="aa",
+                        guide="guide_a",
+                        property="a_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1)
@@ -36,7 +43,14 @@ from .snippets import Snippet
                 root=Path("/b"),
                 errors=MetadataErrors(),
                 sdks={
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                    "b": Sdk(
+                        name="b",
+                        display="bb",
+                        guide="guide_b",
+                        property="b_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "y": Service(long="AWS Y", short="Y", sort="aws y", version=1)
@@ -46,8 +60,22 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                    "a": Sdk(
+                        name="a",
+                        display="aa",
+                        guide="guide_a",
+                        property="a_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
+                    "b": Sdk(
+                        name="b",
+                        display="bb",
+                        guide="guide_b",
+                        property="b_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1),
@@ -91,9 +119,11 @@ def sample_doc_gen() -> DocGen:
         sdks={
             "python": Sdk(
                 name="python",
+                display="Python",
                 versions=[SdkVersion(version=1, long="&PYLong;", short="&PYShort;")],
                 guide="Python Guide",
                 property="python",
+                is_pseudo_sdk=False,
             )
         },
         services={
@@ -167,7 +197,9 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     assert "sdks" in decoded
     assert "python" in decoded["sdks"]
     assert decoded["sdks"]["python"]["name"] == "python"
+    assert decoded["sdks"]["python"]["display"] == "Python"
     assert decoded["sdks"]["python"]["guide"] == "Python Guide"
+    assert decoded["sdks"]["python"]["is_pseudo_sdk"] == False
     assert decoded["sdks"]["python"]["versions"][0]["version"] == 1
     assert decoded["sdks"]["python"]["versions"][0]["long"] == "&PYLong;"
 
