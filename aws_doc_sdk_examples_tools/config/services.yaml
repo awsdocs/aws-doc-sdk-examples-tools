@@ -2380,8 +2380,8 @@ partner-central:
     short: Partner Central
   blurb: is a self-service portal where AWS Partners manage their engagement with AWS.
   guide:
-    subtitle: Landing Page
-    url: partner-central/
+    subtitle: Getting Started
+    url: partner-central/latest/getting-started/what-is-partner-central.html
   api_ref: partner-central/latest/APIReference/aws-partner-central-api-reference-guide.html
   tags:
     product_categories: {'Partner Central'}
