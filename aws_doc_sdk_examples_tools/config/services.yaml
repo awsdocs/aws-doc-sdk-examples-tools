@@ -1934,6 +1934,23 @@ lightsail:
   tags:
     product_categories: {}
   version: lightsail-2016-11-28
+location:
+  apiref: location/latest/APIReference/Welcome.html
+  blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
+  bundle: geo
+  expanded:
+    long: Amazon Location Service
+    short: Amazon Location
+  guide:
+    subtitle: Developer Guide
+    url: location
+  long: '&ALlong;'
+  short: '&ALshort;'
+  sort: Location
+  tags:
+    product_categories: {}
+  version:
+    location-2020-11-19
 lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
