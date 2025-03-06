@@ -1934,6 +1934,22 @@ lightsail:
   tags:
     product_categories: {}
   version: lightsail-2016-11-28
+location:
+  apiref: location/latest/APIReference/Welcome.html
+  blurb: Use Amazon Location Service to easily and securely add maps, places, routes, geofences, and trackers, to your applications. With Amazon Location Service, you safeguard customer data, reduce cost, and easily integrate with other AWS services.
+  expanded:
+    long: Amazon Location Service
+    short: Amazon Location
+  guide:
+    subtitle: Deverloper Guide
+    url: location
+  long: '&ALlong;'
+  short: '&ALshort;'
+  sort: Location
+  tags:
+    product_categories: {}
+  version:
+    location-2020-11-19
 lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
