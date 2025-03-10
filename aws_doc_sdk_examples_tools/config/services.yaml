@@ -2371,21 +2371,21 @@ outposts:
   tags:
     product_categories: {}
   version: outposts-2019-12-03
-partner-central:
-  long: '&AWS; &pcsh;'
+partnercentral-selling:
+  long: '&partnercentral;'
   short: '&pcsh;'
   sort: Partner Central
   expanded:
     long: AWS Partner Central
     short: Partner Central
-  blurb: is a self-service portal where AWS Partners manage their engagement with AWS.
+  blurb: is a portal for AWS Partners to manage their AWS Partner Network membership.
   guide:
     subtitle: Getting Started
     url: partner-central/latest/getting-started/what-is-partner-central.html
   api_ref: partner-central/latest/APIReference/aws-partner-central-api-reference-guide.html
   tags:
     product_categories: {'Partner Central'}
-  version: partner-central-selling-2022-07-26
+  version: partnercentral-selling-2022-07-26
 payment-cryptography:
   api_ref: payment-cryptography/latest/APIReference/Welcome.html
   blurb: ''
