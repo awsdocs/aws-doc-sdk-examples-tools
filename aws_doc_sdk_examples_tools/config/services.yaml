@@ -2372,8 +2372,8 @@ outposts:
     product_categories: {}
   version: outposts-2019-12-03
 partnercentral-selling:
-  long: '&AWS; Partner Central'
-  short: 'Partner Central'
+  long: '&PartnerCentrallong;'
+  short: '&PartnerCentral;'
   sort: Partner Central
   expanded:
     long: AWS Partner Central
