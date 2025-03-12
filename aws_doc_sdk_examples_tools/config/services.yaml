@@ -1374,6 +1374,51 @@ gamelift:
   tags:
     product_categories: {}
   version: gamelift-2015-10-01
+geo-maps:
+  apiref: location/latest/APIReference/Welcome.html
+  blurb: integrate high-quality base map data into your applications using MapLibre
+  bundle: geo
+  expanded:
+    long: Amazon Location Service Maps V2
+    short: Geo Maps
+  guide:
+    subtitle: Developer Guide
+    url: location
+  long: Amazon Location Service Maps V2
+  short: Geo Maps
+  sort: geomaps
+  version:
+    geo-maps-2020-11-19
+geo-places:
+  apiref: location/latest/APIReference/Welcome.html
+  blurb: enables powerful location search and geocoding capabilities for your applications, offering global coverage with rich, detailed information.
+  bundle: geo
+  expanded:
+    long: Amazon Location Service Places
+    short: Geo Places
+  guide:
+    subtitle: Developer Guide
+    url: location
+  long: Amazon Location Service Places
+  short: Geo Places
+  sort: geoplaces
+  version:
+    geo-places-2020-11-19
+geo-routes:
+  apiref: location/latest/APIReference/Welcome.html
+  blurb: calculate routes and estimate travel time based on up-to-date road network and live traffic information.
+  bundle: geo
+  expanded:
+    long: Amazon Location Service Routes V2
+    short: Geo Routes
+  guide:
+    subtitle: Developer Guide
+    url: location
+  long: Amazon Location Service Routes V2
+  short: Geo Routes
+  sort: georoutes
+  version:
+    geo-places-2020-11-19
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
@@ -1947,8 +1992,6 @@ location:
   long: '&ALlong;'
   short: '&ALshort;'
   sort: Location
-  tags:
-    product_categories: {}
   version:
     location-2020-11-19
 lookoutvision:
