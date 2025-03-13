@@ -1402,7 +1402,7 @@ geo-places:
     subtitle: Developer Guide
     url: location/latest/developerguide/places.html
   long: "&GeoPlaceslong;"
-  short: "&GeoPlaces"
+  short: "&GeoPlaces;"
   sort: Location Service Places
   tags:
     product_categories: {'Front-End Web &amp; Mobile'}
@@ -1418,8 +1418,8 @@ geo-routes:
   guide:
     subtitle: Developer Guide
     url: location/latest/developerguide/routes.html
-  long: "&GeoRouteslong"
-  short: "&GeoRoutes"
+  long: "&GeoRouteslong;"
+  short: "&GeoRoutes;"
   sort: Location Service Routes V2
   tags:
     product_categories: {'Front-End Web &amp; Mobile'}
