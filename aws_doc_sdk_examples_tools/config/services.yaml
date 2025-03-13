@@ -1375,7 +1375,7 @@ gamelift:
     product_categories: {}
   version: gamelift-2015-10-01
 geo-maps:
-  apiref: location/latest/APIReference/Welcome.html
+  api_ref: location/latest/APIReference/Welcome.html
   blurb: lets you create beautiful map-enabled visualizations, including embedding interactive dynamic maps, or static map imagery in your apps and even layering your own data on top of the base map.
   bundle: location
   expanded:
@@ -1387,10 +1387,12 @@ geo-maps:
   long: "&GeoMapslong;"
   short: "&GeoMaps;"
   sort: Location Service Maps V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
   version:
     geo-maps-2020-11-19
 geo-places:
-  apiref: location/latest/APIReference/Welcome.html
+  api_ref: location/latest/APIReference/Welcome.html
   blurb: enables searching and geocoding of geographic data, including addresses, points of interest, and business info such as categories, food types, brands, and opening hours.
   bundle: location
   expanded:
@@ -1402,10 +1404,12 @@ geo-places:
   long: "&GeoPlaceslong;"
   short: "&GeoPlaces"
   sort: Location Service Places
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
   version:
     geo-places-2020-11-19
 geo-routes:
-  apiref: location/latest/APIReference/Welcome.html
+  api_ref: location/latest/APIReference/Welcome.html
   blurb: calculates travel routes, estimates trip time, and optimizes travel itineraries and logistics problems using up-to-date road network data, live traffic, and rich road and vehicle attributes.
   bundle: location
   expanded:
@@ -1417,6 +1421,8 @@ geo-routes:
   long: "&GeoRouteslong"
   short: "&GeoRoutes"
   sort: Location Service Routes V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
   version:
     geo-routes-2020-11-19
 glacier:
@@ -1980,7 +1986,7 @@ lightsail:
     product_categories: {}
   version: lightsail-2016-11-28
 location:
-  apiref: location/latest/APIReference/Welcome.html
+  api_ref: location/latest/APIReference/Welcome.html
   blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
   bundle: location
   expanded:
@@ -1992,6 +1998,8 @@ location:
   long: '&ALlong;'
   short: '&ALshort;'
   sort: Location
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
   version:
     location-2020-11-19
 lookoutvision:
