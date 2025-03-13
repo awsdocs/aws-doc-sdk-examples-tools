@@ -1376,49 +1376,49 @@ gamelift:
   version: gamelift-2015-10-01
 geo-maps:
   apiref: location/latest/APIReference/Welcome.html
-  blurb: integrate high-quality base map data into your applications using MapLibre
-  bundle: geo
+  blurb: lets you create beautiful map-enabled visualizations, including embedding interactive dynamic maps, or static map imagery in your apps and even layering your own data on top of the base map.
+  bundle: location
   expanded:
     long: Amazon Location Service Maps V2
-    short: Geo Maps
+    short: Location Service Maps V2
   guide:
     subtitle: Developer Guide
-    url: location
-  long: Amazon Location Service Maps V2
-  short: Geo Maps
-  sort: geomaps
+    url: location/latest/developerguide/maps.html
+  long: "&GeoMapslong;"
+  short: "&GeoMaps;"
+  sort: Location Service Maps V2
   version:
     geo-maps-2020-11-19
 geo-places:
   apiref: location/latest/APIReference/Welcome.html
-  blurb: enables powerful location search and geocoding capabilities for your applications, offering global coverage with rich, detailed information.
-  bundle: geo
+  blurb: enables searching and geocoding of geographic data, including addresses, points of interest, and business info such as categories, food types, brands, and opening hours.
+  bundle: location
   expanded:
     long: Amazon Location Service Places
-    short: Geo Places
+    short: Location Service Places
   guide:
     subtitle: Developer Guide
-    url: location
-  long: Amazon Location Service Places
-  short: Geo Places
-  sort: geoplaces
+    url: location/latest/developerguide/places.html
+  long: "&GeoPlaceslong;"
+  short: "&GeoPlaces"
+  sort: Location Service Places
   version:
     geo-places-2020-11-19
 geo-routes:
   apiref: location/latest/APIReference/Welcome.html
-  blurb: calculate routes and estimate travel time based on up-to-date road network and live traffic information.
-  bundle: geo
+  blurb: calculates travel routes, estimates trip time, and optimizes travel itineraries and logistics problems using up-to-date road network data, live traffic, and rich road and vehicle attributes.
+  bundle: location
   expanded:
     long: Amazon Location Service Routes V2
-    short: Geo Routes
+    short: Location Service Routes V2
   guide:
     subtitle: Developer Guide
-    url: location
-  long: Amazon Location Service Routes V2
-  short: Geo Routes
-  sort: georoutes
+    url: location/latest/developerguide/routes.html
+  long: "&GeoRouteslong"
+  short: "&GeoRoutes"
+  sort: Location Service Routes V2
   version:
-    geo-places-2020-11-19
+    geo-routes-2020-11-19
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
@@ -1982,13 +1982,13 @@ lightsail:
 location:
   apiref: location/latest/APIReference/Welcome.html
   blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
-  bundle: geo
+  bundle: location
   expanded:
     long: Amazon Location Service
     short: Amazon Location
   guide:
     subtitle: Developer Guide
-    url: location
+    url: location/latest/developerguide/what-is.html
   long: '&ALlong;'
   short: '&ALshort;'
   sort: Location
