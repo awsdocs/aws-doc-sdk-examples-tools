@@ -169,3 +169,13 @@
 <!-- Partner Central service -->
 <!ENTITY PartnerCentrallong '&AWS; Partner Central'>
 <!ENTITY PartnerCentral 'Partner Central'>
+
+<!-- Location Service -->
+<!ENTITY GeoMapslong 'Amazon Location Service Maps V2'>
+<!ENTITY GeoMaps 'Location Service Maps V2'>
+
+<!ENTITY GeoPlaceslong 'Amazon Location Service Places'>
+<!ENTITY GeoPlaces 'Location Service Places'>
+
+<!ENTITY GeoRouteslong 'Amazon Location Service Routes V2'>
+<!ENTITY GeoRoutes 'Location Service Routes V2'>

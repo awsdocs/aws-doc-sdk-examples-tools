@@ -1374,6 +1374,57 @@ gamelift:
   tags:
     product_categories: {}
   version: gamelift-2015-10-01
+geo-maps:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: lets you create beautiful map-enabled visualizations, including embedding interactive dynamic maps, or static map imagery in your apps and even layering your own data on top of the base map.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Maps V2
+    short: Location Service Maps V2
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/maps.html
+  long: "&GeoMapslong;"
+  short: "&GeoMaps;"
+  sort: Location Service Maps V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-maps-2020-11-19
+geo-places:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: enables searching and geocoding of geographic data, including addresses, points of interest, and business info such as categories, food types, brands, and opening hours.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Places
+    short: Location Service Places
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/places.html
+  long: "&GeoPlaceslong;"
+  short: "&GeoPlaces;"
+  sort: Location Service Places
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-places-2020-11-19
+geo-routes:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: calculates travel routes, estimates trip time, and optimizes travel itineraries and logistics problems using up-to-date road network data, live traffic, and rich road and vehicle attributes.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Routes V2
+    short: Location Service Routes V2
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/routes.html
+  long: "&GeoRouteslong;"
+  short: "&GeoRoutes;"
+  sort: Location Service Routes V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-routes-2020-11-19
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
@@ -1934,6 +1985,23 @@ lightsail:
   tags:
     product_categories: {}
   version: lightsail-2016-11-28
+location:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
+  bundle: location
+  expanded:
+    long: Amazon Location Service
+    short: Amazon Location
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/what-is.html
+  long: '&ALlong;'
+  short: '&ALshort;'
+  sort: Location
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    location-2020-11-19
 lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
