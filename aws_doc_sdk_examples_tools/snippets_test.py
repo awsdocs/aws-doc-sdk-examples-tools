@@ -60,6 +60,12 @@ from aws_doc_sdk_examples_tools import snippets
             "snippet" + "-end:[this.is.a.snippet.tag]\n",
             1,
         ),
+        (
+            "<!-- snippet" + "-start:[xml.snippet] -->\n"
+            "<text>some xml</text>"
+            "<!-- snippet" + "-end:[xml.snippet] -->\n",
+            0
+        ),
     ],
 )
 def test_verify_snippet_start_end(file_contents: str, expected_error_count: int):
