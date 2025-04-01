@@ -9,6 +9,8 @@ from .metadata import (
     Url,
     Version,
     Excerpt,
+    Person,
+    FeedbackCti,
 )
 from .sdks import Sdk
 from .services import Service
@@ -204,6 +206,37 @@ def url_from_yaml(
     return Url(title, url)
 
 
+def person_from_yaml(
+    yaml: Union[None, Dict[str, Optional[str]]]
+) -> Optional[Union[Person, MetadataParseError]]:
+    if yaml is None:
+        return None
+    name = yaml.get("name")
+    alias = yaml.get("alias")
+
+    if name is None or alias is None:
+        return metadata_errors.PersonMissingField(name=str(name), alias=str(alias))
+
+    return Person(name, alias)
+
+
+def feedback_cti_from_yaml(
+    yaml: Union[None, Dict[str, Optional[str]]]
+) -> Optional[Union[FeedbackCti, MetadataParseError]]:
+    if yaml is None:
+        return None
+    category = yaml.get("category")
+    type = yaml.get("type")
+    item = yaml.get("item")
+
+    if category is None or type is None or item is None:
+        return metadata_errors.InvalidFeedbackCti(
+            feedback_cti="|".join([str(category), str(type), str(item)])
+        )
+
+    return FeedbackCti(category, type, item)
+
+
 def version_from_yaml(
     yaml: Dict[str, Any],
     cross_content_blocks: Set[str],
@@ -243,6 +276,19 @@ def version_from_yaml(
         elif url is not None:
             errors.append(url)
 
+    authors: List[Person] = []
+    for author in yaml.get("authors", []):
+        author = person_from_yaml(author)
+        if isinstance(author, Person):
+            authors.append(author)
+        elif author is not None:
+            errors.append(author)
+
+    owner = feedback_cti_from_yaml(yaml.get("owner"))
+    if owner is not None and not isinstance(owner, FeedbackCti):
+        errors.append(owner)
+        owner = None
+
     add_services = parse_services(yaml.get("add_services", {}), errors)
     if add_services:
         errors.append(
@@ -264,6 +310,8 @@ def version_from_yaml(
             github,
             sdkguide,
             more_info,
+            authors,
+            owner,
         ),
         errors,
     )
