@@ -96,3 +96,22 @@ medical-imagingBadFormat:
         - sdk_version: 2
   services:
     medical-imaging: { TestAction }
+sqs_InvalidOwner:
+  title: Invalid owner
+  title_abbrev: Invalid owner abbrev
+  synopsis: This synopsis is just fine.
+  category: Test
+  languages:
+    Java:
+      versions:
+        - sdk_version: 2
+          authors:
+            - alias: author@example.com
+          owner:
+            category: AWS
+            type: Documentation
+          excerpts:
+            - snippet_tags:
+                - invalid.feedback.cti
+  services:
+    sqs:

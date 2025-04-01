@@ -28,6 +28,19 @@ class Url:
 
 
 @dataclass
+class Person:
+    name: str
+    alias: str
+
+
+@dataclass
+class FeedbackCti:
+    category: str
+    type: str
+    item: str
+
+
+@dataclass
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.
@@ -59,6 +72,10 @@ class Version:
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
+    # List of people who have contributed to this example.
+    authors: List[Person] = field(default_factory=list)
+    # Feedback and maintenance owner. Primarily for internal use.
+    owner: Optional[FeedbackCti] = field(default=None)
 
     def validate(self, errors: MetadataErrors, root: Path):
         github = self.github

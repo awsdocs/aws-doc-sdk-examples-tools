@@ -242,6 +242,16 @@ class InvalidSdkVersion(SdkVersionError):
 
 
 @dataclass
+class InvalidFeedbackCti(SdkVersionError):
+    feedback_cti: str = ""
+
+    def message(self):
+        return (
+            f"has feedback CTI that is missing at least one field: {self.feedback_cti}"
+        )
+
+
+@dataclass
 class InvalidGithubLink(SdkVersionError):
     link: str = ""
 
@@ -368,6 +378,15 @@ class URLMissingTitle(SdkVersionError):
 
     def message(self):
         return f"URL {self.url} is missing a title"
+
+
+@dataclass
+class PersonMissingField(SdkVersionError):
+    name: str = ""
+    alias: str = ""
+
+    def message(self):
+        return f"person is missing a field: name: {self.name}, alias: {self.alias}"
 
 
 @dataclass
