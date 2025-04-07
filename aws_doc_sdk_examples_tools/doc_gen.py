@@ -195,74 +195,12 @@ class DocGen:
 
         config = config or Path(__file__).parent / "config"
 
-        try:
-            with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
-                validation = yaml.safe_load(file)
-                validation = validation or {}
-                self.validation.allow_list.update(validation.get("allow_list", []))
-                self.validation.sample_files.update(validation.get("sample_files", []))
-        except Exception:
-            pass
-
-        try:
-            sdk_path = config / "sdks.yaml"
-            with sdk_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks(sdk_path, meta, self.validation.strict_titles)
-                self.sdks = sdks
-                self.errors.extend(errs)
-        except Exception:
-            pass
-
-        try:
-            services_path = config / "services.yaml"
-            with services_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                services, service_errors = parse_services(services_path, meta)
-                self.services = services
-                for service in self.services.values():
-                    if service.expanded:
-                        self.entities[service.long] = service.expanded.long
-                        self.entities[service.short] = service.expanded.short
-                self.errors.extend(service_errors)
-        except Exception:
-            pass
-
-        try:
-            categories_path = config / "categories.yaml"
-            with categories_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                standard_categories, categories, errs = parse_categories(
-                    categories_path, meta
-                )
-                self.standard_categories = standard_categories
-                self.categories = categories
-                self.errors.extend(errs)
-        except Exception:
-            pass
-
-        try:
-            entities_config_path = config / "entities.yaml"
-            with entities_config_path.open(encoding="utf-8") as file:
-                entities_config = yaml.safe_load(file)
-            for entity, expanded in entities_config["expanded_override"].items():
-                self.entities[entity] = expanded
-        except Exception:
-            pass
-
-        metadata = root / ".doc_gen/metadata"
-        try:
-            self.cross_blocks = set(
-                [
-                    path.name
-                    for path in (metadata.parent / "cross-content").glob("*.xml")
-                ]
-            )
-        except Exception:
-            pass
+        doc_gen = DocGen.empty()
+        parse_config(doc_gen, root, config, self.validation.strict_titles)
+        self.merge(doc_gen)
 
         if not incremental:
-            self.find_and_process_metadata(metadata)
+            self.find_and_process_metadata(root / ".doc_gen/metadata")
 
         return self
 
@@ -399,6 +337,71 @@ class DocGenEncoder(json.JSONEncoder):
             return {"__set__": list(obj)}
 
         return super().default(obj)
+
+
+def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
+    try:
+        with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
+            validation = yaml.safe_load(file)
+            validation = validation or {}
+            doc_gen.validation.allow_list.update(validation.get("allow_list", []))
+            doc_gen.validation.sample_files.update(validation.get("sample_files", []))
+    except Exception:
+        pass
+
+    try:
+        sdk_path = config / "sdks.yaml"
+        with sdk_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            sdks, errs = parse_sdks(sdk_path, meta, strict)
+            doc_gen.sdks = sdks
+            doc_gen.errors.extend(errs)
+    except Exception:
+        pass
+
+    try:
+        services_path = config / "services.yaml"
+        with services_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            services, service_errors = parse_services(services_path, meta)
+            doc_gen.services = services
+            for service in doc_gen.services.values():
+                if service.expanded:
+                    doc_gen.entities[service.long] = service.expanded.long
+                    doc_gen.entities[service.short] = service.expanded.short
+            doc_gen.errors.extend(service_errors)
+    except Exception:
+        pass
+
+    try:
+        categories_path = config / "categories.yaml"
+        with categories_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            standard_categories, categories, errs = parse_categories(
+                categories_path, meta
+            )
+            doc_gen.standard_categories = standard_categories
+            doc_gen.categories = categories
+            doc_gen.errors.extend(errs)
+    except Exception:
+        pass
+
+    try:
+        entities_config_path = config / "entities.yaml"
+        with entities_config_path.open(encoding="utf-8") as file:
+            entities_config = yaml.safe_load(file)
+        for entity, expanded in entities_config["expanded_override"].items():
+            doc_gen.entities[entity] = expanded
+    except Exception:
+        pass
+
+    metadata = root / ".doc_gen/metadata"
+    try:
+        doc_gen.cross_blocks = set(
+            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
+        )
+    except Exception:
+        pass
 
 
 def parse_examples(
