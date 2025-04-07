@@ -398,10 +398,7 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     metadata = root / ".doc_gen/metadata"
     try:
         doc_gen.cross_blocks = set(
-            [
-                path.name
-                for path in (metadata.parent / "cross-content").glob("*.xml")
-            ]
+            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
         )
     except Exception:
         pass
