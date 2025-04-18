@@ -295,6 +295,14 @@ def version_from_yaml(
             metadata_errors.AddServicesHasBeenDeprecated(add_services=add_services)
         )
 
+    source = None
+    if source_url := yaml.get("source", None):
+        source_url = url_from_yaml(source_url)
+        if isinstance(source_url, Url):
+            source = source_url
+        elif source_url is not None:
+            errors.append(source_url)
+
     if block_content is not None and block_content not in cross_content_blocks:
         errors.append(metadata_errors.MissingCrossContent(block=block_content))
 
@@ -312,6 +320,7 @@ def version_from_yaml(
             more_info,
             authors,
             owner,
+            source,
         ),
         errors,
     )
