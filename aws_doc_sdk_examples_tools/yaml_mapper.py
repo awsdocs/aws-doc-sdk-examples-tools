@@ -289,6 +289,8 @@ def version_from_yaml(
         errors.append(owner)
         owner = None
 
+    folder = yaml.get("folder")
+
     add_services = parse_services(yaml.get("add_services", {}), errors)
     if add_services:
         errors.append(
@@ -321,6 +323,7 @@ def version_from_yaml(
             authors,
             owner,
             source,
+            folder,
         ),
         errors,
     )
