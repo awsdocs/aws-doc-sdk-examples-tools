@@ -76,6 +76,7 @@ class Version:
     authors: List[Person] = field(default_factory=list)
     # Feedback and maintenance owner. Primarily for internal use.
     owner: Optional[FeedbackCti] = field(default=None)
+    folder: Optional[str] = field(default=None)
 
     def validate(self, errors: MetadataErrors, root: Path):
         github = self.github
