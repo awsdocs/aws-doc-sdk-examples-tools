@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Dict, Set, Tuple, Any, List, Optional, Union
-from pathlib import Path
 from .metadata import (
     Example,
     Language,
@@ -284,12 +283,18 @@ def version_from_yaml(
         elif author is not None:
             errors.append(author)
 
-    owner = feedback_cti_from_yaml(yaml.get("owner"))
-    if owner is not None and not isinstance(owner, FeedbackCti):
-        errors.append(owner)
-        owner = None
-
-    folder = yaml.get("folder")
+    # `owner` and `folder` are equivalent keys
+    owner_yaml = yaml.get("owner", yaml.get("folder"))
+    # use as-is for strings, otherwise try to parse them as CTI
+    if isinstance(owner_yaml, str):
+        owner = owner_yaml
+    else:
+        owner_cti = feedback_cti_from_yaml(owner_yaml)
+        if owner_cti is not None and not isinstance(owner_cti, FeedbackCti):
+            errors.append(owner_cti)
+            owner = None
+        else:
+            owner = str(owner_cti)
 
     add_services = parse_services(yaml.get("add_services", {}), errors)
     if add_services:
@@ -323,7 +328,6 @@ def version_from_yaml(
             authors,
             owner,
             source,
-            folder,
         ),
         errors,
     )

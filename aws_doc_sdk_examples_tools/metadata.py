@@ -39,6 +39,9 @@ class FeedbackCti:
     type: str
     item: str
 
+    def __str__(self):
+        return f"{self.category} | {self.type} | {self.item}"
+
 
 @dataclass
 class Excerpt:
@@ -75,8 +78,7 @@ class Version:
     # List of people who have contributed to this example.
     authors: List[Person] = field(default_factory=list)
     # Feedback and maintenance owner. Primarily for internal use.
-    owner: Optional[FeedbackCti] = field(default=None)
-    folder: Optional[str] = field(default=None)
+    owner: Optional[str] = field(default=None)
     # Link to the original tributary that contributed this version.
     source: Optional[Url] = field(default=None)
 
