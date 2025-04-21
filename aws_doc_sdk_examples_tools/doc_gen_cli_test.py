@@ -1,12 +1,14 @@
 import pytest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock
 from argparse import Namespace
 from pathlib import Path
 
+from .categories import Category
 from .doc_gen import DocGen, MetadataError, Example
 from .doc_gen_cli import main
-from .metadata import DocFilenames, Sdk, Language, SDKPageVersion, Version
-from .sdks import SdkVersion
+from .metadata import DocFilenames, Language, SDKPageVersion, Version
+from .sdks import Sdk, SdkVersion
+from .services import Service
 
 
 @pytest.fixture
@@ -46,12 +48,23 @@ def mock_doc_gen(mock_example):
         MetadataError(file="a.yaml", id="Error 1"),
         MetadataError(file="b.yaml", id="Error 2"),
     ]
+    doc_gen.categories = {"Actions": Category(key="Actions", display="Action")}
+    doc_gen.services = {
+        "medical-imaging": Service(
+            long="&AHIlong;",
+            short="&AHI;",
+            sort="HealthImaging",
+            version="medical-imaging-2023-07-19",
+        )
+    }
     doc_gen.sdks = {
         "JavaScript": Sdk(
             name="JavaScript",
+            display="JavaScript",
             versions=[SdkVersion(version=3, long="&JS;", short="&JSlong")],
             guide="",
             property="javascript",
+            is_pseudo_sdk=False,
         )
     }
     doc_gen.examples = {"ex": mock_example}
@@ -60,6 +73,7 @@ def mock_doc_gen(mock_example):
 
 @pytest.fixture
 def patched_environment(mock_doc_gen):
+    mock_doc_gen.validate = MagicMock()
     with patch("argparse.ArgumentParser.parse_args") as mock_parse_args, patch(
         "aws_doc_sdk_examples_tools.doc_gen.DocGen.empty", return_value=mock_doc_gen
     ), patch("aws_doc_sdk_examples_tools.doc_gen.DocGen.from_root"), patch(
@@ -76,6 +90,7 @@ def test_doc_gen_strict_option(strict, should_raise, patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=strict,
         skip_entity_expansion=False,
     )
@@ -94,6 +109,7 @@ def test_skip_entity_expansion(patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=False,
         skip_entity_expansion=True,
     )
@@ -111,6 +127,7 @@ def test_default_entity_expansion(patched_environment):
     mock_args = Namespace(
         from_root=["/mock/path"],
         write_json="mock_output.json",
+        write_snippets="",
         strict=False,
         skip_entity_expansion=False,
     )

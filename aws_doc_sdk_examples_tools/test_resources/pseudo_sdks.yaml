@@ -1,0 +1,15 @@
+IAMPolicy:
+  display: "IAM policy grammar"
+  property: policy
+  is_pseudo_sdk: true
+  sdk:
+    1:
+      long: "IAM policy long"
+      short: "IAM policy short"
+      suppress_version_heading: true
+      guide: "IAM/latest/UserGuide/introduction.html"
+      api_ref:
+        uid: "IAMPolicy"
+        name: "&SAZR;"
+        link_template: "https://docs.aws.amazon.com/service-authorization/latest/reference/reference.html"
+  guide: "&guide-iam-user;"

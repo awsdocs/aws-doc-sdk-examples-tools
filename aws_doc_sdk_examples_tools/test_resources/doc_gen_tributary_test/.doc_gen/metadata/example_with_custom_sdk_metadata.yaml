@@ -1,0 +1,13 @@
+sts_CustomSdkExample:
+  title: This example uses an SDK from the tributary config
+  title_abbrev: This example uses an SDK from the tributary config
+  synopsis: allow a user to assume any role in your account with the access- name prefix. The role must also be tagged with the same project, team, and cost center tags as the user.
+  category: IAMPolicyCategory
+  languages:
+    IAMPolicy:
+      versions:
+        - sdk_version: 1
+          excerpts:
+            - description: test
+  services:
+    sts: {AssumeRole}

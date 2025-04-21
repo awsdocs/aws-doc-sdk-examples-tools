@@ -9,8 +9,10 @@ import pytest
 from pathlib import Path
 import json
 
-from .metadata_errors import MetadataErrors, MetadataError
+from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
+from .metadata import Example
+from .metadata_errors import MetadataErrors, MetadataError, UnknownLanguage
 from .sdks import Sdk, SdkVersion
 from .services import Service, ServiceExpanded
 from .snippets import Snippet
@@ -24,7 +26,14 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[])
+                    "a": Sdk(
+                        name="a",
+                        display="aa",
+                        guide="guide_a",
+                        property="a_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1)
@@ -34,7 +43,14 @@ from .snippets import Snippet
                 root=Path("/b"),
                 errors=MetadataErrors(),
                 sdks={
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[])
+                    "b": Sdk(
+                        name="b",
+                        display="bb",
+                        guide="guide_b",
+                        property="b_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "y": Service(long="AWS Y", short="Y", sort="aws y", version=1)
@@ -44,8 +60,22 @@ from .snippets import Snippet
                 root=Path("/a"),
                 errors=MetadataErrors(),
                 sdks={
-                    "a": Sdk(name="a", guide="guide_a", property="a_prop", versions=[]),
-                    "b": Sdk(name="b", guide="guide_b", property="b_prop", versions=[]),
+                    "a": Sdk(
+                        name="a",
+                        display="aa",
+                        guide="guide_a",
+                        property="a_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
+                    "b": Sdk(
+                        name="b",
+                        display="bb",
+                        guide="guide_b",
+                        property="b_prop",
+                        versions=[],
+                        is_pseudo_sdk=False,
+                    ),
                 },
                 services={
                     "x": Service(long="AWS X", short="X", sort="aws x", version=1),
@@ -80,15 +110,20 @@ def sample_doc_gen() -> DocGen:
         root=Path("/test/root"),
         errors=metadata_errors,
         prefix="test_prefix",
-        entities={"&S3long;": "Amazon Simple Storage Service", "&S3;": "Amazon S3"},
+        entities={
+            "&S3long;": "Amazon Simple Storage Service",
+            "&S3;": "Amazon S3",
+            "&PYLong;": "Python SDK v1",
+            "&PYShort;": "Python V1",
+        },
         sdks={
             "python": Sdk(
                 name="python",
-                versions=[
-                    SdkVersion(version=1, long="Python SDK v1", short="Python v1")
-                ],
+                display="Python",
+                versions=[SdkVersion(version=1, long="&PYLong;", short="&PYShort;")],
                 guide="Python Guide",
                 property="python",
+                is_pseudo_sdk=False,
             )
         },
         services={
@@ -112,7 +147,25 @@ def sample_doc_gen() -> DocGen:
             )
         },
         snippet_files={"test.py"},
-        examples={},
+        examples={
+            "s3_PutObject": Example(
+                "s3_PutObject",
+                file=Path("filea.txt"),
+                languages={},
+                services={"s3": set(["PutObject"])},
+            )
+        },
+        categories={
+            "Actions": Category(
+                "Actions",
+                "Actions",
+                defaults=TitleInfo(
+                    title="<code>{{.Action}}</code>",
+                    synopsis="{{.ServiceEntity.Short}} {{.Action}}",
+                ),
+                overrides=TitleInfo(title_abbrev="ExcerptPartsUsage"),
+            )
+        },
         cross_blocks={"test_block"},
     )
 
@@ -121,6 +174,15 @@ def test_expand_entities(sample_doc_gen: DocGen):
     expanded, errors = sample_doc_gen.expand_entities("Hello &S3;")
     assert expanded == "Hello Amazon S3"
     assert not errors
+
+
+def test_expand_entity_fields(sample_doc_gen: DocGen):
+    error_count = len(sample_doc_gen.errors)
+    sample_doc_gen.expand_entity_fields(sample_doc_gen)
+    assert sample_doc_gen.services["s3"].long == "Amazon Simple Storage Service"
+    assert sample_doc_gen.sdks["python"].versions[0].long == "Python SDK v1"
+    # The fixture has an error, so make sure we don't have _more_ errors.
+    assert error_count == len(sample_doc_gen.errors)
 
 
 def test_doc_gen_encoder(sample_doc_gen: DocGen):
@@ -135,9 +197,11 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     assert "sdks" in decoded
     assert "python" in decoded["sdks"]
     assert decoded["sdks"]["python"]["name"] == "python"
+    assert decoded["sdks"]["python"]["display"] == "Python"
     assert decoded["sdks"]["python"]["guide"] == "Python Guide"
+    assert decoded["sdks"]["python"]["is_pseudo_sdk"] == False
     assert decoded["sdks"]["python"]["versions"][0]["version"] == 1
-    assert decoded["sdks"]["python"]["versions"][0]["long"] == "Python SDK v1"
+    assert decoded["sdks"]["python"]["versions"][0]["long"] == "&PYLong;"
 
     # Verify service information
     assert "services" in decoded
@@ -171,7 +235,29 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
 
     # Verify examples (empty in this case)
     assert "examples" in decoded
-    assert decoded["examples"] == {}
+    assert decoded["examples"] == {
+        "s3_PutObject": {
+            "category": None,
+            "doc_filenames": None,
+            "file": "filea.txt",
+            "guide_topic": None,
+            "id": "s3_PutObject",
+            "languages": {},
+            "service_main": None,
+            "services": {
+                "s3": {
+                    "__set__": [
+                        "PutObject",
+                    ],
+                },
+            },
+            "source_key": None,
+            "synopsis": "",
+            "synopsis_list": [],
+            "title": "",
+            "title_abbrev": "",
+        },
+    }
 
 
 def test_doc_gen_load_snippets():
@@ -183,3 +269,20 @@ def test_doc_gen_load_snippets():
     doc_gen.collect_snippets()
     assert doc_gen.snippet_files == set(["snippet_file.txt"])
     assert doc_gen.snippets["snippet_file.txt"].code == "Line A\nLine C\n"
+
+
+def test_fill_fields(sample_doc_gen: DocGen):
+    sample_doc_gen.fill_missing_fields()
+    example = sample_doc_gen.examples["s3_PutObject"]
+    assert example.title == "<code>PutObject</code>"
+    assert example.title_abbrev == "ExcerptPartsUsage"
+    assert example.synopsis == "&S3; PutObject"
+
+
+def test_language_not_in_sdks():
+    errors = MetadataErrors()
+    doc_gen = DocGen(Path(), errors).for_root(
+        Path(__file__).parent / "test_resources", incremental=False
+    )
+    doc_gen.process_metadata(doc_gen.root / "bad_language_example.yaml")
+    assert isinstance(doc_gen.errors[0], UnknownLanguage)

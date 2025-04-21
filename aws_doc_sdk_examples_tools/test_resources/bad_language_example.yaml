@@ -1,0 +1,14 @@
+s3_TestExample:
+  title: Test language not in SDKs
+  title_abbrev: Test language not in SDKs
+  synopsis: test language not in SDKs.
+  category: Test
+  languages:
+    NotAnSdk:
+      versions:
+        - sdk_version: 1
+          excerpts:
+            - snippet_tags:
+                - s3.notalang
+  services:
+    s3:

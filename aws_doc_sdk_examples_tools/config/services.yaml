@@ -938,6 +938,21 @@ directory-service:
   tags:
     product_categories: {}
   version: ds-2015-04-16
+directory-service-data:
+  api_ref: directoryservicedata/latest/DirectoryServiceDataAPIReference/Welcome.html
+  blurb: ''
+  expanded:
+    long: AWS Directory Service Data
+    short: AWS Directory Service Data
+  guide:
+    subtitle: Administration Guide
+    url: directoryservice/latest/admin-guide/what_is.html
+  long: '&ADSlong; Data'
+  short: '&ADS; Data'
+  sort: Directory Service Data
+  tags:
+    product_categories: {}
+  version: directory-service-data-2023-05-31
 dlm:
   api_ref: dlm/latest/APIReference/Welcome.html
   blurb: ''
@@ -1239,6 +1254,21 @@ emr-containers:
   tags:
     product_categories: {}
   version: emr-containers-2020-10-01
+entityresolution:
+  long: '&ERlong;'
+  short: '&ER;'
+  sort: Entity Resolution
+  expanded:
+    long: AWS Entity Resolution
+    short: AWS Entity Resolution
+  blurb: helps organizations extract, link, and organize information from multiple data sources.
+  guide:
+    subtitle: User Guide
+    url: entityresolution/latest/userguide/what-is-service.html
+  api_ref: entityresolution/latest/apireference/Welcome.html
+  tags:
+    product_categories: {'Analytics'}
+  version: entityresolution-2018-05-10
 eventbridge:
   long: '&EVlong;'
   short: '&EV;'
@@ -1344,6 +1374,57 @@ gamelift:
   tags:
     product_categories: {}
   version: gamelift-2015-10-01
+geo-maps:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: lets you create beautiful map-enabled visualizations, including embedding interactive dynamic maps, or static map imagery in your apps and even layering your own data on top of the base map.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Maps V2
+    short: Location Service Maps V2
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/maps.html
+  long: "&GeoMapslong;"
+  short: "&GeoMaps;"
+  sort: Location Service Maps V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-maps-2020-11-19
+geo-places:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: enables searching and geocoding of geographic data, including addresses, points of interest, and business info such as categories, food types, brands, and opening hours.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Places
+    short: Location Service Places
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/places.html
+  long: "&GeoPlaceslong;"
+  short: "&GeoPlaces;"
+  sort: Location Service Places
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-places-2020-11-19
+geo-routes:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: calculates travel routes, estimates trip time, and optimizes travel itineraries and logistics problems using up-to-date road network data, live traffic, and rich road and vehicle attributes.
+  bundle: location
+  expanded:
+    long: Amazon Location Service Routes V2
+    short: Location Service Routes V2
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/routes.html
+  long: "&GeoRouteslong;"
+  short: "&GeoRoutes;"
+  sort: Location Service Routes V2
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    geo-routes-2020-11-19
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
@@ -1559,36 +1640,6 @@ iot:
   tags:
     product_categories: {'IoT'}
   version: iot-2015-05-28
-iot-1click-devices-service:
-  api_ref: iot-1click-devices-service/latest/APIReference/Welcome.html
-  blurb: ''
-  expanded:
-    long: AWS IoT 1-Click Devices
-    short: AWS IoT 1-Click Devices
-  guide:
-    subtitle: Developer Guide
-    url: iot-1-click/1.0/devices-apireference/what-is-iot.html
-  long: '&ITOCDevlong;'
-  short: '&ITOCDev;'
-  sort: IoT 1-Click Devices
-  tags:
-    product_categories: {}
-  version: iot1click-devices-2018-05-14
-iot-1click-projects:
-  api_ref: iot-1-click/latest/projects-apireference/Welcome.html
-  blurb: ''
-  expanded:
-    long: AWS IoT 1-Click Projects
-    short: AWS IoT 1-Click Projects
-  guide:
-    subtitle: Developer Guide
-    url: iot-1-click/latest/developerguide/what-is-1click.html
-  long: '&ITOCProjlong;'
-  short: '&ITOCProj;'
-  sort: IoT 1-Click Projects
-  tags:
-    product_categories: {}
-  version: iot1click-projects-2018-05-14
 iot-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
@@ -1934,6 +1985,23 @@ lightsail:
   tags:
     product_categories: {}
   version: lightsail-2016-11-28
+location:
+  api_ref: location/latest/APIReference/Welcome.html
+  blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
+  bundle: location
+  expanded:
+    long: Amazon Location Service
+    short: Amazon Location
+  guide:
+    subtitle: Developer Guide
+    url: location/latest/developerguide/what-is.html
+  long: '&ALlong;'
+  short: '&ALshort;'
+  sort: Location
+  tags:
+    product_categories: {'Front-End Web &amp; Mobile'}
+  version:
+    location-2020-11-19
 lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
@@ -2221,6 +2289,21 @@ networkmonitor:
   tags:
     product_categories: {'Management &amp; Governance'}
   version: networkmonitor-2023-08-01
+networkflowmonitor:
+  long: '&NFMlong;'
+  short: '&NFM;'
+  sort: Network Flow Monitor
+  expanded:
+    long: Network Flow Monitor
+    short: Network Flow Monitor
+  blurb: uses fully-managed agents to monitor network flows and provide performance and availability metrics.
+  guide:
+    subtitle: User Guide
+    url: AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html
+  api_ref: networkflowmonitor/2.0/APIReference/Welcome.html
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: networkflowmonitor-2023-04-19
 nimble:
   api_ref: nimble-studio/latest/APIReference/Welcome.html
   blurb: ''
@@ -2236,6 +2319,36 @@ nimble:
   tags:
     product_categories: {}
   version: '' # no longer published
+oam:
+  api_ref: OAM/latest/APIReference/Welcome.html
+  blurb: ''
+  expanded:
+    long: Amazon CloudWatch Observability Access Monitor
+    short: CloudWatch Observability Access Monitor
+  guide:
+    subtitle: Prescriptive Guidance
+    url: prescriptive-guidance/latest/patterns/centralize-monitoring-by-using-amazon-cloudwatch-observability-access-manager.html
+  long: '&CWlong; Observability Access Monitor'
+  short: '&CW; Observability Access Monitor'
+  sort: CloudWatch Observability Access Monitor
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: oam-2022-06-10
+observabilityadmin:
+  api_ref: cloudwatch/latest/observabilityadmin/Welcome.html
+  blurb: lets you discover and understand the state of telemetry configuration in CloudWatch for your AWS Organization or account.
+  expanded:
+    long: Amazon CloudWatch Observability Admin
+    short: CloudWatch Observability Admin
+  guide:
+    subtitle: User Guide
+    url: AmazonCloudWatch/latest/monitoring/telemetry-config-cloudwatch.html
+  long: '&CWlong; Observability Admin'
+  short: '&CW; Observability Admin'
+  sort: CloudWatch Observability Admin
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: observabilityadmin-2018-05-10
 omics:
   api_ref: omics/latest/api/Welcome.html
   blurb: ''
@@ -2326,6 +2439,21 @@ outposts:
   tags:
     product_categories: {}
   version: outposts-2019-12-03
+partnercentral-selling:
+  long: '&PartnerCentrallong;'
+  short: '&PartnerCentral;'
+  sort: Partner Central
+  expanded:
+    long: AWS Partner Central
+    short: Partner Central
+  blurb: is a portal for AWS Partners to manage their AWS Partner Network membership.
+  guide:
+    subtitle: Getting Started
+    url: partner-central/latest/getting-started/what-is-partner-central.html
+  api_ref: partner-central/latest/APIReference/aws-partner-central-api-reference-guide.html
+  tags:
+    product_categories: {'Partner Central'}
+  version: partnercentral-selling-2022-07-26
 payment-cryptography:
   api_ref: payment-cryptography/latest/APIReference/Welcome.html
   blurb: ''
@@ -3183,6 +3311,21 @@ swf:
   tags:
     product_categories: {}
   version: swf-2012-01-25
+synthetics:
+  api_ref: AmazonSynthetics/latest/APIReference/Welcome.html
+  blurb: ''
+  guide:
+    subtitle: Synthetic monitoring (canaries)
+    url: AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
+  expanded:
+    long: Amazon CloudWatch Synthetics
+    short: CloudWatch Synthetics
+  long: '&CWlong; Synthetics'
+  short: '&CW; Synthetics'
+  sort: CloudWatch Synthetics
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: synthetics-2017-10-11
 textract:
   long: '&TEXTRACTlong;'
   short: '&TEXTRACT;'

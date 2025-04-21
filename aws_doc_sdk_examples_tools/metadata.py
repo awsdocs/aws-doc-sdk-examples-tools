@@ -6,11 +6,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, Literal, List, Optional, Set, Union, Iterable
+from typing import Container, Dict, Literal, List, Optional, Set, Iterable
 from os.path import splitext
 from pathlib import Path
 
 from . import metadata_errors
+from .categories import Category
 from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
@@ -18,15 +19,25 @@ from .metadata_errors import (
     ExampleMergeMismatchedLanguage,
     ExampleMergeConflict,
 )
-from .project_validator import ValidationConfig
-from .services import Service
-from .sdks import Sdk
 
 
 @dataclass
 class Url:
     title: str
     url: Optional[str]
+
+
+@dataclass
+class Person:
+    name: str
+    alias: str
+
+
+@dataclass
+class FeedbackCti:
+    category: str
+    type: str
+    item: str
 
 
 @dataclass
@@ -57,11 +68,16 @@ class Version:
     excerpts: List[Excerpt] = field(default_factory=list)
     # Link to the source code for this example. TODO rename.
     github: Optional[str] = field(default=None)
-    add_services: Dict[str, Set[str]] = field(default_factory=dict)
     # Deprecated. Replace with guide_topic list.
     sdkguide: Optional[str] = field(default=None)
     # Link to additional topic places.
     more_info: List[Url] = field(default_factory=list)
+    # List of people who have contributed to this example.
+    authors: List[Person] = field(default_factory=list)
+    # Feedback and maintenance owner. Primarily for internal use.
+    owner: Optional[FeedbackCti] = field(default=None)
+    # Link to the original tributary that contributed this version.
+    source: Optional[Url] = field(default=None)
 
     def validate(self, errors: MetadataErrors, root: Path):
         github = self.github
@@ -89,7 +105,7 @@ class Version:
 @dataclass
 class Language:
     name: str
-    # A downcased, special-character-free version of the name. Matches a key of the same name in sdks.yaml.
+    # A downcased, special-character-free version of the name. Matches a key of the same name in sdks.yaml. Used for syntax parser.
     property: str
     versions: List[Version]
 
@@ -132,9 +148,9 @@ class Example:
     id: str
     file: Optional[Path]
     languages: Dict[str, Language]
-    # Human readable title. TODO: Defaults to slug-to-title of the ID if not provided.
+    # Human readable title.
     title: Optional[str] = field(default="")
-    # Used in the TOC. TODO: Defaults to slug-to-title of the ID if not provided.
+    # Used in the TOC.
     title_abbrev: Optional[str] = field(default="")
     synopsis: Optional[str] = field(default="")
     # String label categories. Categories inferred by cross-service with multiple services, and can be whatever else it wants. Controls where in the TOC it appears.
@@ -150,6 +166,30 @@ class Example:
     doc_filenames: Optional[DocFilenames] = field(default=None)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
+
+    def fill_display_fields(self, categories: Dict[str, Category], service, action):
+        category = self.choose_category(categories)
+        if category:
+            self.title = category.evaluate(
+                self.title, lambda x: x.title, service, action
+            )
+            self.title_abbrev = category.evaluate(
+                self.title_abbrev, lambda x: x.title_abbrev, service, action
+            )
+            self.synopsis = category.evaluate(
+                self.synopsis, lambda x: x.synopsis, service, action
+            )
+
+    def choose_category(self, categories: Dict[str, Category]) -> Optional[Category]:
+        """Find a category for an example. This logic is taken from directories and zexii.
+
+        Original Zexii code at https://code.amazon.com/packages/GoAmzn-AWSDocsCodeExampleDocBuilder/blobs/1321fffadd8ff02e6acbae4a1f42b81006cdfa72/--/zexi/zonbook/category.go#L31-L50.
+        """
+        if self.category in categories:
+            return categories[self.category]
+        if len(self.services) == 1:
+            return categories["Actions"]
+        return categories["Scenarios"]
 
     def merge(self, other: Example, errors: MetadataErrors):
         """Combine `other` Example into self example.
@@ -184,11 +224,20 @@ class Example:
                     err.id = self.id
                     err.file = self.file
                     if hasattr(err, "other_file"):
-                        err.other_file = other.file
+                        err.other_file = other.file  # type: ignore
                 errors.extend(merge_errs)
 
-    def validate(self, errors: MetadataErrors, root: Path):
+    def validate(
+        self, errors: MetadataErrors, known_services: Container[str], root: Path
+    ):
         errs = MetadataErrors()
+        for service in self.services.keys():
+            if service not in known_services:
+                errors.append(
+                    metadata_errors.UnknownService(
+                        id=self.id, file=self.file, service=service
+                    )
+                )
         for language in self.languages.values():
             language.validate(errs, root)
         for error in errs:

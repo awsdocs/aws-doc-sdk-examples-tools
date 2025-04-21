@@ -5,13 +5,14 @@ import yaml
 import json
 
 from collections import defaultdict
-from dataclasses import dataclass, field, is_dataclass, asdict
+from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
 
 # from os import glob
 
+from .categories import Category, parse as parse_categories
 from .metadata import (
     Example,
     DocFilenames,
@@ -55,6 +56,8 @@ class DocGen:
     validation: ValidationConfig = field(default_factory=ValidationConfig)
     sdks: Dict[str, Sdk] = field(default_factory=dict)
     services: Dict[str, Service] = field(default_factory=dict)
+    standard_categories: List[str] = field(default_factory=list)
+    categories: Dict[str, Category] = field(default_factory=dict)
     snippets: Dict[str, Snippet] = field(default_factory=dict)
     snippet_files: Set[str] = field(default_factory=set)
     examples: Dict[str, Example] = field(default_factory=dict)
@@ -87,6 +90,24 @@ class DocGen:
     def expand_entities(self, text: str) -> Tuple[str, EntityErrors]:
         return expand_all_entities(text, self.entities)
 
+    def expand_entity_fields(self, obj: object):
+        if isinstance(obj, list):
+            for o in obj:
+                self.expand_entity_fields(o)
+        if isinstance(obj, dict):
+            for val in obj.values():
+                self.expand_entity_fields(val)
+        if is_dataclass(obj) and not isinstance(obj, type):
+            for f in fields(obj):
+                val = getattr(obj, f.name)
+                if isinstance(val, str):
+                    [expanded, errs] = self.expand_entities(val)
+                    if errs:
+                        self.errors.extend(errs)
+                    else:
+                        setattr(obj, f.name, expanded)
+                self.expand_entity_fields(val)
+
     def merge(self, other: "DocGen") -> MetadataErrors:
         """Merge fields from other into self, prioritizing self fields."""
         warnings = MetadataErrors()
@@ -100,6 +121,7 @@ class DocGen:
         for name, service in other.services.items():
             if name not in self.services:
                 self.services[name] = service
+            else:
                 warnings.append(
                     DocGenMergeWarning(
                         file=other.root, id=f"conflict in service {name}"
@@ -108,6 +130,7 @@ class DocGen:
         for name, snippet in other.snippets.items():
             if name not in self.snippets:
                 self.snippets[name] = snippet
+            else:
                 warnings.append(
                     DocGenMergeWarning(
                         file=other.root, id=f"conflict in snippet {name}"
@@ -129,6 +152,9 @@ class DocGen:
         self.snippet_files.update(other.snippet_files)
         self.cross_blocks.update(other.cross_blocks)
         self.extend_examples(other.examples.values(), warnings)
+        for name, category in other.categories.items():
+            if name not in self.categories:
+                self.categories[name] = category
 
         return warnings
 
@@ -151,10 +177,11 @@ class DocGen:
     def clone(self) -> "DocGen":
         return DocGen(
             root=self.root,
-            errors=MetadataErrors(),
             validation=self.validation.clone(),
             sdks={**self.sdks},
+            entities={**self.entities},
             services={**self.services},
+            errors=MetadataErrors(),
             snippets={},
             snippet_files=set(),
             cross_blocks=set(),
@@ -168,64 +195,18 @@ class DocGen:
 
         config = config or Path(__file__).parent / "config"
 
-        try:
-            with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
-                validation = yaml.safe_load(file)
-                validation = validation or {}
-                self.validation.allow_list.update(validation.get("allow_list", []))
-                self.validation.sample_files.update(validation.get("sample_files", []))
-        except Exception:
-            pass
-
-        try:
-            sdk_path = config / "sdks.yaml"
-            with sdk_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                sdks, errs = parse_sdks(sdk_path, meta)
-                self.sdks = sdks
-                self.errors.extend(errs)
-        except Exception:
-            pass
-
-        try:
-            services_path = config / "services.yaml"
-            with services_path.open(encoding="utf-8") as file:
-                meta = yaml.safe_load(file)
-                services, service_errors = parse_services(services_path, meta)
-                self.services = services
-                for service in self.services.values():
-                    if service.expanded:
-                        self.entities[service.long] = service.expanded.long
-                        self.entities[service.short] = service.expanded.short
-                self.errors.extend(service_errors)
-        except Exception:
-            pass
-
-        try:
-            entities_config_path = config / "entities.yaml"
-            with entities_config_path.open(encoding="utf-8") as file:
-                entities_config = yaml.safe_load(file)
-            for entity, expanded in entities_config["expanded_override"].items():
-                self.entities[entity] = expanded
-        except Exception:
-            pass
-
-        metadata = root / ".doc_gen/metadata"
-        try:
-            self.cross_blocks = set(
-                [
-                    path.name
-                    for path in (metadata.parent / "cross-content").glob("*.xml")
-                ]
-            )
-        except Exception:
-            pass
+        doc_gen = DocGen.empty()
+        parse_config(doc_gen, root, config, self.validation.strict_titles)
+        self.merge(doc_gen)
 
         if not incremental:
-            for path in metadata.glob("*_metadata.yaml"):
-                self.process_metadata(path)
+            self.find_and_process_metadata(root / ".doc_gen/metadata")
 
         return self
+
+    def find_and_process_metadata(self, metadata_path: Path):
+        for path in metadata_path.glob("*_metadata.yaml"):
+            self.process_metadata(path)
 
     def process_metadata(self, path: Path) -> "DocGen":
         if path in self._loaded:
@@ -236,9 +217,9 @@ class DocGen:
                 yaml.safe_load(file),
                 self.sdks,
                 self.services,
+                self.standard_categories,
                 self.cross_blocks,
                 self.validation,
-                self.root,
             )
             self.extend_examples(examples, self.errors)
             self.errors.extend(errs)
@@ -268,9 +249,11 @@ class DocGen:
             sdk.validate(self.errors)
         for service in self.services.values():
             service.validate(self.errors)
+        for category in self.categories.values():
+            category.validate(self.errors)
         for example in self.examples.values():
-            example.validate(self.errors, self.root)
-        validate_metadata(self.root, self.errors)
+            example.validate(self.errors, self.services, self.root)
+        validate_metadata(self.root, self.validation.strict_titles, self.errors)
         validate_no_duplicate_api_examples(self.examples.values(), self.errors)
         validate_snippets(
             [*self.examples.values()],
@@ -279,6 +262,28 @@ class DocGen:
             self.errors,
             self.root,
         )
+
+    def fill_missing_fields(self):
+        for example in self.examples.values():
+            id_service, id_action = example.id.split("_", 1)
+            service_id = example.service_main or next(
+                (k for (k, _) in example.services.items()), None
+            )
+            if service_id is None:
+                # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
+                service_id = id_service
+            action = (
+                next((k for k in example.services.get(service_id, [])), None)
+                or example.id.split("_", 1)[1]
+            )
+            if action is None:
+                # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
+                action = id_action
+            if service_id in self.services:
+                service_name = self.services[service_id].short
+            else:
+                service_name = service_id
+            example.fill_display_fields(self.categories, service_name, action)
 
     def stats(self):
         values = self.examples.values()
@@ -313,7 +318,7 @@ class DocGen:
 # and arguably not useful either.
 class DocGenEncoder(json.JSONEncoder):
     def default(self, obj):
-        if is_dataclass(obj):
+        if is_dataclass(obj) and not isinstance(obj, type):
             return asdict(obj)
 
         if isinstance(obj, Path):
@@ -334,28 +339,94 @@ class DocGenEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
+def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
+    try:
+        with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
+            validation = yaml.safe_load(file)
+            validation = validation or {}
+            doc_gen.validation.allow_list.update(validation.get("allow_list", []))
+            doc_gen.validation.sample_files.update(validation.get("sample_files", []))
+    except Exception:
+        pass
+
+    try:
+        sdk_path = config / "sdks.yaml"
+        with sdk_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            sdks, errs = parse_sdks(sdk_path, meta, strict)
+            doc_gen.sdks = sdks
+            doc_gen.errors.extend(errs)
+    except Exception:
+        pass
+
+    try:
+        services_path = config / "services.yaml"
+        with services_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            services, service_errors = parse_services(services_path, meta)
+            doc_gen.services = services
+            for service in doc_gen.services.values():
+                if service.expanded:
+                    doc_gen.entities[service.long] = service.expanded.long
+                    doc_gen.entities[service.short] = service.expanded.short
+            doc_gen.errors.extend(service_errors)
+    except Exception:
+        pass
+
+    try:
+        categories_path = config / "categories.yaml"
+        with categories_path.open(encoding="utf-8") as file:
+            meta = yaml.safe_load(file)
+            standard_categories, categories, errs = parse_categories(
+                categories_path, meta
+            )
+            doc_gen.standard_categories = standard_categories
+            doc_gen.categories = categories
+            doc_gen.errors.extend(errs)
+    except Exception:
+        pass
+
+    try:
+        entities_config_path = config / "entities.yaml"
+        with entities_config_path.open(encoding="utf-8") as file:
+            entities_config = yaml.safe_load(file)
+        for entity, expanded in entities_config["expanded_override"].items():
+            doc_gen.entities[entity] = expanded
+    except Exception:
+        pass
+
+    metadata = root / ".doc_gen/metadata"
+    try:
+        doc_gen.cross_blocks = set(
+            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
+        )
+    except Exception:
+        pass
+
+
 def parse_examples(
     file: Path,
     yaml: Dict[str, Any],
     sdks: Dict[str, Sdk],
     services: Dict[str, Service],
+    standard_categories: List[str],
     blocks: Set[str],
     validation: Optional[ValidationConfig],
-    root: Optional[Path] = None,
 ) -> Tuple[List[Example], MetadataErrors]:
     examples: List[Example] = []
     errors = MetadataErrors()
     validation = validation or ValidationConfig()
     for id in yaml:
         example, example_errors = example_from_yaml(
-            yaml[id], sdks, services, blocks, validation, root or file.parent
+            yaml[id], sdks, services, blocks, validation
         )
-        check_id_format(
-            id,
-            example.services,
-            validation.strict_titles and example.category == "Api",
-            example_errors,
-        )
+        if example.category in standard_categories:
+            check_id_format(
+                id,
+                example.services,
+                validation.strict_titles and example.category == "Api",
+                example_errors,
+            )
         for error in example_errors:
             error.file = file
             error.id = id
@@ -411,7 +482,7 @@ def get_doc_filenames(example_id: str, example: Example) -> Optional[DocFilename
                     )
                 )
             else:
-                anchor = "actions" if example.category == "Actions" else "scenarios"
+                anchor = "actions" if example.category == "Api" else "scenarios"
                 sdk_pages[language.property][version.sdk_version] = SDKPageVersion(
                     actions_scenarios={
                         service_id: f"{base_url}/{language.property}_{version.sdk_version}_{service_id}_code_examples.html#{anchor}"

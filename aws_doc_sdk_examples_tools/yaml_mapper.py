@@ -9,6 +9,8 @@ from .metadata import (
     Url,
     Version,
     Excerpt,
+    Person,
+    FeedbackCti,
 )
 from .sdks import Sdk
 from .services import Service
@@ -24,7 +26,6 @@ def example_from_yaml(
     services: Dict[str, Service],
     blocks: Set[str],
     validation: ValidationConfig,
-    root: Path,
 ) -> Tuple[Example, MetadataErrors]:
     errors = MetadataErrors()
 
@@ -39,10 +40,10 @@ def example_from_yaml(
         errors.append(guide_topic)
         guide_topic = None
 
-    parsed_services = parse_services(yaml.get("services", {}), errors, services)
+    parsed_services = parse_services(yaml.get("services", {}), errors)
     category = yaml.get("category", "")
     if category == "":
-        category = "Api" if len(parsed_services) == 1 else "Cross"
+        category = "Api" if len(parsed_services) == 1 else "Scenarios"
     is_action = category == "Api"
     is_basics = category == "Basics"
 
@@ -84,7 +85,7 @@ def example_from_yaml(
     else:
         for name in yaml_languages:
             language, errs = language_from_yaml(
-                name, yaml_languages[name], sdks, services, blocks, is_action, root
+                name, yaml_languages[name], sdks, blocks, is_action
             )
             languages[language.name] = language
             errors.extend(errs)
@@ -145,10 +146,8 @@ def language_from_yaml(
     name: str,
     yaml: Any,
     sdks: Dict[str, Sdk],
-    services: Dict[str, Service],
     blocks: Set[str],
     is_action: bool,
-    root: Path,
 ) -> Tuple[Language, MetadataErrors]:
     errors = MetadataErrors()
     if name not in sdks:
@@ -164,9 +163,7 @@ def language_from_yaml(
 
     versions: List[Version] = []
     for version in yaml_versions:
-        vers, version_errors = version_from_yaml(
-            version, services, blocks, is_action, root
-        )
+        vers, version_errors = version_from_yaml(version, blocks, is_action)
         errors.extend(version_errors)
         versions.append(vers)
 
@@ -177,26 +174,21 @@ def language_from_yaml(
     return Language(name, property, versions), errors
 
 
-def parse_services(
-    yaml: Any, errors: MetadataErrors, known_services: Dict[str, Service]
-) -> Dict[str, Set[str]]:
+def parse_services(yaml: Any, errors: MetadataErrors) -> Dict[str, Set[str]]:
     if yaml is None:
         return {}
     services: Dict[str, Set[str]] = {}
     for name in yaml:
-        if name not in known_services:
-            errors.append(metadata_errors.UnknownService(service=name))
-        else:
-            service: Union[Dict[str, None], Set[str], None] = yaml.get(name)
-            # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
-            if service is None:
-                service = set()
-            if isinstance(service, dict):
-                service = set(service.keys())
-            if isinstance(service, set):
-                # Make a copy of the set for ourselves
-                service = set(service)
-            services[name] = set(service)
+        service: Union[Dict[str, None], Set[str], None] = yaml.get(name)
+        # While .get replaces missing with {}, `sqs: ` in yaml parses a literal `None`
+        if service is None:
+            service = set()
+        if isinstance(service, dict):
+            service = set(service.keys())
+        if isinstance(service, set):
+            # Make a copy of the set for ourselves
+            service = set(service)
+        services[name] = set(service)
     return services
 
 
@@ -214,12 +206,41 @@ def url_from_yaml(
     return Url(title, url)
 
 
+def person_from_yaml(
+    yaml: Union[None, Dict[str, Optional[str]]]
+) -> Optional[Union[Person, MetadataParseError]]:
+    if yaml is None:
+        return None
+    name = yaml.get("name")
+    alias = yaml.get("alias")
+
+    if name is None or alias is None:
+        return metadata_errors.PersonMissingField(name=str(name), alias=str(alias))
+
+    return Person(name, alias)
+
+
+def feedback_cti_from_yaml(
+    yaml: Union[None, Dict[str, Optional[str]]]
+) -> Optional[Union[FeedbackCti, MetadataParseError]]:
+    if yaml is None:
+        return None
+    category = yaml.get("category")
+    type = yaml.get("type")
+    item = yaml.get("item")
+
+    if category is None or type is None or item is None:
+        return metadata_errors.InvalidFeedbackCti(
+            feedback_cti="|".join([str(category), str(type), str(item)])
+        )
+
+    return FeedbackCti(category, type, item)
+
+
 def version_from_yaml(
     yaml: Dict[str, Any],
-    services: Dict[str, Service],
     cross_content_blocks: Set[str],
     is_action: bool,
-    root: Path,
 ) -> Tuple["Version", MetadataErrors]:
     errors = MetadataErrors()
 
@@ -255,9 +276,32 @@ def version_from_yaml(
         elif url is not None:
             errors.append(url)
 
-    add_services = parse_services(yaml.get("add_services", {}), errors, services)
-    if add_services and is_action:
-        errors.append(metadata_errors.APIExampleCannotAddService())
+    authors: List[Person] = []
+    for author in yaml.get("authors", []):
+        author = person_from_yaml(author)
+        if isinstance(author, Person):
+            authors.append(author)
+        elif author is not None:
+            errors.append(author)
+
+    owner = feedback_cti_from_yaml(yaml.get("owner"))
+    if owner is not None and not isinstance(owner, FeedbackCti):
+        errors.append(owner)
+        owner = None
+
+    add_services = parse_services(yaml.get("add_services", {}), errors)
+    if add_services:
+        errors.append(
+            metadata_errors.AddServicesHasBeenDeprecated(add_services=add_services)
+        )
+
+    source = None
+    if source_url := yaml.get("source", None):
+        source_url = url_from_yaml(source_url)
+        if isinstance(source_url, Url):
+            source = source_url
+        elif source_url is not None:
+            errors.append(source_url)
 
     if block_content is not None and block_content not in cross_content_blocks:
         errors.append(metadata_errors.MissingCrossContent(block=block_content))
@@ -272,9 +316,11 @@ def version_from_yaml(
             block_content,
             excerpts,
             github,
-            add_services,
             sdkguide,
             more_info,
+            authors,
+            owner,
+            source,
         ),
         errors,
     )

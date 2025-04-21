@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Iterator, Iterable, List, TypeVar, Generic
+from typing import Optional, Iterator, Iterable, List, TypeVar, Generic, Dict, Set
 
 
 ErrorT = TypeVar("ErrorT")
@@ -242,6 +242,16 @@ class InvalidSdkVersion(SdkVersionError):
 
 
 @dataclass
+class InvalidFeedbackCti(SdkVersionError):
+    feedback_cti: str = ""
+
+    def message(self):
+        return (
+            f"has feedback CTI that is missing at least one field: {self.feedback_cti}"
+        )
+
+
+@dataclass
 class InvalidGithubLink(SdkVersionError):
     link: str = ""
 
@@ -267,11 +277,11 @@ class InvalidSdkGuideStart(SdkVersionError):
 
 
 @dataclass
-class APIExampleCannotAddService(SdkVersionError):
+class AddServicesHasBeenDeprecated(SdkVersionError):
+    add_services: Dict[str, Set[str]] = field(default_factory=dict)
+
     def message(self):
-        return (
-            "is an API example but lists additional services in the add_service field."
-        )
+        return "lists additional services in add_services, which has been deprecated."
 
 
 @dataclass
@@ -371,6 +381,21 @@ class URLMissingTitle(SdkVersionError):
 
 
 @dataclass
+class PersonMissingField(SdkVersionError):
+    name: str = ""
+    alias: str = ""
+
+    def message(self):
+        return f"person is missing a field: name: {self.name}, alias: {self.alias}"
+
+
+@dataclass
+class MissingCategoryBody(MetadataParseError):
+    def message(self):
+        return "category definition missing body"
+
+
+@dataclass
 class ExampleMergeMismatchedId(MetadataError):
     other_id: str = ""
     other_file: Optional[Path] = None
@@ -395,10 +420,12 @@ class ExampleMergeConflict(LanguageError):
         return f"conflict from {self.other_file}: example already exists for this language and SDK version"
 
 
-def check_mapping(mapping: str | None, field: str) -> str | MetadataParseError:
+def check_mapping(
+    mapping: str | None, field: str, strict: bool = True
+) -> str | MetadataParseError:
     if not mapping:
         return MissingField(field=field)
-    if not re.match("&[-_a-zA-Z0-9]+;", mapping):
+    if strict and not re.match("&[-_a-zA-Z0-9]+;", mapping):
         return MappingMustBeEntity(field=field, value=mapping)
 
     return mapping

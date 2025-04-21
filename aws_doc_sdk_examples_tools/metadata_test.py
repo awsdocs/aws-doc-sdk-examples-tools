@@ -33,7 +33,13 @@ def load(
     with path.open() as file:
         meta = yaml.safe_load(file)
     return parse_examples(
-        path, meta, doc_gen.sdks, doc_gen.services, blocks, doc_gen.validation
+        path,
+        meta,
+        doc_gen.sdks,
+        doc_gen.services,
+        doc_gen.standard_categories,
+        blocks,
+        doc_gen.validation,
     )
 
 
@@ -83,17 +89,47 @@ SERVICES = {
     ),
 }
 SDKS = {
-    "C++": Sdk(name="C++", versions=[], guide="", property="cpp"),
-    "Java": Sdk(name="Java", versions=[], guide="", property="java"),
-    "JavaScript": Sdk(name="JavaScript", versions=[], guide="", property="javascript"),
-    "PHP": Sdk(name="PHP", versions=[], guide="", property="php"),
+    "C++": Sdk(
+        name="C++",
+        display="C++",
+        versions=[],
+        guide="",
+        property="cpp",
+        is_pseudo_sdk=False,
+    ),
+    "Java": Sdk(
+        name="Java",
+        display="Java",
+        versions=[],
+        guide="",
+        property="java",
+        is_pseudo_sdk=False,
+    ),
+    "JavaScript": Sdk(
+        name="JavaScript",
+        display="JavaScript",
+        versions=[],
+        guide="",
+        property="javascript",
+        is_pseudo_sdk=False,
+    ),
+    "PHP": Sdk(
+        name="PHP",
+        display="PHP",
+        versions=[],
+        guide="",
+        property="php",
+        is_pseudo_sdk=False,
+    ),
 }
+STANDARD_CATS = ["Api"]
 DOC_GEN = DocGen(
     root=Path(),
     errors=metadata_errors.MetadataErrors(),
     validation=ValidationConfig(),
     services=SERVICES,
     sdks=SDKS,
+    standard_categories=STANDARD_CATS,
 )
 
 GOOD_SINGLE_CPP = """
@@ -118,7 +154,13 @@ medical-imaging_CreateDatastore:
 def test_parse():
     meta = yaml.safe_load(GOOD_SINGLE_CPP)
     parsed, errors = parse_examples(
-        Path("test_cpp.yaml"), meta, SDKS, SERVICES, set(), DOC_GEN.validation
+        Path("test_cpp.yaml"),
+        meta,
+        SDKS,
+        SERVICES,
+        STANDARD_CATS,
+        set(),
+        DOC_GEN.validation,
     )
     assert len(errors) == 0
     assert len(parsed) == 1
@@ -140,7 +182,7 @@ def test_parse():
     example = Example(
         file=Path("test_cpp.yaml"),
         id="medical-imaging_CreateDatastore",
-        category="Cross",
+        category="Scenarios",
         services={
             "medical-imaging": set(["Operation1", "Operation2"]),
             "api-gateway": set(["Operation1", "Operation2"]),
@@ -220,6 +262,7 @@ def test_parse_strict_titles():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(),
         ValidationConfig(strict_titles=True),
     )
@@ -259,7 +302,7 @@ def test_parse_strict_titles():
                         actions_scenarios={
                             "medical-imaging": make_doc_link(
                                 stub="cpp_1_medical-imaging_code_examples",
-                                anchor="scenarios",
+                                anchor="actions",
                             ),
                         }
                     )
@@ -354,6 +397,7 @@ def test_parse_strict_title_errors():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(),
         ValidationConfig(strict_titles=True),
     )
@@ -401,6 +445,7 @@ def test_parse_cross():
         meta,
         SDKS,
         SERVICES,
+        STANDARD_CATS,
         set(["cross_DeleteTopic_block.xml"]),
         DOC_GEN.validation,
     )
@@ -467,7 +512,6 @@ def test_verify_load_successful():
                 github="test_path",
                 block_content="test block",
                 excerpts=[],
-                add_services={},
                 sdkguide=None,
                 more_info=[],
             ),
@@ -481,7 +525,6 @@ def test_verify_load_successful():
             Version(
                 sdk_version=3,
                 block_content=None,
-                add_services={"s3": set()},
                 excerpts=[
                     Excerpt(
                         description="Descriptive",
@@ -516,7 +559,6 @@ def test_verify_load_successful():
                         snippet_files=["snippet_file.txt"],
                     )
                 ],
-                add_services={},
                 more_info=[],
             )
         ],
@@ -600,12 +642,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=EMPTY_METADATA_PATH,
                     id="medical-imaging_EmptyExample",
                 ),
-                metadata_errors.ServiceNameFormat(
-                    file=EMPTY_METADATA_PATH,
-                    id="medical-imaging_EmptyExample",
-                    svc="medical-imaging",
-                    svcs=[],
-                ),
             ],
             [],
         ),
@@ -635,11 +671,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     language="Perl",
                     sdk_version=1,
                 ),
-                metadata_errors.APIExampleCannotAddService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=ERRORS_METADATA_PATH,
                     id="sqs_WrongServiceSlug",
                     language="Perl",
                     sdk_version=1,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.ServiceNameFormat(
                     file=ERRORS_METADATA_PATH,
@@ -666,11 +703,6 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                 #     sdk_version=2,
                 #     tag="this.snippet.does.not.exist",
                 # ),
-                metadata_errors.UnknownService(
-                    file=ERRORS_METADATA_PATH,
-                    id="medical-imaging_TestExample2",
-                    service="garbled",
-                ),
                 metadata_errors.FieldError(
                     file=ERRORS_METADATA_PATH,
                     id="medical-imaging_TestExample2",
@@ -684,6 +716,13 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     id="cross_TestExample_Versions",
                     language="Java",
                     sdk_version=2,
+                ),
+                metadata_errors.AddServicesHasBeenDeprecated(
+                    file=ERRORS_METADATA_PATH,
+                    id="cross_TestExample_Versions",
+                    language="Java",
+                    sdk_version=2,
+                    add_services={"sqs": set()},
                 ),
                 metadata_errors.MissingCrossContent(
                     file=ERRORS_METADATA_PATH,
@@ -702,6 +741,21 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=ERRORS_METADATA_PATH,
                     id="medical-imagingBadFormat",
                 ),
+                metadata_errors.PersonMissingField(
+                    file=ERRORS_METADATA_PATH,
+                    id="sqs_InvalidOwner",
+                    language="Java",
+                    sdk_version=2,
+                    name="None",
+                    alias="author@example.com",
+                ),
+                metadata_errors.InvalidFeedbackCti(
+                    file=ERRORS_METADATA_PATH,
+                    id="sqs_InvalidOwner",
+                    language="Java",
+                    sdk_version=2,
+                    feedback_cti="AWS|Documentation|None",
+                ),
             ],
             [
                 metadata_errors.MissingGithubLink(
@@ -711,6 +765,11 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     sdk_version=1,
                     link="perl/example_code/medical-imaging",
                     root=TEST_RESOURCES_PATH,
+                ),
+                metadata_errors.UnknownService(
+                    file=ERRORS_METADATA_PATH,
+                    id="medical-imaging_TestExample2",
+                    service="garbled",
                 ),
                 metadata_errors.InvalidGithubLink(
                     file=ERRORS_METADATA_PATH,
@@ -728,12 +787,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     file=FORMATTER_METADATA_PATH,
                     id="WrongNameFormat",
                 ),
-                metadata_errors.UnknownService(
+                metadata_errors.AddServicesHasBeenDeprecated(
                     file=FORMATTER_METADATA_PATH,
                     id="cross_TestExample",
                     language="Java",
                     sdk_version=2,
-                    service="garbage",
+                    add_services={"garbage": set()},
                 ),
             ],
             [],
@@ -750,7 +809,7 @@ def test_common_errors(
     assert expected_errors == [*actual]
     validations = MetadataErrors()
     for example in examples:
-        example.validate(validations, root.parent)
+        example.validate(validations, DOC_GEN.services, root.parent)
     assert validation_errors == [*validations]
 
 
@@ -964,6 +1023,10 @@ def test_no_duplicate_title_abbrev():
                 },
                 services={"svc": set(), "cvs": set()},
             ),
+        },
+        services={
+            "svc": Service(long="Service", short="svc", version="1", sort="svc"),
+            "cvs": Service(long="CVS", short="cvs", version="2", sort="cvs"),
         },
     )
     doc_gen.validate()

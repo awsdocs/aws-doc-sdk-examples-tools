@@ -7,7 +7,6 @@ from pathlib import Path
 import logging
 
 from .doc_gen import DocGen, DocGenEncoder
-from .entities import EntityErrors
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,6 +26,12 @@ def main():
         default="doc_gen.json",
         type=str,
         help="Output a JSON version of the computed DocGen with some properties stripped out. Includes any errors.",
+    )
+    parser.add_argument(
+        "--write-snippets",
+        default="doc_gen_snippets.json",
+        type=str,
+        help="Output a JSON version of the computed DocGen with only snippets and snippet files. Separates snippet content from metadata content.",
     )
 
     parser.add_argument(
@@ -48,48 +53,35 @@ def main():
         unmerged_doc_gen = DocGen.from_root(Path(root))
         merged_doc_gen.merge(unmerged_doc_gen)
 
-    if args.strict and merged_doc_gen.errors:
-        logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
-        exit(1)
+    merged_doc_gen.validate()
+    merged_doc_gen.fill_missing_fields()
 
     if not args.skip_entity_expansion:
         # Replace entities
-        for example in merged_doc_gen.examples.values():
-            errors = EntityErrors()
-            title, title_errors = merged_doc_gen.expand_entities(example.title)
-            errors.extend(title_errors)
+        merged_doc_gen.expand_entity_fields(merged_doc_gen)
 
-            title_abbrev, title_abbrev_errors = merged_doc_gen.expand_entities(
-                example.title_abbrev
-            )
-            errors.extend(title_abbrev_errors)
-
-            synopsis, synopsis_errors = merged_doc_gen.expand_entities(example.synopsis)
-            errors.extend(synopsis_errors)
-
-            synopsis_list = []
-            for synopsis in example.synopsis_list:
-                expanded_synopsis, synopsis_errors = merged_doc_gen.expand_entities(
-                    synopsis
-                )
-                synopsis_list.append(expanded_synopsis)
-                errors.extend(synopsis_errors)
-
-            if args.strict and errors:
-                logging.error(
-                    f"Errors expanding entities for example: {example}. {errors}"
-                )
-                exit(1)
-
-            example.title = title
-            example.title_abbrev = title_abbrev
-            example.synopsis = synopsis
-            example.synopsis_list = synopsis_list
+    if args.strict and merged_doc_gen.errors:
+        logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
+        exit(1)
 
     serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
 
     with open(args.write_json, "w") as out:
         out.write(serialized)
+
+    if args.write_snippets:
+        for root in args.from_root:
+            merged_doc_gen.collect_snippets(Path(root))
+
+        serialized_snippets = json.dumps(
+            {
+                "snippets": merged_doc_gen.snippets,
+                "snippet_files": merged_doc_gen.snippet_files,
+            },
+            cls=DocGenEncoder,
+        )
+        with open(args.write_snippets, "w") as out:
+            out.write(serialized_snippets)
 
 
 if __name__ == "__main__":

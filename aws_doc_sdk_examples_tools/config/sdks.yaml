@@ -327,7 +327,7 @@ Swift:
       api_ref:
         uid: "SdkForSwift"
         name: "&guide-swift-api;"
-        link_template: "https://awslabs.github.io/aws-sdk-swift/reference/0.x"
+        link_template: "https://sdk.amazonaws.com/swift/api/aws{{.ServiceCollapsed}}/latest/documentation/aws{{.ServiceCollapsed}}/{{.ServiceCollapsed}}client/{{.ActionLower}}(input:)"
   guide: "&guide-swift-dev;"
 CLI:
   property: cli
