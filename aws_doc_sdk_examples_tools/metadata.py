@@ -34,16 +34,6 @@ class Person:
 
 
 @dataclass
-class FeedbackCti:
-    category: str
-    type: str
-    item: str
-
-    def __str__(self):
-        return f"{self.category} | {self.type} | {self.item}"
-
-
-@dataclass
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.

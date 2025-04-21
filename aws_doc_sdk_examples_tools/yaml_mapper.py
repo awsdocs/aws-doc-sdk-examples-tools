@@ -9,7 +9,6 @@ from .metadata import (
     Version,
     Excerpt,
     Person,
-    FeedbackCti,
 )
 from .sdks import Sdk
 from .services import Service
@@ -219,23 +218,6 @@ def person_from_yaml(
     return Person(name, alias)
 
 
-def feedback_cti_from_yaml(
-    yaml: Union[None, Dict[str, Optional[str]]]
-) -> Optional[Union[FeedbackCti, MetadataParseError]]:
-    if yaml is None:
-        return None
-    category = yaml.get("category")
-    type = yaml.get("type")
-    item = yaml.get("item")
-
-    if category is None or type is None or item is None:
-        return metadata_errors.InvalidFeedbackCti(
-            feedback_cti="|".join([str(category), str(type), str(item)])
-        )
-
-    return FeedbackCti(category, type, item)
-
-
 def version_from_yaml(
     yaml: Dict[str, Any],
     cross_content_blocks: Set[str],
@@ -283,18 +265,10 @@ def version_from_yaml(
         elif author is not None:
             errors.append(author)
 
-    # `owner` and `folder` are equivalent keys
-    owner_yaml = yaml.get("owner", yaml.get("folder"))
-    # use as-is for strings, otherwise try to parse them as CTI
-    if isinstance(owner_yaml, str):
-        owner = owner_yaml
-    else:
-        owner_cti = feedback_cti_from_yaml(owner_yaml)
-        if owner_cti is not None and not isinstance(owner_cti, FeedbackCti):
-            errors.append(owner_cti)
-            owner = None
-        else:
-            owner = str(owner_cti)
+    owner = yaml.get("owner")
+    if owner and not isinstance(owner, str):
+        errors.append(metadata_errors.InvalidFieldType(reason="must be string"))
+        owner = None
 
     add_services = parse_services(yaml.get("add_services", {}), errors)
     if add_services:
