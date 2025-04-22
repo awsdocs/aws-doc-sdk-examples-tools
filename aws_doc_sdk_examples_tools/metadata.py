@@ -34,13 +34,6 @@ class Person:
 
 
 @dataclass
-class FeedbackCti:
-    category: str
-    type: str
-    item: str
-
-
-@dataclass
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.
@@ -75,7 +68,7 @@ class Version:
     # List of people who have contributed to this example.
     authors: List[Person] = field(default_factory=list)
     # Feedback and maintenance owner. Primarily for internal use.
-    owner: Optional[FeedbackCti] = field(default=None)
+    owner: Optional[str] = field(default=None)
     # Link to the original tributary that contributed this version.
     source: Optional[Url] = field(default=None)
 

@@ -176,6 +176,14 @@ class MissingField(FieldError):
 
 
 @dataclass
+class InvalidFieldType(FieldError):
+    reason: str = "unknown"
+
+    def message(self):
+        return f"invalid field type {self.field} ({self.reason})"
+
+
+@dataclass
 class AwsNotEntity(FieldError):
     check_err: str = ""
 
@@ -239,16 +247,6 @@ class SdkVersionError(LanguageError):
 class InvalidSdkVersion(SdkVersionError):
     def message(self):
         return "lists version which is not listed in sdks.yaml."
-
-
-@dataclass
-class InvalidFeedbackCti(SdkVersionError):
-    feedback_cti: str = ""
-
-    def message(self):
-        return (
-            f"has feedback CTI that is missing at least one field: {self.feedback_cti}"
-        )
 
 
 @dataclass

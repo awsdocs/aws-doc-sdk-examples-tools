@@ -749,12 +749,12 @@ FORMATTER_METADATA_PATH = TEST_RESOURCES_PATH / "formaterror_metadata.yaml"
                     name="None",
                     alias="author@example.com",
                 ),
-                metadata_errors.InvalidFeedbackCti(
+                metadata_errors.InvalidFieldType(
                     file=ERRORS_METADATA_PATH,
                     id="sqs_InvalidOwner",
                     language="Java",
                     sdk_version=2,
-                    feedback_cti="AWS|Documentation|None",
+                    reason="must be string",
                 ),
             ],
             [
