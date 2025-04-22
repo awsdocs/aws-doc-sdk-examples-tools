@@ -12,7 +12,7 @@ example:
   guide_topic: include('guide_topic', required=False)
   languages: map(include('language'))
   service_main: service_name(required=False)
-  services: map(map(key=str(), required=False), key=service_name())
+  services: map(map(key=str(), required=False), key=str())
 
 guide_topic:
   title: str(upper_start=True, no_end_punc=True)
