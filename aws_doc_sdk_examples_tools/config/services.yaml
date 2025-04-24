@@ -1745,6 +1745,21 @@ iotdeviceadvisor:
   tags:
     product_categories: {}
   version: iotdeviceadvisor-2020-09-18
+iotfleetwise:
+  api_ref: iot-fleetwise/latest/APIReference/Welcome.html
+  blurb: ''
+  expanded:
+    long: AWS IoT FleetWise
+    short: AWS IoT FleetWise
+  guide:
+    subtitle: Developer Guide
+    url: iot-fleetwise/latest/userguide/what-is-fleetwise.html
+  long: '&FWlong;'
+  short: '&FW;'
+  sort: IoT FleetWise
+  tags:
+    product_categories: {}
+  version: iotfleetwise-2019-12-02
 iotsitewise:
   api_ref: iot-sitewise/latest/APIReference/Welcome.html
   blurb: ''
