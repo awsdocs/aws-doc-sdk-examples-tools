@@ -1745,6 +1745,21 @@ iotdeviceadvisor:
   tags:
     product_categories: {}
   version: iotdeviceadvisor-2020-09-18
+iotfleetwise:
+  api_ref: iot-fleetwise/latest/APIReference/Welcome.html
+  blurb: 'provides a secure and scalable platform for collecting, storing, and analyzing data from connected vehicles and fleets.'
+  expanded:
+    long: AWS IoT FleetWise
+    short: AWS IoT FleetWise
+  guide:
+    subtitle: Developer Guide
+    url: iot-fleetwise/latest/developerguide/what-is-fleetwise.html
+  long: '&FWlong;'
+  short: '&FW;'
+  sort: IoT FleetWise
+  tags:
+    product_categories: {'Internet of Things (IoT)'}
+  version: iotfleetwise-2021-06-17
 iotsitewise:
   api_ref: iot-sitewise/latest/APIReference/Welcome.html
   blurb: ''
