@@ -1747,7 +1747,7 @@ iotdeviceadvisor:
   version: iotdeviceadvisor-2020-09-18
 iotfleetwise:
   api_ref: iot-fleetwise/latest/APIReference/Welcome.html
-  blurb: 'AWS IoT Fleetwise provides a secure and scalable platform for collecting, storing, and analyzing data from connected vehicles and fleets.'
+  blurb: 'provides a secure and scalable platform for collecting, storing, and analyzing data from connected vehicles and fleets.'
   expanded:
     long: AWS IoT FleetWise
     short: AWS IoT FleetWise
