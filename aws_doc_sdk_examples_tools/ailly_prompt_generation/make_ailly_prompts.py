@@ -54,7 +54,9 @@ def parse_prompts_arg(values: List[str]) -> List[str]:
     return prompts
 
 
-def main(doc_gen_root: Path, system_prompts: List[str], out: str = ".ailly_prompts") -> None:
+def main(
+    doc_gen_root: Path, system_prompts: List[str], out: str = ".ailly_prompts"
+) -> None:
     """Generate prompts and configuration files for Ailly."""
     out_path = Path(out)
     setup_ailly(system_prompts, out_path)
@@ -68,17 +70,18 @@ if __name__ == "__main__":
         description="Write Ailly prompts for DocGen snippets and parse the results."
     )
     parser.add_argument(
-        "--doc-gen-root", required=True,
-        help="Path to a DocGen ready project."
+        "--doc-gen-root", required=True, help="Path to a DocGen ready project."
     )
     parser.add_argument(
-        "--system-prompts", nargs="+", required=True,
-        help="List of prompt strings or file paths to store in a .aillyrc file."
+        "--system-prompts",
+        nargs="+",
+        required=True,
+        help="List of prompt strings or file paths to store in a .aillyrc file.",
     )
     parser.add_argument(
         "--out",
         default=".ailly_prompts",
-        help="Directory where Ailly prompt files will be written. Defaults to '.ailly_prompts'."
+        help="Directory where Ailly prompt files will be written. Defaults to '.ailly_prompts'.",
     )
 
     args = parser.parse_args()
