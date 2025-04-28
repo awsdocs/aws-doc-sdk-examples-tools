@@ -1,4 +1,4 @@
-# Example output of the snippet_summarize script for IAM policies
+# Example generated IAM policy descriptions 
 ```
 [
   {
