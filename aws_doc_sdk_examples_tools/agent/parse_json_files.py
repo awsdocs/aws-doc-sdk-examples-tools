@@ -41,7 +41,7 @@ def process_files(file_paths: List[str]) -> Dict[str, Dict]:
                 content = f.read()
             json_data = extract_json_from_text(content)
             if json_data is not None:
-                results[basename(path)] = json_data
+                results[basename(path).replace(".md.ailly.md", "")] = json_data
             else:
                 logger.warning(f"No valid JSON object found in file: {f.name}")
         except Exception as e:
