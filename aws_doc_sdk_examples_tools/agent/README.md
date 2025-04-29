@@ -47,7 +47,7 @@ Run Ailly on the generated prompts. From inside the .ailly_prompts directory:
 npx @ailly/cli --root .ailly_prompts
 ```
 
-This will create `.ailly.md` output files in the `.ailly_prompts` directory (or whatever output directory you specified).
+This will create `{file}.ailly.md` output files in the `.ailly_prompts` directory (or whatever output directory you specified).
 
 ---
 
