@@ -4,7 +4,7 @@ This project provides two scripts to **generate**, **run**, and **parse** [Ailly
 
 ## Overview
 
-1. **Generate** Ailly prompts from DocGen snippets (`make_ailly_prompts.py`).
+1. **Generate** Ailly prompts from DocGen snippets (`make_prompts.py`).
 2. **Run** the Ailly CLI on the generated prompts (`npx @ailly/cli`).
 3. **Parse** the Ailly outputs back into structured JSON (`parse_json_files.py`).
 
@@ -19,10 +19,10 @@ This project provides two scripts to **generate**, **run**, and **parse** [Ailly
 
 ## Step 1: Generate Ailly prompts
 
-Use `make_ailly_prompts.py` to create a directory of Markdown files and a `.aillyrc` configuration file.
+Use `make_prompts.py` to create a directory of Markdown files and a `.aillyrc` configuration file.
 
 ```bash
-python make_ailly_prompts.py \
+python make_prompts.py \
   --doc-gen-root /path/to/your/docgen/project \
   --system-prompts "You are a helpful assistant..." \
   --out .ailly_prompts
@@ -69,7 +69,7 @@ python parse_json_files.py .ailly_prompts/*.ailly.md --out output.json
 
 ```bash
 # Step 1: Generate prompts
-python make_ailly_prompts.py \
+python make_prompts.py \
   --doc-gen-root ~/projects/aws-docgen-root \
   --system-prompts system_prompt.txt \
   --out .ailly_prompts

@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+from os.path import basename
 from pathlib import Path
 from typing import List, Dict, Optional
 
@@ -32,15 +33,15 @@ def extract_json_from_text(text: str) -> Optional[Dict]:
     return None
 
 
-def process_files(file_paths: List[str]) -> List[Dict]:
-    results = []
+def process_files(file_paths: List[str]) -> Dict[str, Dict]:
+    results = {}
     for path in file_paths:
         try:
             with open(path, "r", encoding="utf-8") as f:
                 content = f.read()
             json_data = extract_json_from_text(content)
             if json_data is not None:
-                results.append(json_data)
+                results[basename(path)] = json_data
             else:
                 logger.warning(f"No valid JSON object found in file: {f.name}")
         except Exception as e:
