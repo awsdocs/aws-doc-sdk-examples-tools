@@ -50,7 +50,7 @@ This will create `{file}.ailly.md` output files in the `.ailly_prompts` director
 
 ## Step 3: Parse Ailly output
 
-Parse the `.ailly.md` files into JSON using `parse_json_files.py`:
+Parse the `{name}.ailly.md` files into JSON using `parse_json_files.py`:
 
 ```bash
 python parse_json_files.py .ailly_prompts/*.ailly.md --out example_updates.json
