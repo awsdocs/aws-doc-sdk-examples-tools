@@ -28,7 +28,13 @@ def write_prompts(doc_gen: DocGen, out: Path) -> None:
         # Postfix with `.md` so Ailly will pick it up.
         prompt_path = out / f"{example_id}.md"
         # This assumes we're running DocGen specifically on AWSIAMPolicyExampleReservoir.
-        snippet_key = example.languages["IAMPolicyGrammar"].versions[0].excerpts[0].snippet_files[0].replace("/", ".")
+        snippet_key = (
+            example.languages["IAMPolicyGrammar"]
+            .versions[0]
+            .excerpts[0]
+            .snippet_files[0]
+            .replace("/", ".")
+        )
         snippet = snippets[snippet_key]
         prompt_path.write_text(snippet.code, encoding="utf-8")
 
@@ -59,13 +65,18 @@ def parse_prompts_arg(values: List[str]) -> List[str]:
     return prompts
 
 
+def validate_root_path(doc_gen_root: Path):
+    assert "AWSIAMPolicyExampleReservoir" in str(doc_gen_root)
+    assert doc_gen_root.is_dir()
+
+
 def main(
     doc_gen_root: Path, system_prompts: List[str], out: str = ".ailly_prompts"
 ) -> None:
     """Generate prompts and configuration files for Ailly."""
     out_path = Path(out)
     setup_ailly(system_prompts, out_path)
-
+    validate_root_path(doc_gen_root)
     doc_gen = make_doc_gen(doc_gen_root)
     write_prompts(doc_gen, out_path)
 
