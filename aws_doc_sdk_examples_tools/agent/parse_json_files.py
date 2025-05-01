@@ -1,4 +1,3 @@
-import argparse
 import json
 import logging
 from os.path import basename
@@ -33,17 +32,16 @@ def extract_json_from_text(text: str) -> Optional[Dict]:
     return None
 
 
-def process_files(file_paths: List[str]) -> Dict[str, Dict]:
+def process_files(file_paths: List[Path]) -> Dict[str, Dict]:
     results = {}
     for path in file_paths:
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                content = f.read()
+            content = path.read_text()
             json_data = extract_json_from_text(content)
             if json_data is not None:
                 results[basename(path).replace(".md.ailly.md", "")] = json_data
             else:
-                logger.warning(f"No valid JSON object found in file: {f.name}")
+                logger.warning(f"No valid JSON object found in file: {path.name}")
         except Exception as e:
             logger.warning(f"Error processing file {path}: {e}")
     return results
@@ -53,25 +51,6 @@ def write_objects(object: Dict, out: Path):
     out.write_text(json.dumps(object, indent=2))
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Extract JSON objects from one or more text files."
-    )
-
-    parser.add_argument("files", nargs="+", help="List of files to process")
-
-    parser.add_argument(
-        "--out",
-        default="out.json",
-        help="File path where the resultant json will be written.",
-    )
-
-    args = parser.parse_args()
-
-    json_objects = process_files(args.files)
-    out = Path(args.out)
+def main(file_paths: List[Path], out: Path):
+    json_objects = process_files(file_paths)
     write_objects(json_objects, out)
-
-
-if __name__ == "__main__":
-    main()
