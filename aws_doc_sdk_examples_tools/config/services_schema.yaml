@@ -6,6 +6,7 @@ service:
   long: str()
   short: str()
   sort: regex('^[^&]\\w', name='non-entity')
+  sdk_id: str()
   chapter_override: include('chapter_override', required=False)
   expanded:
     long: str(upper_start=True, end_punc=False, check_aws=False)
