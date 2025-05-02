@@ -36,17 +36,8 @@ def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> None:
             logger.warning(f"Could not find example with id: {example.id}")
 
 
-def main(doc_gen_root: Path, iam_updates_path: Path) -> None:
+def main(doc_gen_root: Path, iam_updates_path: Path) -> DocGen:
     doc_gen = DocGen.from_root(doc_gen_root)
     examples = examples_from_updates(iam_updates_path)
     update_examples(doc_gen, examples)
-    print(
-        [
-            {
-                "title": ex.title,
-                "title_abbrev": ex.title_abbrev,
-                "synopsis": ex.synopsis,
-            }
-            for _, ex in doc_gen.examples.items()
-        ]
-    )
+    return doc_gen
