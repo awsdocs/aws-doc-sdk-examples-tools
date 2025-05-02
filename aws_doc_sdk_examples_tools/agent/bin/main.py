@@ -15,7 +15,7 @@ AILLY_DIR_PATH = Path(AILLY_DIR)
 IAM_UPDATES_PATH = AILLY_DIR_PATH / "iam_updates.json"
 
 
-def get_ailly_files(dir: Path):
+def get_ailly_files(dir: Path) -> List[Path]:
     return [
         file
         for file in dir.iterdir()
@@ -24,7 +24,7 @@ def get_ailly_files(dir: Path):
 
 
 @app.command()
-def update(iam_tributary_root: str, system_prompts: List[str] = []):
+def update(iam_tributary_root: str, system_prompts: List[str] = []) -> None:
     doc_gen_root = Path(iam_tributary_root)
     make_prompts(
         doc_gen_root=doc_gen_root, system_prompts=system_prompts, out=AILLY_DIR_PATH
