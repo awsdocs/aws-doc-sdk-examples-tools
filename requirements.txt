@@ -8,3 +8,4 @@ PyYAML==6.0.1
 requests==2.32.0
 types-PyYAML==6.0.12.12
 yamale==4.0.4
+typer==0.15.3

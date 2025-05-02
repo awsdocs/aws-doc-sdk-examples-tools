@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-import argparse
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Snippet
 
@@ -53,7 +52,7 @@ def setup_ailly(system_prompts: List[str], out: Path) -> None:
     aillyrc_path.write_text(content, encoding="utf-8")
 
 
-def parse_prompts_arg(values: List[str]) -> List[str]:
+def read_system_prompts(values: List[str]) -> List[str]:
     """Parse system prompts from a list of strings or file paths."""
     prompts = []
     for value in values:
@@ -70,38 +69,10 @@ def validate_root_path(doc_gen_root: Path):
     assert doc_gen_root.is_dir()
 
 
-def main(
-    doc_gen_root: Path, system_prompts: List[str], out: str = ".ailly_prompts"
-) -> None:
+def main(doc_gen_root: Path, system_prompts: List[str], out: Path) -> None:
     """Generate prompts and configuration files for Ailly."""
-    out_path = Path(out)
-    setup_ailly(system_prompts, out_path)
+    system_prompts = read_system_prompts(system_prompts)
+    setup_ailly(system_prompts, out)
     validate_root_path(doc_gen_root)
     doc_gen = make_doc_gen(doc_gen_root)
-    write_prompts(doc_gen, out_path)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Write Ailly prompts for DocGen snippets and parse the results."
-    )
-    parser.add_argument(
-        "--doc-gen-root", required=True, help="Path to a DocGen ready project."
-    )
-    parser.add_argument(
-        "--system-prompts",
-        nargs="+",
-        required=True,
-        help="List of prompt strings or file paths to store in a .aillyrc file.",
-    )
-    parser.add_argument(
-        "--out",
-        default=".ailly_prompts",
-        help="Directory where Ailly prompt files will be written. Defaults to '.ailly_prompts'.",
-    )
-
-    args = parser.parse_args()
-
-    doc_gen_root = Path(args.doc_gen_root)
-    system_prompts = parse_prompts_arg(args.system_prompts)
-    main(doc_gen_root, system_prompts, out=args.out)
+    write_prompts(doc_gen, out)

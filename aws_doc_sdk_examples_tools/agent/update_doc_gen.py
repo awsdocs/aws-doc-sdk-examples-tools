@@ -1,4 +1,3 @@
-import argparse
 import json
 import logging
 from pathlib import Path
@@ -37,9 +36,9 @@ def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> None:
             logger.warning(f"Could not find example with id: {example.id}")
 
 
-def main(doc_gen_root: Path, updates_path: Path) -> None:
+def main(doc_gen_root: Path, iam_updates_path: Path) -> None:
     doc_gen = DocGen.from_root(doc_gen_root)
-    examples = examples_from_updates(updates_path)
+    examples = examples_from_updates(iam_updates_path)
     update_examples(doc_gen, examples)
     print(
         [
@@ -48,26 +47,6 @@ def main(doc_gen_root: Path, updates_path: Path) -> None:
                 "title_abbrev": ex.title_abbrev,
                 "synopsis": ex.synopsis,
             }
-            for id, ex in doc_gen.examples.items()
+            for _, ex in doc_gen.examples.items()
         ]
     )
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Apply a list of example updates to a doc gen instance"
-    )
-    parser.add_argument(
-        "--doc-gen-root", required=True, help="Path to a DocGen ready project."
-    )
-    parser.add_argument(
-        "--updates-path",
-        default="example_updates.json",
-        help="JSON file containing a list of example updates.",
-    )
-
-    args = parser.parse_args()
-
-    doc_gen_root = Path(args.doc_gen_root)
-    updates_path = Path(args.updates_path)
-    main(doc_gen_root, updates_path)
