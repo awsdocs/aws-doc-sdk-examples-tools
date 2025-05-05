@@ -264,8 +264,15 @@ class DocGen:
         )
 
     def fill_missing_fields(self):
+        def safe_split_id(ex_id: str) -> Tuple[str, str]:
+            if "_" in example.id:
+                svc, act = ex_id.split("_", 1)
+            else:
+                svc, act = "unknown_service", "unknown_action"
+            return svc, act
+
         for example in self.examples.values():
-            id_service, id_action = example.id.split("_", 1)
+            id_service, id_action = safe_split_id(example.id)
             service_id = example.service_main or next(
                 (k for (k, _) in example.services.items()), None
             )
@@ -274,7 +281,7 @@ class DocGen:
                 service_id = id_service
             action = (
                 next((k for k in example.services.get(service_id, [])), None)
-                or example.id.split("_", 1)[1]
+                or safe_split_id(example.id)[1]
             )
             if action is None:
                 # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
