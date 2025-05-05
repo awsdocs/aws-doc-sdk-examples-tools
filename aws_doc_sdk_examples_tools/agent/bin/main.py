@@ -6,7 +6,8 @@ import typer
 
 from aws_doc_sdk_examples_tools.agent.make_prompts import main as make_prompts
 from aws_doc_sdk_examples_tools.agent.parse_json_files import main as parse_json_files
-from aws_doc_sdk_examples_tools.agent.update_doc_gen import main as update_doc_gen
+from aws_doc_sdk_examples_tools.agent.update_doc_gen import update as update_doc_gen
+from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
 
 app = typer.Typer()
 
@@ -32,7 +33,11 @@ def update(iam_tributary_root: str, system_prompts: List[str] = []) -> None:
     run(["npx", "@ailly/cli", "--root", AILLY_DIR])
     file_paths = get_ailly_files(AILLY_DIR_PATH)
     parse_json_files(file_paths=file_paths, out=IAM_UPDATES_PATH)
-    update_doc_gen(doc_gen_root=doc_gen_root, iam_updates_path=IAM_UPDATES_PATH)
+    doc_gen = update_doc_gen(
+        doc_gen_root=doc_gen_root, iam_updates_path=IAM_UPDATES_PATH
+    )
+    writes = prepare_write(doc_gen.examples)
+    write_many(doc_gen_root, writes)
 
 
 if __name__ == "__main__":
