@@ -6,7 +6,7 @@ import typer
 
 from aws_doc_sdk_examples_tools.agent.make_prompts import main as make_prompts
 from aws_doc_sdk_examples_tools.agent.parse_json_files import main as parse_json_files
-from aws_doc_sdk_examples_tools.agent.update_doc_gen import main as update_doc_gen
+from aws_doc_sdk_examples_tools.agent.update_doc_gen import update as update_doc_gen
 from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
 
 app = typer.Typer()
