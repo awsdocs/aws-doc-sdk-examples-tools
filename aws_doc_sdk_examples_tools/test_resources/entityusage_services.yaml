@@ -4,4 +4,5 @@ medical-imaging:
   expanded:
     long: AWS HealthImaging
     short: HealthImaging
+  sdk_id: Medical Imaging
   sort: HealthImaging 

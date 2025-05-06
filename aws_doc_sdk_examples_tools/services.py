@@ -51,7 +51,7 @@ class Service:
         sort = yaml.get("sort")
         version = yaml.get("version")
         api_ref = yaml.get("api_ref")
-        sdk_id = yaml.get("sdk_id"
+        sdk_id = yaml.get("sdk_id")
 
         if isinstance(long, metadata_errors.MetadataParseError):
             errors.append(long)

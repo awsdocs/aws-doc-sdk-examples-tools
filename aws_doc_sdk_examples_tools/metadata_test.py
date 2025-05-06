@@ -52,6 +52,7 @@ SERVICES = {
         ),
         sort="api-gateway",
         version=1,
+        sdk_id="apigateway"
     ),
     "medical-imaging": Service(
         long="&AHIlong;",
@@ -61,6 +62,7 @@ SERVICES = {
         ),
         sort="HealthImaging",
         version=1,
+        sdk_id="Medical Imaging"
     ),
     "sqs": Service(
         long="&SQSlong;",
@@ -70,6 +72,7 @@ SERVICES = {
         ),
         sort="sqs",
         version=1,
+        sdk_id="SQS"
     ),
     "s3": Service(
         long="&S3long;",
@@ -79,6 +82,7 @@ SERVICES = {
         ),
         sort="s3",
         version=1,
+        sdk_id="S3"
     ),
     "autogluon": Service(
         long="AutoGluon Test",
@@ -86,6 +90,7 @@ SERVICES = {
         expanded=ServiceExpanded(long="AutoGluon Test", short="AutoGluon Test"),
         sort="autogluon",
         version=1,
+        sdk_id=""
     ),
 }
 SDKS = {
@@ -1025,8 +1030,8 @@ def test_no_duplicate_title_abbrev():
             ),
         },
         services={
-            "svc": Service(long="Service", short="svc", version="1", sort="svc"),
-            "cvs": Service(long="CVS", short="cvs", version="2", sort="cvs"),
+            "svc": Service(long="Service", short="svc", version="1", sort="svc", sdk_id="SVC"),
+            "cvs": Service(long="CVS", short="cvs", version="2", sort="cvs", sdk_id="CVS"),
         },
     )
     doc_gen.validate()
