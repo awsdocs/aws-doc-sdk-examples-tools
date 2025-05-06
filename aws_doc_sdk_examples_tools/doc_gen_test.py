@@ -36,7 +36,9 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "x": Service(long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx")
+                    "x": Service(
+                        long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx"
+                    )
                 },
             ),
             DocGen(
@@ -53,7 +55,9 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy")
+                    "y": Service(
+                        long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy"
+                    )
                 },
             ),
             DocGen(
@@ -78,8 +82,12 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "x": Service(long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx"),
-                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy"),
+                    "x": Service(
+                        long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx"
+                    ),
+                    "y": Service(
+                        long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy"
+                    ),
                 },
             ),
         )
@@ -135,7 +143,7 @@ def sample_doc_gen() -> DocGen:
                 ),
                 sort="Amazon S3",
                 version="2006-03-01",
-                sdk_id="S3"
+                sdk_id="S3",
             )
         },
         snippets={
