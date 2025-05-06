@@ -161,6 +161,7 @@ def sample_doc_gen() -> DocGen:
                 "s3_PutObject",
                 file=Path("filea.txt"),
                 languages={},
+                service_sdk_id="S3",
                 services={"s3": set(["PutObject"])},
             )
         },
@@ -253,6 +254,7 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
             "id": "s3_PutObject",
             "languages": {},
             "service_main": None,
+            "service_sdk_id": "S3",
             "services": {
                 "s3": {
                     "__set__": [

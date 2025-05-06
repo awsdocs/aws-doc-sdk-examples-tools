@@ -281,6 +281,7 @@ class DocGen:
                 action = id_action
             if service_id in self.services:
                 service_name = self.services[service_id].short
+                example.service_sdk_id = self.services[service_id].sdk_id
             else:
                 service_name = service_id
             example.fill_display_fields(self.categories, service_name, action)
