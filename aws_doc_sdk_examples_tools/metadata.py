@@ -154,6 +154,8 @@ class Example:
     # TODO document service_main and services. Not to be used by tributaries. Part of Cross Service.
     # List of services used by the examples. Lines up with those in services.yaml.
     service_main: Optional[str] = field(default=None)
+    # Main service sdk_id. Matches Smithy model svc_id in services.yaml.
+    service_sdk_id: Optional[str] = field(default="")
     services: Dict[str, Set[str]] = field(default_factory=dict)
     # HTML file names corresponding to the documentation pages in the Code Library
     doc_filenames: Optional[DocFilenames] = field(default=None)

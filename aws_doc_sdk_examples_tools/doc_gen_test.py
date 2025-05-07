@@ -36,7 +36,9 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "x": Service(long="AWS X", short="X", sort="aws x", version=1)
+                    "x": Service(
+                        long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx"
+                    )
                 },
             ),
             DocGen(
@@ -53,7 +55,9 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1)
+                    "y": Service(
+                        long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy"
+                    )
                 },
             ),
             DocGen(
@@ -78,8 +82,12 @@ from .snippets import Snippet
                     ),
                 },
                 services={
-                    "x": Service(long="AWS X", short="X", sort="aws x", version=1),
-                    "y": Service(long="AWS Y", short="Y", sort="aws y", version=1),
+                    "x": Service(
+                        long="AWS X", short="X", sort="aws x", version=1, sdk_id="AWSx"
+                    ),
+                    "y": Service(
+                        long="AWS Y", short="Y", sort="aws y", version=1, sdk_id="AWSy"
+                    ),
                 },
             ),
         )
@@ -135,6 +143,7 @@ def sample_doc_gen() -> DocGen:
                 ),
                 sort="Amazon S3",
                 version="2006-03-01",
+                sdk_id="S3",
             )
         },
         snippets={
@@ -152,6 +161,7 @@ def sample_doc_gen() -> DocGen:
                 "s3_PutObject",
                 file=Path("filea.txt"),
                 languages={},
+                service_sdk_id="S3",
                 services={"s3": set(["PutObject"])},
             )
         },
@@ -244,6 +254,7 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
             "id": "s3_PutObject",
             "languages": {},
             "service_main": None,
+            "service_sdk_id": "S3",
             "services": {
                 "s3": {
                     "__set__": [

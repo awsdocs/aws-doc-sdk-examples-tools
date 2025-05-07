@@ -26,6 +26,7 @@ class Service:
     long: str
     short: str
     sort: str
+    sdk_id: str
     version: Union[int, str]
     expanded: Optional[ServiceExpanded] = field(default=None)
     api_ref: Optional[str] = field(default=None)
@@ -50,6 +51,7 @@ class Service:
         sort = yaml.get("sort")
         version = yaml.get("version")
         api_ref = yaml.get("api_ref")
+        sdk_id = yaml.get("sdk_id")
 
         if isinstance(long, metadata_errors.MetadataParseError):
             errors.append(long)
@@ -75,6 +77,9 @@ class Service:
             version = "0"
         if api_ref is None:
             errors.append(metadata_errors.MissingField(field="api_ref"))
+        if sdk_id is None:
+            errors.append(metadata_errors.MissingField(field="sdk_id"))
+            sdk_id = ""
 
         blurb = yaml.get("blurb")
         caveat = yaml.get("caveat")
@@ -101,6 +106,7 @@ class Service:
             cls(
                 long=long,
                 short=short,
+                sdk_id=sdk_id,
                 expanded=expanded,
                 sort=sort,
                 api_ref=api_ref,

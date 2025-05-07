@@ -1,6 +1,7 @@
 s3:
   short: "&S3;"
   long: "&S3long;"
+  sdk_id: "S3"
   expanded:
     long: Amazon Simple Storage Service (Amazon S3)
     short: Amazon S3
@@ -16,6 +17,7 @@ s3:
 medical-imaging:
   short: "&AHI;"
   long: "&AHIlong;"
+  sdk_id: "Medical Imaging"
   expanded:
     long: AWS HealthImaging
     short: HealthImaging
@@ -24,6 +26,7 @@ medical-imaging:
 sqs:
   short: "&SQS;"
   long: "&SQSlong;"
+  sdk_id: "SQS"
   expanded:
     long: Amazon Simple Queue Service (Amazon SQS)
     short: Amazon SQS
@@ -35,6 +38,7 @@ sqs:
 textract:
   short: "&TEXTRACT;"
   long: "&TEXTRACTlong;"
+  sdk_id: "Textract"
   expanded:
     long: Amazon Textract
     short: Amazon Textract

@@ -55,6 +55,7 @@ def mock_doc_gen(mock_example):
             short="&AHI;",
             sort="HealthImaging",
             version="medical-imaging-2023-07-19",
+            sdk_id="Medical Imaging",
         )
     }
     doc_gen.sdks = {

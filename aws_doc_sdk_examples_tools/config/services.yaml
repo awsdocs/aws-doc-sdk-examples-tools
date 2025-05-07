@@ -2,6 +2,7 @@ accessanalyzer:
   long: '&iam-citadel-long;'
   short: '&iam-citadel;'
   sort: IAM Access Analyzer
+  sdk_id: AccessAnalyzer
   expanded:
     long: AWS Identity and Access Management Access Analyzer
     short: IAM Access Analyzer
@@ -17,6 +18,7 @@ acm:
   long: '&ACMlong;'
   short: '&ACM;'
   sort: ACM
+  sdk_id: ACM
   expanded:
     long: AWS Certificate Manager (ACM)
     short: ACM
@@ -31,6 +33,7 @@ acm:
 acm-pca:
   api_ref: privateca/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ACM PCA
   expanded:
     long: AWS Private Certificate Authority
     short: AWS Private CA
@@ -46,6 +49,7 @@ acm-pca:
 alexa-for-business:
   api_ref: alexa-for-business/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ''
   expanded:
     long: Alexa For Business
     short: Alexa for Business
@@ -62,6 +66,7 @@ api-gateway:
   long: '&ABPlong;'
   short: '&ABP;'
   sort: API Gateway
+  sdk_id: API Gateway
   expanded:
     long: Amazon API Gateway
     short: API Gateway
@@ -77,6 +82,7 @@ apigatewaymanagementapi:
   long: '&ABPMAlong;'
   short: '&ABPMA;'
   sort: API Gateway Management
+  sdk_id: ApiGatewayManagementApi
   expanded:
     long: Amazon API Gateway Management API
     short: API Gateway Management API
@@ -91,6 +97,7 @@ apigatewaymanagementapi:
 apigatewayv2:
   api_ref: apigateway/latest/developerguide/welcome.html
   blurb: ''
+  sdk_id: ApiGatewayV2
   expanded:
     long: Amazon API Gateway HTTP and WebSocket API
     short: API Gateway HTTP and WebSocket API
@@ -107,6 +114,7 @@ application-auto-scaling:
   long: '&APP-ASlong;'
   short: '&APP-AS;'
   sort: Application Auto Scaling
+  sdk_id: Application Auto Scaling
   expanded:
     long: AWS Application Auto Scaling
     short: Application Auto Scaling
@@ -121,6 +129,7 @@ application-auto-scaling:
 app-mesh:
   api_ref: app-mesh/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: App Mesh
   expanded:
     long: AWS App Mesh
     short: App Mesh
@@ -136,6 +145,7 @@ app-mesh:
 appconfig:
   api_ref: appconfig/2019-10-09/APIReference/Welcome.html
   blurb: ''
+  sdk_id: AppConfig
   expanded:
     long: AWS AppConfig
     short: AWS AppConfig
@@ -151,6 +161,7 @@ appconfig:
 application-discovery-service:
   api_ref: application-discovery/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Application Discovery Service
   expanded:
     long: AWS Application Discovery Service
     short: Application Discovery Service
@@ -166,6 +177,7 @@ application-discovery-service:
 apprunner:
   api_ref: apprunner/latest/api/Welcome.html
   blurb: ''
+  sdk_id: AppRunner
   expanded:
     long: AWS App Runner
     short: App Runner
@@ -182,6 +194,7 @@ appstream:
   long: '&AAS2long;'
   short: '&AAS2;'
   sort: AppStream
+  sdk_id: AppStream
   expanded:
     long: Amazon AppStream
     short: Amazon AppStream
@@ -196,6 +209,7 @@ appstream:
 athena:
   api_ref: athena/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Athena
   expanded:
     long: Amazon Athena
     short: Athena
@@ -212,6 +226,7 @@ auditmanager:
   long: '&AMlong;'
   short: '&AM;'
   sort: Audit Manager
+  sdk_id: AuditManager
   expanded:
     long: AWS Audit Manager
     short: Audit Manager
@@ -227,6 +242,7 @@ aurora:
   long: '&AURlong;'
   short: '&AUR;'
   sort: Aurora
+  sdk_id: RDS
   expanded:
     long: Amazon Aurora
     short: Aurora
@@ -243,6 +259,7 @@ auto-scaling:
   long: '&ASlong;'
   short: '&AS;'
   sort: Auto Scaling
+  sdk_id: Auto Scaling
   expanded:
     long: Amazon EC2 Auto Scaling
     short: Auto Scaling
@@ -258,6 +275,7 @@ auto-scaling:
 auto-scaling-plans:
   api_ref: autoscaling/plans/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Auto Scaling Plans
   expanded:
     long: AWS Auto Scaling Plans
     short: Auto Scaling Plans
@@ -273,6 +291,7 @@ auto-scaling-plans:
 backup:
   api_ref: aws-backup/latest/devguide/api-reference.html
   blurb: ''
+  sdk_id: Backup
   expanded:
     long: AWS Backup
     short: AWS Backup
@@ -289,6 +308,7 @@ batch:
   long: '&BATCHlong;'
   short: '&BATCH;'
   sort: Batch
+  sdk_id: Batch
   expanded:
     long: AWS Batch
     short: AWS Batch
@@ -305,6 +325,7 @@ bedrock:
   long: '&BRlong;'
   short: '&BR;'
   sort: Bedrock1
+  sdk_id: Bedrock
   expanded:
     long: Amazon Bedrock
     short: Amazon Bedrock
@@ -321,6 +342,7 @@ bedrock-runtime:
   long: '&BRRUNlong;'
   short: '&BRRUN;'
   sort: Bedrock2
+  sdk_id: Bedrock Runtime
   expanded:
     long: Amazon Bedrock Runtime
     short: Amazon Bedrock Runtime
@@ -337,6 +359,7 @@ bedrock-agent:
   long: '&BRAlong;'
   short: '&BRA;'
   sort: Bedrock3
+  sdk_id: Bedrock Agent
   expanded:
     long: Amazon Bedrock Agents
     short: Amazon Bedrock Agents
@@ -353,6 +376,7 @@ bedrock-agent-runtime:
   long: '&BRARUNlong;'
   short: '&BRARUN;'
   sort: Bedrock4
+  sdk_id: Bedrock Agent Runtime
   expanded:
     long: Amazon Bedrock Agents Runtime
     short: Amazon Bedrock Agents Runtime
@@ -367,6 +391,7 @@ bedrock-agent-runtime:
 budgets:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Budgets
   expanded:
     long: AWS Budgets
     short: AWS Budgets
@@ -382,6 +407,7 @@ budgets:
 chime:
   api_ref: chime/latest/APIReference/welcome.html
   blurb: ''
+  sdk_id: Chime
   expanded:
     long: Amazon Chime
     short: Amazon Chime
@@ -397,6 +423,7 @@ chime:
 cloud9:
   api_ref: cloud9/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Cloud9
   expanded:
     long: AWS Cloud9
     short: AWS Cloud9
@@ -412,6 +439,7 @@ cloud9:
 cloudcontrol:
   api_ref: cloudcontrolapi/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: CloudControl
   expanded:
     long: AWS Cloud Control API
     short: Cloud Control API
@@ -428,6 +456,7 @@ cloudformation:
   long: '&CFNlong;'
   short: '&CFN;'
   sort: CloudFormation
+  sdk_id: CloudFormation
   expanded:
     long: AWS CloudFormation
     short: CloudFormation
@@ -443,6 +472,7 @@ cloudfront:
   long: '&CFlong;'
   short: '&CF;'
   sort: CloudFront
+  sdk_id: CloudFront
   expanded:
     long: Amazon CloudFront
     short: CloudFront
@@ -457,6 +487,7 @@ cloudfront:
 cloudsearch-domain:
   api_ref: cloudsearch/latest/developerguide/search-api.html
   blurb: ''
+  sdk_id: CloudSearch Domain
   expanded:
     long: Amazon CloudSearch
     short: Amazon CloudSearch
@@ -472,6 +503,7 @@ cloudsearch-domain:
 cloudtrail:
   api_ref: awscloudtrail/latest/APIReference/Welcome.html
   blurb: helps you monitor your AWS deployments in the cloud by getting a history of AWS API calls for your account.
+  sdk_id: CloudTrail
   expanded:
     long: AWS CloudTrail
     short: CloudTrail
@@ -488,6 +520,7 @@ cloudwatch:
   long: '&CWlong;'
   short: '&CW;'
   sort: CloudWatch
+  sdk_id: CloudWatch
   expanded:
     long: Amazon CloudWatch
     short: CloudWatch
@@ -503,6 +536,7 @@ cloudwatch-events:
   long: '&CWElong;'
   short: '&CWE;'
   sort: CloudWatch Events
+  sdk_id: CloudWatch Events
   expanded:
     long: Amazon CloudWatch Events
     short: CloudWatch Events
@@ -518,6 +552,7 @@ cloudwatch-logs:
   long: '&CWLlong;'
   short: '&CWL;'
   sort: CloudWatch Logs
+  sdk_id: CloudWatch Logs
   expanded:
     long: Amazon CloudWatch Logs
     short: CloudWatch Logs
@@ -532,6 +567,7 @@ cloudwatch-logs:
 codeartifact:
   api_ref: codeartifact/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: codeartifact
   expanded:
     long: CodeArtifact
     short: CodeArtifact
@@ -548,6 +584,7 @@ codebuild:
   long: '&ACBlong;'
   short: '&ACB;'
   sort: CodeBuild
+  sdk_id: CodeBuild
   expanded:
     long: AWS CodeBuild
     short: CodeBuild
@@ -562,6 +599,7 @@ codebuild:
 codecommit:
   api_ref: codecommit/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: CodeCommit
   expanded:
     long: AWS CodeCommit
     short: CodeCommit
@@ -577,6 +615,7 @@ codecommit:
 codedeploy:
   api_ref: codedeploy/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: CodeDeploy
   expanded:
     long: AWS CodeDeploy
     short: CodeDeploy
@@ -592,6 +631,7 @@ codedeploy:
 codeguru-reviewer:
   api_ref: codeguru/latest/reviewer-api/Welcome.html
   blurb: ''
+  sdk_id: CodeGuru Reviewer
   expanded:
     long: Amazon CodeGuru Reviewer
     short: CodeGuru Reviewer
@@ -607,6 +647,7 @@ codeguru-reviewer:
 codepipeline:
   api_ref: codepipeline/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: CodePipeline
   expanded:
     long: AWS CodePipeline
     short: CodePipeline
@@ -622,6 +663,7 @@ codepipeline:
 codestar:
   api_ref: codestar/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ''
   expanded:
     long: AWS CodeStar
     short: AWS CodeStar
@@ -637,6 +679,7 @@ codestar:
 codestar-connections:
   api_ref: codestar-connections/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: CodeStar connections
   expanded:
     long: AWS CodeStar Connections
     short: AWS CodeStar Connections
@@ -652,6 +695,7 @@ codestar-connections:
 codestar-notifications:
   api_ref: codestar-notifications/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: codestar notifications
   expanded:
     long: AWS CodeStar Notifications
     short: AWS CodeStar Notifications
@@ -668,6 +712,7 @@ cognito:
   long: '&COGlong;'
   short: '&COG;'
   sort: Cognito
+  sdk_id: ''
   expanded:
     long: Amazon Cognito
     short: Amazon Cognito
@@ -684,6 +729,7 @@ cognito-identity:
   long: '&COGID;'
   short: '&COGID;'
   sort: Cognito Identity
+  sdk_id: Cognito Identity
   expanded:
     long: Amazon Cognito Identity
     short: Amazon Cognito Identity
@@ -700,6 +746,7 @@ cognito-identity-provider:
   long: '&COGIDP;'
   short: '&COGIDP;'
   sort: Cognito Identity Provider
+  sdk_id: Cognito Identity Provider
   expanded:
     long: Amazon Cognito Identity Provider
     short: Amazon Cognito Identity Provider
@@ -716,6 +763,7 @@ cognito-sync:
   long: '&COGSYNClong;'
   short: '&COGSYNC;'
   sort: Cognito Sync
+  sdk_id: Cognito Sync
   expanded:
     long: Amazon Cognito Sync
     short: Amazon Cognito Sync
@@ -731,6 +779,7 @@ comprehend:
   long: '&CMPlong;'
   short: '&CMP;'
   sort: Comprehend
+  sdk_id: Comprehend
   expanded:
     long: Amazon Comprehend
     short: Amazon Comprehend
@@ -745,6 +794,7 @@ comprehend:
 comprehendmedical:
   api_ref: comprehend-medical/latest/api/Welcome.html
   blurb: ''
+  sdk_id: ComprehendMedical
   expanded:
     long: AWS Comprehend Medical
     short: AWS Comprehend Medical
@@ -761,6 +811,7 @@ config-service:
   long: '&CClong;'
   short: '&CC;'
   sort: Config
+  sdk_id: Config Service
   expanded:
     long: AWS Config
     short: AWS Config
@@ -776,6 +827,7 @@ config-service:
 connect:
   api_ref: connect/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Connect
   expanded:
     long: Amazon Connect
     short: Amazon Connect
@@ -791,6 +843,7 @@ connect:
 cost-and-usage-report-service:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Cost and Usage Report Service
   expanded:
     long: AWS Cost and Usage Report
     short: AWS Cost and Usage Report
@@ -806,6 +859,7 @@ cost-and-usage-report-service:
 cost-explorer:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Cost Explorer
   expanded:
     long: AWS Cost Explorer Service
     short: Cost Explorer Service
@@ -821,6 +875,7 @@ cost-explorer:
 data-pipeline:
   api_ref: datapipeline/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Data Pipeline
   expanded:
     long: AWS Data Pipeline
     short: AWS Data Pipeline
@@ -836,6 +891,7 @@ data-pipeline:
 database-migration-service:
   api_ref: dms/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Database Migration Service
   expanded:
     long: AWS Database Migration Service
     short: AWS DMS
@@ -851,6 +907,7 @@ database-migration-service:
 datasync:
   api_ref: datasync/latest/userguide/API_Reference.html
   blurb: is an online data movement and discovery service that simplifies data migration and helps you quickly, easily, and securely transfer your file or object data to, from, and between AWS storage services.
+  sdk_id: DataSync
   expanded:
     long: AWS DataSync
     short: DataSync
@@ -866,6 +923,7 @@ datasync:
 dax:
   api_ref: amazondynamodb/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: DAX
   expanded:
     long: DynamoDB Accelerator
     short: DAX
@@ -881,6 +939,7 @@ dax:
 detective:
   api_ref: detective/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Detective
   expanded:
     long: Amazon Detective
     short: Detective
@@ -897,6 +956,7 @@ device-farm:
   long: '&ATPlong;'
   short: '&ATP;'
   sort: Device Farm
+  sdk_id: Device Farm
   expanded:
     long: AWS Device Farm
     short: Device Farm
@@ -911,6 +971,7 @@ device-farm:
 direct-connect:
   api_ref: directconnect/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Direct Connect
   expanded:
     long: AWS Direct Connect
     short: AWS Direct Connect
@@ -926,6 +987,7 @@ direct-connect:
 directory-service:
   api_ref: directoryservice/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Directory Service
   expanded:
     long: AWS Directory Service
     short: AWS Directory Service
@@ -941,6 +1003,7 @@ directory-service:
 directory-service-data:
   api_ref: directoryservicedata/latest/DirectoryServiceDataAPIReference/Welcome.html
   blurb: ''
+  sdk_id: Directory Service Data
   expanded:
     long: AWS Directory Service Data
     short: AWS Directory Service Data
@@ -956,6 +1019,7 @@ directory-service-data:
 dlm:
   api_ref: dlm/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: DLM
   expanded:
     long: Amazon Data Lifecycle Manager
     short: Amazon Data Lifecycle Manager
@@ -971,6 +1035,7 @@ dlm:
 docdb:
   api_ref: documentdb/latest/developerguide/api-reference.html
   blurb: ''
+  sdk_id: DocDB
   expanded:
     long: Amazon DocumentDB (with MongoDB compatibility)
     short: Amazon DocumentDB
@@ -987,6 +1052,7 @@ dynamodb:
   long: '&DDBlong;'
   short: '&DDB;'
   sort: DynamoDB
+  sdk_id: DynamoDB
   expanded:
     long: Amazon DynamoDB
     short: DynamoDB
@@ -1001,6 +1067,7 @@ dynamodb:
 dynamodb-streams:
   api_ref: dynamodb-streams/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: DynamoDB Streams
   expanded:
     long: Amazon DynamoDB Streams
     short: DynamoDB Streams
@@ -1017,6 +1084,7 @@ ebs:
   long: '&EBSlong;'
   short: '&EBS;'
   sort: EBS
+  sdk_id: EBS
   expanded:
     long: Amazon Elastic Block Store (Amazon EBS)
     short: Amazon EBS
@@ -1032,6 +1100,7 @@ ec2:
   long: '&EC2long;'
   short: '&EC2;'
   sort: EC2
+  sdk_id: EC2
   expanded:
     long: Amazon Elastic Compute Cloud (Amazon EC2)
     short: Amazon EC2
@@ -1047,6 +1116,7 @@ ec2:
 ec2-instance-connect:
   api_ref: ec2-instance-connect/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: EC2 Instance Connect
   expanded:
     long: Amazon EC2 Instance Connect
     short: Amazon EC2 Instance Connect
@@ -1063,6 +1133,7 @@ ecr:
   long: '&ECRlong;'
   short: '&ECR;'
   sort: ECR
+  sdk_id: ECR
   expanded:
     long: Amazon Elastic Container Registry (Amazon ECR)
     short: Amazon ECR
@@ -1077,6 +1148,7 @@ ecr:
 ecr-public:
   api_ref: AmazonECRPublic/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ECR PUBLIC
   expanded:
     long: Amazon Elastic Container Registry Public
     short: Amazon ECR Public
@@ -1093,6 +1165,7 @@ ecs:
   long: '&ECSlong;'
   short: '&ECS;'
   sort: ECS
+  sdk_id: ECS
   expanded:
     long: Amazon Elastic Container Service (Amazon ECS)
     short: Amazon ECS
@@ -1107,6 +1180,7 @@ ecs:
 efs:
   api_ref: efs/latest/ug/api-reference.html
   blurb: ''
+  sdk_id: EFS
   expanded:
     long: Amazon Elastic File System
     short: Amazon EFS
@@ -1123,6 +1197,7 @@ eks:
   long: '&EKSlong;'
   short: '&EKS;'
   sort: EKS
+  sdk_id: EKS
   expanded:
     long: Amazon Elastic Kubernetes Service (Amazon EKS)
     short: Amazon EKS
@@ -1137,6 +1212,7 @@ eks:
 elastic-beanstalk:
   api_ref: elasticbeanstalk/latest/api/Welcome.html
   blurb: ''
+  sdk_id: Elastic Beanstalk
   expanded:
     long: AWS Elastic Beanstalk
     short: Elastic Beanstalk
@@ -1152,6 +1228,7 @@ elastic-beanstalk:
 elastic-load-balancing:
   api_ref: elasticloadbalancing/2012-06-01/APIReference/Welcome.html
   blurb: automatically distributes your incoming traffic across multiple targets, such as EC2 instances, containers, and IP addresses, in one or more Availability Zones.
+  sdk_id: Elastic Load Balancing
   expanded:
     long: Elastic Load Balancing - Version 1
     short: Elastic Load Balancing - Version 1
@@ -1168,6 +1245,7 @@ elastic-load-balancing-v2:
   long: '&ELBv2long;'
   short: '&ELBv2;'
   sort: Elastic Load Balancing - Version 2
+  sdk_id: Elastic Load Balancing v2
   expanded:
     long: Elastic Load Balancing - Version 2
     short: Elastic Load Balancing - Version 2
@@ -1182,6 +1260,7 @@ elastic-load-balancing-v2:
 elastic-transcoder:
   api_ref: elastictranscoder/latest/developerguide/api-reference.html
   blurb: ''
+  sdk_id: Elastic Transcoder
   expanded:
     long: Amazon Elastic Transcoder
     short: Elastic Transcoder
@@ -1197,6 +1276,7 @@ elastic-transcoder:
 elasticache:
   api_ref: AmazonElastiCache/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ElastiCache
   expanded:
     long: Amazon ElastiCache
     short: ElastiCache
@@ -1212,6 +1292,7 @@ elasticache:
 elasticsearch-service:
   api_ref: opensearch-service/latest/APIReference/API_Operations_Amazon_OpenSearch_Service.html
   blurb: ''
+  sdk_id: Elasticsearch Service
   expanded:
     long: Amazon OpenSearch Service
     short: OpenSearch Service
@@ -1228,6 +1309,7 @@ emr:
   long: '&EMRlong;'
   short: '&EMR;'
   sort: EMR
+  sdk_id: EMR
   expanded:
     long: Amazon EMR
     short: Amazon EMR
@@ -1242,6 +1324,7 @@ emr:
 emr-containers:
   api_ref: emr-on-eks/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: EMR containers
   expanded:
     long: Amazon EMR on EKS
     short: Amazon EMR on EKS
@@ -1258,6 +1341,7 @@ entityresolution:
   long: '&ERlong;'
   short: '&ER;'
   sort: Entity Resolution
+  sdk_id: EntityResolution
   expanded:
     long: AWS Entity Resolution
     short: AWS Entity Resolution
@@ -1273,6 +1357,7 @@ eventbridge:
   long: '&EVlong;'
   short: '&EV;'
   sort: EventBridge
+  sdk_id: EventBridge
   expanded:
     long: Amazon EventBridge
     short: EventBridge
@@ -1289,6 +1374,7 @@ firehose:
   short: '&FH;'
   sort: Data Firehose
   api_ref: firehose/latest/APIReference/Welcome.html
+  sdk_id: Firehose
   expanded:
     long: Amazon Data Firehose
     short: Data Firehose
@@ -1303,6 +1389,7 @@ forecast:
   long: '&FORlong;'
   short: '&FOR;'
   sort: Forecast
+  sdk_id: forecast
   expanded:
     long: Amazon Forecast Service
     short: Forecast
@@ -1317,6 +1404,7 @@ forecast:
 fis:
   api_ref: fis/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: fis
   expanded:
     long: AWS Fault Injection Simulator
     short: AWS FIS
@@ -1332,6 +1420,7 @@ fis:
 fms:
   api_ref: fms/2018-01-01/APIReference/Welcome.html
   blurb: ''
+  sdk_id: FMS
   expanded:
     long: AWS Firewall Manager
     short: Firewall Manager
@@ -1347,6 +1436,7 @@ fms:
 fsx:
   api_ref: fsx/latest/APIReference/welcome.html
   blurb: ''
+  sdk_id: FSx
   expanded:
     long: Amazon FSx
     short: Amazon FSx
@@ -1362,6 +1452,7 @@ fsx:
 gamelift:
   api_ref: gamelift/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: GameLift
   expanded:
     long: Amazon GameLift
     short: Amazon GameLift
@@ -1378,6 +1469,7 @@ geo-maps:
   api_ref: location/latest/APIReference/Welcome.html
   blurb: lets you create beautiful map-enabled visualizations, including embedding interactive dynamic maps, or static map imagery in your apps and even layering your own data on top of the base map.
   bundle: location
+  sdk_id: Geo Maps
   expanded:
     long: Amazon Location Service Maps V2
     short: Location Service Maps V2
@@ -1395,6 +1487,7 @@ geo-places:
   api_ref: location/latest/APIReference/Welcome.html
   blurb: enables searching and geocoding of geographic data, including addresses, points of interest, and business info such as categories, food types, brands, and opening hours.
   bundle: location
+  sdk_id: Geo Places
   expanded:
     long: Amazon Location Service Places
     short: Location Service Places
@@ -1412,6 +1505,7 @@ geo-routes:
   api_ref: location/latest/APIReference/Welcome.html
   blurb: calculates travel routes, estimates trip time, and optimizes travel itineraries and logistics problems using up-to-date road network data, live traffic, and rich road and vehicle attributes.
   bundle: location
+  sdk_id: Geo Routes
   expanded:
     long: Amazon Location Service Routes V2
     short: Location Service Routes V2
@@ -1429,6 +1523,7 @@ glacier:
   long: '&GLlong;'
   short: '&GLshort;'
   sort: S3 Glacier
+  sdk_id: Glacier
   expanded:
     long: Amazon S3 Glacier
     short: S3 Glacier
@@ -1443,6 +1538,7 @@ glacier:
 global-accelerator:
   api_ref: global-accelerator/latest/api/Welcome.html
   blurb: ''
+  sdk_id: Global Accelerator
   expanded:
     long: AWS Global Accelerator
     short: Global Accelerator
@@ -1462,6 +1558,7 @@ glue:
   chapter_override:
     title: '&GLU; API code examples using &AWS; SDKs'
     title_abbrev: '&GLU; API code examples'
+  sdk_id: Glue
   expanded:
     long: AWS Glue
     short: AWS Glue
@@ -1476,6 +1573,7 @@ glue:
 grafana:
   api_ref: grafana/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: grafana
   expanded:
     long: Amazon Managed Grafana
     short: Amazon Managed Grafana
@@ -1491,6 +1589,7 @@ grafana:
 greengrass:
   api_ref: greengrass/v1/apireference/api-doc.html
   blurb: ''
+  sdk_id: Greengrass
   expanded:
     long: AWS IoT Greengrass
     short: AWS IoT Greengrass
@@ -1506,6 +1605,7 @@ greengrass:
 greengrassv2:
   api_ref: greengrass/v2/APIReference/Welcome.html
   blurb: ''
+  sdk_id: GreengrassV2
   expanded:
     long: AWS IoT Greengrass V2
     short: AWS IoT Greengrass V2
@@ -1521,6 +1621,7 @@ greengrassv2:
 guardduty:
   api_ref: guardduty/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: GuardDuty
   expanded:
     long: Amazon GuardDuty
     short: GuardDuty
@@ -1536,6 +1637,7 @@ guardduty:
 health:
   api_ref: health/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Health
   expanded:
     long: AWS Health
     short: AWS Health
@@ -1551,6 +1653,7 @@ health:
 healthlake:
   api_ref: healthlake/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: HealthLake
   expanded:
     long: AWS HealthLake
     short: HealthLake
@@ -1568,6 +1671,7 @@ iam:
   long: '&IAMlong;'
   short: '&IAM;'
   sort: IAM
+  sdk_id: IAM
   expanded:
     long: AWS Identity and Access Management (IAM)
     short: IAM
@@ -1582,6 +1686,7 @@ iam:
 imagebuilder:
   api_ref: imagebuilder/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: imagebuilder
   expanded:
     long: EC2 Image Builder
     short: Image Builder
@@ -1597,6 +1702,7 @@ imagebuilder:
 inspector:
   api_ref: inspector/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Inspector
   expanded:
     long: Amazon Inspector
     short: Amazon Inspector
@@ -1612,6 +1718,7 @@ inspector:
 inspector2:
   api_ref: inspector/v2/APIReference/Welcome.html
   blurb: is a vulnerability discovery service that automates continuous scanning for security vulnerabilities within your Amazon EC2, Amazon ECR, and AWS Lambda environments.
+  sdk_id: Inspector2
   expanded:
     long: Amazon Inspector
     short: Amazon Inspector
@@ -1628,6 +1735,7 @@ iot:
   long: '&IoTlong;'
   short: '&IoT;'
   sort: IoT
+  sdk_id: IoT
   expanded:
     long: AWS IoT
     short: AWS IoT
@@ -1643,6 +1751,7 @@ iot:
 iot-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoT Data Plane
   expanded:
     long: AWS IoT data
     short: AWS IoT data
@@ -1658,6 +1767,7 @@ iot-data-plane:
 iot-events:
   api_ref: iotevents/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoT Events
   expanded:
     long: AWS IoT Events
     short: AWS IoT Events
@@ -1673,6 +1783,7 @@ iot-events:
 iot-events-data:
   api_ref: iotevents/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoT Events Data
   expanded:
     long: AWS IoT Events-Data
     short: AWS IoT Events-Data
@@ -1688,6 +1799,7 @@ iot-events-data:
 iot-jobs-data-plane:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoT Jobs Data Plane
   expanded:
     long: AWS IoT Jobs SDK release
     short: AWS IoT Jobs SDK release
@@ -1703,6 +1815,7 @@ iot-jobs-data-plane:
 iot-wireless:
   api_ref: iot-wireless/2020-11-22/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoT Wireless
   expanded:
     long: AWS IoT Wireless
     short: AWS IoT Wireless
@@ -1718,6 +1831,7 @@ iot-wireless:
 iotanalytics:
   api_ref: iotanalytics/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: IoTAnalytics
   expanded:
     long: AWS IoT Analytics
     short: AWS IoT Analytics
@@ -1733,6 +1847,7 @@ iotanalytics:
 iotdeviceadvisor:
   api_ref: iot/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IotDeviceAdvisor
   expanded:
     long: AWS IoT Core Device Advisor
     short: Device Advisor
@@ -1748,6 +1863,7 @@ iotdeviceadvisor:
 iotfleetwise:
   api_ref: iot-fleetwise/latest/APIReference/Welcome.html
   blurb: 'provides a secure and scalable platform for collecting, storing, and analyzing data from connected vehicles and fleets.'
+  sdk_id: IoTFleetWise
   expanded:
     long: AWS IoT FleetWise
     short: AWS IoT FleetWise
@@ -1763,6 +1879,7 @@ iotfleetwise:
 iotsitewise:
   api_ref: iot-sitewise/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: IoTSiteWise
   expanded:
     long: AWS IoT SiteWise
     short: AWS IoT SiteWise
@@ -1778,6 +1895,7 @@ iotsitewise:
 iotthingsgraph:
   api_ref: iot-twinmaker/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: IoTThingsGraph
   expanded:
     long: AWS IoT Things Graph
     short: AWS IoT Things Graph
@@ -1793,6 +1911,7 @@ iotthingsgraph:
 ivs:
   api_ref: ivs/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ivs
   expanded:
     long: Amazon Interactive Video Service
     short: Amazon IVS
@@ -1808,6 +1927,7 @@ ivs:
 ivs-realtime:
   api_ref: ivs/latest/RealTimeAPIReference/Welcome.html
   blurb: ''
+  sdk_id: IVS RealTime
   expanded:
     long: Amazon Interactive Video Service Real-Time Streaming
     short: Amazon IVS Real-Time Streaming
@@ -1823,6 +1943,7 @@ ivs-realtime:
 ivschat:
   api_ref: ivs/latest/ChatAPIReference/Welcome.html
   blurb: ''
+  sdk_id: ivschat
   expanded:
     long: Amazon Interactive Video Service Chat
     short: Amazon IVS Chat
@@ -1838,6 +1959,7 @@ ivschat:
 kafka:
   api_ref: MSK/2.0/APIReference/welcome.html
   blurb: ''
+  sdk_id: Kafka
   expanded:
     long: Amazon Managed Streaming for Apache Kafka
     short: Amazon MSK
@@ -1854,6 +1976,7 @@ keyspaces:
   long: '&KEYlong;'
   short: '&KEY;'
   sort: Keyspaces
+  sdk_id: Keyspaces
   expanded:
     long: Amazon Keyspaces (for Apache Cassandra)
     short: Amazon Keyspaces
@@ -1869,6 +1992,7 @@ kendra:
   long: '&KENlong;'
   short: '&KEN;'
   sort: Kendra
+  sdk_id: kendra
   expanded:
     long: Amazon Kendra
     short: Amazon Kendra
@@ -1884,6 +2008,7 @@ kinesis:
   long: '&AKlong;'
   short: '&AK;'
   sort: Kinesis
+  sdk_id: Kinesis
   expanded:
     long: Amazon Kinesis
     short: Kinesis
@@ -1899,6 +2024,7 @@ kinesis-analytics-v2:
   long: '&AKAlong;'
   short: '&AKA;'
   sort: Managed Service for Apache Flink
+  sdk_id: Kinesis Analytics V2
   expanded:
     long: Amazon Managed Service for Apache Flink
     short: Managed Service for Apache Flink
@@ -1914,6 +2040,7 @@ kms:
   long: '&KMSlong;'
   short: '&KMS;'
   sort: KMS
+  sdk_id: KMS
   expanded:
     long: AWS Key Management Service (AWS KMS)
     short: AWS KMS
@@ -1928,6 +2055,7 @@ kms:
 lakeformation:
   api_ref: lake-formation/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: LakeFormation
   expanded:
     long: AWS Lake Formation
     short: Lake Formation
@@ -1944,6 +2072,7 @@ lambda:
   long: '&LAMlong;'
   short: '&LAM;'
   sort: Lambda
+  sdk_id: Lambda
   expanded:
     long: AWS Lambda
     short: Lambda
@@ -1959,6 +2088,7 @@ lex:
   long: '&LEX2long;'
   short: '&LEX2;'
   sort: Lex
+  sdk_id: Lex Runtime Service
   expanded:
     long: Amazon Lex
     short: Amazon Lex
@@ -1973,6 +2103,7 @@ lex:
 license-manager:
   api_ref: license-manager/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: License Manager
   expanded:
     long: AWS License Manager
     short: License Manager
@@ -1988,6 +2119,7 @@ license-manager:
 lightsail:
   api_ref: lightsail/2016-11-28/api-reference/Welcome.html
   blurb: ''
+  sdk_id: Lightsail
   expanded:
     long: Amazon Lightsail
     short: Lightsail
@@ -2004,6 +2136,7 @@ location:
   api_ref: location/latest/APIReference/Welcome.html
   blurb: lets you easily and securely add maps, places, routes, geofences, and trackers, to your applications.
   bundle: location
+  sdk_id: Location
   expanded:
     long: Amazon Location Service
     short: Amazon Location
@@ -2021,6 +2154,7 @@ lookoutvision:
   long: '&LYRAlong;'
   short: '&LYRA;'
   sort: Lookout for Vision
+  sdk_id: LookoutVision
   expanded:
     long: Amazon Lookout for Vision
     short: Lookout for Vision
@@ -2035,6 +2169,7 @@ lookoutvision:
 machine-learning:
   api_ref: machine-learning/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Machine Learning
   expanded:
     long: Amazon Machine Learning
     short: Amazon ML
@@ -2050,6 +2185,7 @@ machine-learning:
 macie2:
   api_ref: macie/latest/APIReference/welcome.html
   blurb: ''
+  sdk_id: Macie2
   expanded:
     long: Amazon Macie
     short: Macie
@@ -2066,6 +2202,7 @@ marketplace:
   long: '&MKTlong;'
   short: '&MKT;'
   sort: Marketplace
+  sdk_id: ''
   expanded:
     long: AWS Marketplace
     short: Marketplace
@@ -2081,6 +2218,7 @@ marketplace-agreement:
   bundle: marketplace
   api_ref: marketplace-agreements/latest/api-reference/welcome.html
   blurb: provides an API interface that helps AWS Marketplace sellers manage their agreements, including listing, filtering, and viewing details about their agreements.
+  sdk_id: Marketplace Agreement
   expanded:
     long: AWS Marketplace Agreement API
     short: AWS Marketplace Agreement API
@@ -2097,6 +2235,7 @@ marketplace-catalog:
   bundle: marketplace
   api_ref: marketplace-catalog/latest/api-reference/welcome.html
   blurb: provides an API interface for approved providers to programmatically manage their products.
+  sdk_id: Marketplace Catalog
   expanded:
     long: AWS Marketplace Catalog API
     short: AWS Marketplace Catalog API
@@ -2112,6 +2251,7 @@ marketplace-catalog:
 mediaconnect:
   api_ref: mediaconnect/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: MediaConnect
   expanded:
     long: AWS Elemental MediaConnect
     short: MediaConnect
@@ -2128,6 +2268,7 @@ mediaconvert:
   long: '&EMClong;'
   short: '&EMC;'
   sort: MediaConvert
+  sdk_id: MediaConvert
   expanded:
     long: AWS Elemental MediaConvert
     short: MediaConvert
@@ -2143,6 +2284,7 @@ medialive:
   long: '&EMLlong;'
   short: '&EML;'
   sort: MediaLive
+  sdk_id: MediaLive
   expanded:
     long: AWS Elemental MediaLive
     short: MediaLive
@@ -2158,6 +2300,7 @@ mediapackage:
   long: '&EMPlong;'
   short: '&EMP;'
   sort: MediaPackage
+  sdk_id: MediaPackage
   expanded:
     long: AWS Elemental MediaPackage
     short: MediaPackage
@@ -2172,6 +2315,7 @@ mediapackage:
 mediapackage-vod:
   api_ref: mediapackage-vod/latest/apireference/what-is-mp-vod.html
   blurb: ''
+  sdk_id: MediaPackage Vod
   expanded:
     long: AWS Elemental MediaPackage Video on Demand
     short: MediaPackage VOD
@@ -2187,6 +2331,7 @@ mediapackage-vod:
 mediastore:
   api_ref: mediastore/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: MediaStore
   expanded:
     long: AWS Elemental MediaStore
     short: MediaStore
@@ -2202,6 +2347,7 @@ mediastore:
 mediastore-data:
   api_ref: mediastore/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: MediaStore Data
   expanded:
     long: AWS Elemental MediaStore Data Plane
     short: MediaStore Data Plane
@@ -2217,6 +2363,7 @@ mediastore-data:
 mediatailor:
   api_ref: mediatailor/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: MediaTailor
   expanded:
     long: AWS Elemental MediaTailor
     short: MediaTailor
@@ -2233,6 +2380,7 @@ medical-imaging:
   long: '&AHIlong;'
   short: '&AHI;'
   sort: HealthImaging
+  sdk_id: Medical Imaging
   expanded:
     long: AWS HealthImaging
     short: HealthImaging
@@ -2248,6 +2396,7 @@ migration-hub:
   long: '&MHBlong;'
   short: '&MHB;'
   sort: MigrationHub
+  sdk_id: Migration Hub
   expanded:
     long: AWS Migration Hub
     short: Migration Hub
@@ -2262,6 +2411,7 @@ migration-hub:
 memorydb:
   api_ref: memorydb/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: MemoryDB
   expanded:
     long: Amazon MemoryDB for Redis
     short: MemoryDB
@@ -2277,6 +2427,7 @@ memorydb:
 networkmanager:
   api_ref: networkmanager/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: NetworkManager
   expanded:
     long: AWS Network Manager
     short: Network Manager
@@ -2292,6 +2443,7 @@ networkmanager:
 networkmonitor:
   api_ref: networkmonitor/latest/APIReference/Welcome.html
   blurb: is an AWS active network monitoring service that identifies if a network issues exists within the AWS network or your own company network.
+  sdk_id: NetworkMonitor
   expanded:
     long: Amazon CloudWatch Network Monitoring
     short: CloudWatch Network Monitoring
@@ -2308,6 +2460,7 @@ networkflowmonitor:
   long: '&NFMlong;'
   short: '&NFM;'
   sort: Network Flow Monitor
+  sdk_id: NetworkFlowMonitor
   expanded:
     long: Network Flow Monitor
     short: Network Flow Monitor
@@ -2322,6 +2475,7 @@ networkflowmonitor:
 nimble:
   api_ref: nimble-studio/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: ''
   expanded:
     long: Amazon Nimble Studio
     short: Nimble Studio
@@ -2337,6 +2491,7 @@ nimble:
 oam:
   api_ref: OAM/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: OAM
   expanded:
     long: Amazon CloudWatch Observability Access Monitor
     short: CloudWatch Observability Access Monitor
@@ -2352,6 +2507,7 @@ oam:
 observabilityadmin:
   api_ref: cloudwatch/latest/observabilityadmin/Welcome.html
   blurb: lets you discover and understand the state of telemetry configuration in CloudWatch for your AWS Organization or account.
+  sdk_id: ObservabilityAdmin
   expanded:
     long: Amazon CloudWatch Observability Admin
     short: CloudWatch Observability Admin
@@ -2367,6 +2523,7 @@ observabilityadmin:
 omics:
   api_ref: omics/latest/api/Welcome.html
   blurb: ''
+  sdk_id: Omics
   expanded:
     long: AWS HealthOmics
     short: HealthOmics
@@ -2383,6 +2540,7 @@ opensearch:
   long: '&ESlong;'
   short: '&ES;'
   sort: ES
+  sdk_id: OpenSearch
   expanded:
     long: Amazon OpenSearch Service
     short: OpenSearch
@@ -2397,6 +2555,7 @@ opensearch:
 opsworks:
   api_ref: opsworks/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: OpsWorks
   expanded:
     long: AWS OpsWorks
     short: AWS OpsWorks
@@ -2412,6 +2571,7 @@ opsworks:
 opsworkscm:
   api_ref: opsworks-cm/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: OpsWorksCM
   expanded:
     long: AWS OpsWorks CM
     short: AWS OpsWorks CM
@@ -2428,6 +2588,7 @@ organizations:
   long: '&AOlong;'
   short: '&AO;'
   sort: Organizations
+  sdk_id: Organizations
   expanded:
     long: AWS Organizations
     short: Organizations
@@ -2442,6 +2603,7 @@ organizations:
 outposts:
   api_ref: outposts/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Outposts
   expanded:
     long: AWS Outposts
     short: Outposts
@@ -2458,6 +2620,7 @@ partnercentral-selling:
   long: '&PartnerCentrallong;'
   short: '&PartnerCentral;'
   sort: Partner Central
+  sdk_id: PartnerCentral Selling
   expanded:
     long: AWS Partner Central
     short: Partner Central
@@ -2472,6 +2635,7 @@ partnercentral-selling:
 payment-cryptography:
   api_ref: payment-cryptography/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Payment Cryptography
   expanded:
     long: AWS Payment Cryptography
     short: AWS Payment Cryptography
@@ -2487,6 +2651,7 @@ payment-cryptography:
 payment-cryptography-data:
   api_ref: payment-cryptography/latest/DataAPIReference/Welcome.html
   blurb: ''
+  sdk_id: Payment Cryptography Data
   expanded:
     long: AWS Payment Cryptography Data Plane
     short: AWS Payment Cryptography Data Plane
@@ -2504,6 +2669,7 @@ personalize:
   long: '&PERSlong;'
   short: '&PERS;'
   sort: Personalize
+  sdk_id: Personalize
   expanded:
     long: Amazon Personalize
     short: Amazon Personalize
@@ -2520,6 +2686,7 @@ personalize-runtime:
   long: '&PERSRlong;'
   short: '&PERSR;'
   sort: Personalize Runtime
+  sdk_id: Personalize Runtime
   expanded:
     long: Amazon Personalize Runtime
     short: Amazon Personalize Runtime
@@ -2536,6 +2703,7 @@ personalize-events:
   long: '&PERSElong;'
   short: '&PERSE;'
   sort: Personalize Events
+  sdk_id: Personalize Events
   expanded:
     long: Amazon Personalize Events
     short: Amazon Personalize Events
@@ -2550,6 +2718,7 @@ personalize-events:
 pi:
   api_ref: performance-insights/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: PI
   expanded:
     long: Amazon Relational Database Service Performance Insights
     short: Amazon RDS Performance Insights
@@ -2567,6 +2736,7 @@ pinpoint:
   long: '&PINlong;'
   short: '&PIN;'
   sort: Pinpoint
+  sdk_id: Pinpoint
   expanded:
     long: Amazon Pinpoint
     short: Amazon Pinpoint
@@ -2582,6 +2752,7 @@ pinpoint-email:
   long: '&PIN-Email-API;'
   short: '&PIN-Email-API;'
   sort: Pinpoint Email
+  sdk_id: Pinpoint Email
   expanded:
     long: Amazon Pinpoint Email
     short: Amazon Pinpoint Email
@@ -2598,6 +2769,7 @@ pinpoint-sms-voice:
   long: '&PIN-SMS-Voice-API;'
   short: '&PIN-SMS-Voice-API;'
   sort: Pinpoint SMS and Voice
+  sdk_id: Pinpoint SMS Voice
   expanded:
     long: Amazon Pinpoint SMS and Voice
     short: Amazon Pinpoint SMS and Voice
@@ -2613,6 +2785,7 @@ pipes:
   long: '&EVlong; Pipes'
   short: '&EV; Pipes'
   sort: Eventbridge Pipes
+  sdk_id: Pipes
   expanded:
     long: Amazon EventBridge Pipes
     short: EventBridge Pipes 
@@ -2628,6 +2801,7 @@ polly:
   long: '&POLlong;'
   short: '&POL;'
   sort: Polly
+  sdk_id: Polly
   expanded:
     long: Amazon Polly
     short: Amazon Polly
@@ -2642,6 +2816,7 @@ polly:
 pricing:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Pricing
   expanded:
     long: AWS Price List
     short: AWS Price List
@@ -2657,6 +2832,7 @@ pricing:
 proton:
   api_ref: proton/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Proton
   expanded:
     long: AWS Proton
     short: AWS Proton
@@ -2673,6 +2849,7 @@ qldb:
   long: '&QLDBlong;'
   short: '&QLDB;'
   sort: QLDB
+  sdk_id: QLDB
   expanded:
     long: Amazon Quantum Ledger Database (Amazon QLDB)
     short: Amazon QLDB
@@ -2687,6 +2864,7 @@ qldb:
 ram:
   api_ref: ram/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: RAM
   expanded:
     long: AWS Resource Access Manager
     short: AWS RAM
@@ -2703,6 +2881,7 @@ rds:
   long: '&RDSlong;'
   short: '&RDS;'
   sort: RDS
+  sdk_id: RDS
   expanded:
     long: Amazon Relational Database Service (Amazon RDS)
     short: Amazon RDS
@@ -2718,6 +2897,7 @@ rds-data:
   long: '&RDSDataServicelong;'
   short: '&RDSDataService;'
   sort: RDS Data Service
+  sdk_id: RDS Data
   expanded:
     long: Amazon Relational Database Service Data Service
     short: Amazon RDS Data Service
@@ -2733,6 +2913,7 @@ redshift:
   long: '&RSlong;'
   short: '&RS;'
   sort: Redshift
+  sdk_id: Redshift
   expanded:
     long: Amazon Redshift
     short: Amazon Redshift
@@ -2751,6 +2932,7 @@ rekognition:
   long: '&REKlong;'
   short: '&REK;'
   sort: Rekognition
+  sdk_id: Rekognition
   expanded:
     long: Amazon Rekognition
     short: Amazon Rekognition
@@ -2765,6 +2947,7 @@ rekognition:
 resource-explorer-2:
   api_ref: resource-explorer/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: Resource Explorer 2
   expanded:
     long: AWS Resource Explorer
     short: Resource Explorer
@@ -2780,6 +2963,7 @@ resource-explorer-2:
 resource-groups:
   api_ref: ARG/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Resource Groups
   expanded:
     long: AWS Resource Groups
     short: Resource Groups
@@ -2795,6 +2979,7 @@ resource-groups:
 resource-groups-tagging-api:
   api_ref: resourcegroupstagging/latest/APIReference/overview.html
   blurb: ''
+  sdk_id: Resource Groups Tagging API
   expanded:
     long: AWS Resource Groups Tagging API
     short: Resource Groups Tagging API
@@ -2810,6 +2995,7 @@ resource-groups-tagging-api:
 robomaker:
   api_ref: robomaker/latest/dg/API_Reference.html
   blurb: ''
+  sdk_id: RoboMaker
   expanded:
     long: AWS RoboMaker
     short: AWS RoboMaker
@@ -2827,6 +3013,7 @@ route-53:
   long: '&R53long;'
   short: '&R53;'
   sort: Route 53
+  sdk_id: Route 53
   expanded:
     long: Amazon Route 53
     short: Route 53
@@ -2843,6 +3030,7 @@ route-53-domains:
   long: '&R53DRlong;'
   short: '&R53DR;'
   sort: Route 53 Domain Registration
+  sdk_id: Route 53 Domains
   expanded:
     long: Amazon Route 53 Domain Registration
     short: Route 53 Domain Registration
@@ -2858,6 +3046,7 @@ route53profiles:
   long: '&R53Pslong;'
   short: '&R53Ps;'
   sort: Route 53 Profiles
+  sdk_id: Route53Profiles
   expanded:
     long: Amazon Route 53 Profiles
     short: Route 53 Profiles
@@ -2873,6 +3062,7 @@ route53-recovery-cluster:
   long: '&R53ARClong;'
   short: '&R53ARC;'
   sort: Application Recovery Controller
+  sdk_id: Route53 Recovery Cluster
   expanded:
     long: Amazon Route 53 Application Recovery Controller
     short: Route 53 ARC
@@ -2887,6 +3077,7 @@ route53-recovery-cluster:
 route53resolver:
   api_ref: Route53/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Route53Resolver
   expanded:
     long: Amazon Route 53 Resolver
     short: Route 53 Resolver
@@ -2904,6 +3095,7 @@ s3:
   long: '&S3long;'
   short: '&S3;'
   sort: S3
+  sdk_id: S3
   expanded:
     long: Amazon Simple Storage Service (Amazon S3)
     short: Amazon S3
@@ -2919,6 +3111,7 @@ s3-control:
   bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
   blurb: lets you manage S3 resources.
+  sdk_id: S3 Control
   expanded:
     long: Amazon S3 Control
     short: Amazon S3 Control
@@ -2935,6 +3128,7 @@ s3-directory-buckets:
   bundle: s3
   api_ref: AmazonS3/latest/API/Welcome.html
   blurb: are designed to store data within a single AWS Zone. Directory buckets organize data hierarchically into directories, providing a structure similar to a file system.
+  sdk_id: S3
   expanded:
     long: Amazon S3 Directory Buckets
     short: S3 Directory Buckets
@@ -2951,6 +3145,7 @@ sagemaker:
   long: '&SMlong;'
   short: '&SM;'
   sort: SageMaker
+  sdk_id: SageMaker
   expanded:
     long: Amazon SageMaker
     short: SageMaker
@@ -2966,6 +3161,7 @@ scheduler:
   long: '&EVSlong;'
   short: '&EVS;'
   sort: EventBridge Scheduler
+  sdk_id: Scheduler
   expanded:
     long: Amazon EventBridge Scheduler
     short: EventBridge Scheduler
@@ -2981,6 +3177,7 @@ secrets-manager:
   long: '&ASMlong;'
   short: '&ASM;'
   sort: Secrets Manager
+  sdk_id: Secrets Manager
   expanded:
     long: AWS Secrets Manager
     short: Secrets Manager
@@ -2995,6 +3192,7 @@ secrets-manager:
 securityhub:
   api_ref: securityhub/1.0/APIReference/Welcome.html
   blurb: ''
+  sdk_id: SecurityHub
   expanded:
     long: AWS Security Hub
     short: Security Hub
@@ -3010,6 +3208,7 @@ securityhub:
 securitylake:
   api_ref: security-lake/latest/APIReference/Welcome.html
   blurb: is a fully-managed security data lake service.
+  sdk_id: SecurityLake
   expanded:
     long: Amazon Security Lake
     short: Security Lake
@@ -3025,6 +3224,7 @@ securitylake:
 serverlessapplicationrepository:
   api_ref: serverlessrepo/latest/devguide/operations.html
   blurb: ''
+  sdk_id: ServerlessApplicationRepository
   expanded:
     long: AWS Serverless Application Repository
     short: AWS Serverless Application Repository
@@ -3040,6 +3240,7 @@ serverlessapplicationrepository:
 service-catalog:
   api_ref: servicecatalog/latest/dg/API_Reference.html
   blurb: ''
+  sdk_id: Service Catalog
   expanded:
     long: AWS Service Catalog
     short: Service Catalog
@@ -3055,6 +3256,7 @@ service-catalog:
 service-catalog-appregistry:
   api_ref: servicecatalog/latest/dg/API_Reference.html
   blurb: ''
+  sdk_id: Service Catalog AppRegistry
   expanded:
     long: AWS Service Catalog AppRegistry
     short: AppRegistry
@@ -3070,6 +3272,7 @@ service-catalog-appregistry:
 service-quotas:
   api_ref: servicequotas/2019-06-24/apireference/Welcome.html
   blurb: ''
+  sdk_id: Service Quotas
   expanded:
     long: Service Quotas
     short: Service Quotas
@@ -3085,6 +3288,7 @@ service-quotas:
 servicediscovery:
   api_ref: cloud-map/latest/api/Welcome.html
   blurb: ''
+  sdk_id: ServiceDiscovery
   expanded:
     long: AWS Cloud Map
     short: AWS Cloud Map
@@ -3102,6 +3306,7 @@ ses:
   long: '&SESlong;'
   short: '&SES;'
   sort: SES
+  sdk_id: SES
   expanded:
     long: Amazon Simple Email Service (Amazon SES)
     short: Amazon SES
@@ -3118,6 +3323,7 @@ sesv2:
   long: '&SESv2long;'
   short: '&SESv2;'
   sort: SES v2 API
+  sdk_id: SESv2
   expanded:
     long: Amazon Simple Email Service v2 API
     short: Amazon SES v2 API
@@ -3133,6 +3339,7 @@ sfn:
   long: '&SFNlong;'
   short: '&SFN;'
   sort: Step Functions
+  sdk_id: SFN
   expanded:
     long: AWS Step Functions
     short: Step Functions
@@ -3147,6 +3354,7 @@ sfn:
 shield:
   api_ref: waf/latest/DDOSAPIReference/Welcome.html
   blurb: ''
+  sdk_id: Shield
   expanded:
     long: AWS Shield
     short: Shield
@@ -3162,6 +3370,7 @@ shield:
 signer:
   api_ref: signer/latest/api/Welcome.html
   blurb: ''
+  sdk_id: signer
   expanded:
     long: AWS Signer
     short: Signer
@@ -3178,6 +3387,7 @@ snowball:
   long: '&Frozenlong;'
   short: '&Frozen;'
   sort: Snowball
+  sdk_id: Snowball
   expanded:
     long: AWS Snowball
     short: Snowball
@@ -3194,6 +3404,7 @@ sns:
   long: '&SNSlong;'
   short: '&SNS;'
   sort: SNS
+  sdk_id: SNS
   expanded:
     long: Amazon Simple Notification Service (Amazon SNS)
     short: Amazon SNS
@@ -3209,6 +3420,7 @@ sqs:
   long: '&SQSlong;'
   short: '&SQS;'
   sort: SQS
+  sdk_id: SQS
   expanded:
     long: Amazon Simple Queue Service (Amazon SQS)
     short: Amazon SQS
@@ -3224,6 +3436,7 @@ ssm:
   long: '&SYSlong;'
   short: '&SYS;'
   sort: Systems Manager
+  sdk_id: SSM
   expanded:
     long: AWS Systems Manager
     short: Systems Manager
@@ -3238,6 +3451,7 @@ ssm:
 ssm-contacts:
   api_ref: incident-manager/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: SSM Contacts
   expanded:
     long: AWS Systems Manager Incident Manager Contacts
     short: Incident Manager Contacts
@@ -3253,6 +3467,7 @@ ssm-contacts:
 ssm-incidents:
   api_ref: incident-manager/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: SSM Incidents
   expanded:
     long: AWS Systems Manager Incident Manager
     short: Incident Manager
@@ -3268,6 +3483,7 @@ ssm-incidents:
 storage-gateway:
   api_ref: storagegateway/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: Storage Gateway
   expanded:
     long: AWS Storage Gateway
     short: Storage Gateway
@@ -3285,6 +3501,7 @@ sts:
   long: '&STSlong;'
   short: '&STS;'
   sort: STS
+  sdk_id: STS
   expanded:
     long: AWS Security Token Service (AWS STS)
     short: AWS STS
@@ -3300,6 +3517,7 @@ support:
   long: '&SUPlong;'
   short: '&SUP;'
   sort: Support
+  sdk_id: Support
   expanded:
     long: AWS Support
     short: Support
@@ -3314,6 +3532,7 @@ support:
 swf:
   api_ref: amazonswf/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: SWF
   expanded:
     long: Amazon Simple Workflow Service
     short: Amazon SWF
@@ -3332,6 +3551,7 @@ synthetics:
   guide:
     subtitle: Synthetic monitoring (canaries)
     url: AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html
+  sdk_id: synthetics
   expanded:
     long: Amazon CloudWatch Synthetics
     short: CloudWatch Synthetics
@@ -3345,6 +3565,7 @@ textract:
   long: '&TEXTRACTlong;'
   short: '&TEXTRACT;'
   sort: Textract
+  sdk_id: Textract
   expanded:
     long: Amazon Textract
     short: Amazon Textract
@@ -3360,6 +3581,7 @@ transcribe:
   long: '&TSClong;'
   short: '&TSC;'
   sort: Transcribe
+  sdk_id: Transcribe
   expanded:
     long: Amazon Transcribe
     short: Amazon Transcribe
@@ -3375,6 +3597,7 @@ transcribe-streaming:
   long: '&TSCStreaminglong;'
   short: '&TSCStreaming;'
   sort: Transcribe Streaming
+  sdk_id: Transcribe Streaming
   expanded:
     long: Amazon Transcribe Streaming
     short: Amazon Transcribe Streaming
@@ -3390,6 +3613,7 @@ transcribe-medical:
   long: '&TSCMlong;'
   short: '&TSCM;'
   sort: Transcribe Medical
+  sdk_id: Transcribe
   expanded:
     long: Amazon Transcribe Medical
     short: Amazon Transcribe Medical
@@ -3406,6 +3630,7 @@ translate:
   long: '&TSLlong;'
   short: '&TSL;'
   sort: Translate
+  sdk_id: Translate
   expanded:
     long: Amazon Translate
     short: Amazon Translate
@@ -3421,6 +3646,7 @@ trustedadvisor:
   long: '&AWS-TA-long;'
   short: '&AWS-TA;'
   sort: Trusted Advisor
+  sdk_id: TrustedAdvisor
   expanded:
     long: AWS Trusted Advisor
     short: Trusted Advisor
@@ -3435,6 +3661,7 @@ trustedadvisor:
 verifiedpermissions:
   api_ref: verifiedpermissions/latest/apireference/Welcome.html
   blurb: ''
+  sdk_id: VerifiedPermissions
   expanded:
     long: Amazon Verified Permissions
     short: Verified Permissions
@@ -3450,6 +3677,7 @@ verifiedpermissions:
 vpc-lattice:
   api_ref: vpc-lattice/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: VPC Lattice
   expanded:
     long: Amazon VPC Lattice
     short: VPC Lattice
@@ -3465,6 +3693,7 @@ vpc-lattice:
 waf:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAF.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
+  sdk_id: WAF
   expanded:
     long: AWS WAF Classic
     short: AWS WAF Classic
@@ -3480,6 +3709,7 @@ waf:
 waf-regional:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAF_Regional.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
+  sdk_id: WAF Regional
   expanded:
     long: AWS WAF Classic Regional
     short: AWS WAF Classic Regional
@@ -3495,6 +3725,7 @@ waf-regional:
 wafv2:
   api_ref: waf/latest/APIReference/API_Operations_AWS_WAFV2.html
   blurb: is a web application firewall that lets you monitor and manage web requests that are forwarded to protected AWS resources.
+  sdk_id: WAFV2
   expanded:
     long: AWS WAFV2
     short: AWS WAFV2
@@ -3510,6 +3741,7 @@ wafv2:
 workdocs:
   api_ref: workdocs/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: WorkDocs
   expanded:
     long: Amazon WorkDocs
     short: Amazon WorkDocs
@@ -3525,6 +3757,7 @@ workdocs:
 workmail:
   api_ref: workmail/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: WorkMail
   expanded:
     long: Amazon WorkMail
     short: Amazon WorkMail
@@ -3540,6 +3773,7 @@ workmail:
 workmailmessageflow:
   api_ref: workmail/latest/APIReference/Welcome.html
   blurb: ''
+  sdk_id: WorkMailMessageFlow
   expanded:
     long: Amazon WorkMail Message Flow
     short: Amazon WorkMail Message Flow
@@ -3555,6 +3789,7 @@ workmailmessageflow:
 workspaces:
   api_ref: workspaces/latest/api/welcome.html
   blurb: ''
+  sdk_id: WorkSpaces
   expanded:
     long: Amazon WorkSpaces
     short: WorkSpaces
@@ -3570,6 +3805,7 @@ workspaces:
 xray:
   api_ref: xray/latest/api/Welcome.html
   blurb: ''
+  sdk_id: XRay
   expanded:
     long: AWS X-Ray
     short: X-Ray

@@ -66,6 +66,7 @@ def test_services():
     assert examples == {
         "s3": Service(
             short="&S3;",
+            sdk_id="S3",
             expanded=ServiceExpanded(
                 long="Amazon Simple Storage Service (Amazon S3)", short="Amazon S3"
             ),
@@ -83,6 +84,7 @@ def test_services():
         "medical-imaging": Service(
             short="&AHI;",
             long="&AHIlong;",
+            sdk_id="Medical Imaging",
             expanded=ServiceExpanded(
                 long="AWS HealthImaging",
                 short="HealthImaging",
@@ -93,6 +95,7 @@ def test_services():
         "sqs": Service(
             short="&SQS;",
             long="&SQSlong;",
+            sdk_id="SQS",
             expanded=ServiceExpanded(
                 long="Amazon Simple Queue Service (Amazon SQS)", short="Amazon SQS"
             ),
@@ -106,6 +109,7 @@ def test_services():
         "textract": Service(
             short="&TEXTRACT;",
             long="&TEXTRACTlong;",
+            sdk_id="Textract",
             expanded=ServiceExpanded(long="Amazon Textract", short="Amazon Textract"),
             sort="Textract",
             tags={"product_categories": set(["Category 1"])},
