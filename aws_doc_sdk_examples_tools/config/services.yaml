@@ -3467,7 +3467,7 @@ ssm-contacts:
 ssm-incidents:
   api_ref: incident-manager/latest/APIReference/Welcome.html
   blurb: ''
-  sdk_id: SSM Incident
+  sdk_id: SSM Incidents
   expanded:
     long: AWS Systems Manager Incident Manager
     short: Incident Manager

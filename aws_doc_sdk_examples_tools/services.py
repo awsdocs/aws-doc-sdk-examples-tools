@@ -77,6 +77,9 @@ class Service:
             version = "0"
         if api_ref is None:
             errors.append(metadata_errors.MissingField(field="api_ref"))
+        if sdk_id is None:
+            errors.append(metadata_errors.MissingField(field="sdk_id"))
+            sdk_id = ""
 
         blurb = yaml.get("blurb")
         caveat = yaml.get("caveat")
