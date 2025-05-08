@@ -108,6 +108,7 @@ Go:
           mediastore-data: mediastoredata
           medical-imaging: medicalimaging
           migration-hub: migrationhub
+          partnercentral-selling: partnercentralselling
           payment-cryptography: paymentcryptography
           payment-cryptography-data: paymentcryptographydata
           personalize-runtime: personalizeruntime
