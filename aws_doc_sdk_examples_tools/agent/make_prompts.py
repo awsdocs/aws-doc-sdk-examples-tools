@@ -7,6 +7,9 @@ from typing import List
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Snippet
 
+DEFAULT_METADATA_PREFIX = "[DEFAULT]"
+
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,16 +26,23 @@ def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
     examples = doc_gen.examples
     snippets = doc_gen.snippets
     for example_id, example in examples.items():
-        prompt_path = out_dir / f"{example_id}.md"
-        snippet_key = (
-            example.languages[language]
-            .versions[0]
-            .excerpts[0]
-            .snippet_files[0]
-            .replace("/", ".")
-        )
-        snippet = snippets[snippet_key]
-        prompt_path.write_text(snippet.code, encoding="utf-8")
+        # "Title" and "Abbrev" are the defaults. If they're not there, it suggests we've already
+        # added new titles.
+        title = example.title or ""
+        title_abbrev = example.title_abbrev or ""
+        if title.startswith(DEFAULT_METADATA_PREFIX) and title_abbrev.startswith(
+            DEFAULT_METADATA_PREFIX
+        ):
+            prompt_path = out_dir / f"{example_id}.md"
+            snippet_key = (
+                example.languages[language]
+                .versions[0]
+                .excerpts[0]
+                .snippet_files[0]
+                .replace("/", ".")
+            )
+            snippet = snippets[snippet_key]
+            prompt_path.write_text(snippet.code, encoding="utf-8")
 
 
 def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
