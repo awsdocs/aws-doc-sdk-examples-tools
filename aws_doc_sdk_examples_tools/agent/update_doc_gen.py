@@ -5,13 +5,24 @@ from typing import Iterable
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
 
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def examples_from_updates(updates_path: Path) -> Iterable[Example]:
+    """
+    Take a path to a file containing a list of example metadata updates
+    and returns an iterable of examples with the applied updates.
+    """
     updates = json.loads(updates_path.read_text())
+
+    if isinstance(updates, list):
+        updates_dict = {}
+        for item in updates:
+            if "id" in item:
+                updates_dict[item["id"]] = item
+        updates = updates_dict
+
     examples = [
         Example(
             id=id,
@@ -27,6 +38,9 @@ def examples_from_updates(updates_path: Path) -> Iterable[Example]:
 
 
 def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> None:
+    """
+    Merge a subset of example properties into a DocGen instance.
+    """
     for example in examples:
         if doc_gen_example := doc_gen.examples.get(example.id):
             doc_gen_example.title = example.title
@@ -36,7 +50,7 @@ def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> None:
             logger.warning(f"Could not find example with id: {example.id}")
 
 
-def update(doc_gen_root: Path, iam_updates_path: Path) -> DocGen:
+def update_doc_gen(doc_gen_root: Path, iam_updates_path: Path) -> DocGen:
     doc_gen = DocGen.from_root(doc_gen_root)
     examples = examples_from_updates(iam_updates_path)
     update_examples(doc_gen, examples)
