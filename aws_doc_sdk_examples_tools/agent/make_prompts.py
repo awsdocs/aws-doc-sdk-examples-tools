@@ -19,16 +19,13 @@ def make_doc_gen(root: Path) -> DocGen:
     return doc_gen
 
 
-def write_prompts(doc_gen: DocGen, out: Path) -> None:
-    out.mkdir(parents=True, exist_ok=True)
+def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
     examples = doc_gen.examples
     snippets = doc_gen.snippets
     for example_id, example in examples.items():
-        # Postfix with `.md` so Ailly will pick it up.
-        prompt_path = out / f"{example_id}.md"
-        # This assumes we're running DocGen specifically on AWSIAMPolicyExampleReservoir.
+        prompt_path = out_dir / f"{example_id}.md"
         snippet_key = (
-            example.languages["IAMPolicyGrammar"]
+            example.languages[language]
             .versions[0]
             .excerpts[0]
             .snippet_files[0]
@@ -38,7 +35,7 @@ def write_prompts(doc_gen: DocGen, out: Path) -> None:
         prompt_path.write_text(snippet.code, encoding="utf-8")
 
 
-def setup_ailly(system_prompts: List[str], out: Path) -> None:
+def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
     """Create the .aillyrc configuration file."""
     fence = "---"
     options = {"isolated": "true"}
@@ -47,32 +44,33 @@ def setup_ailly(system_prompts: List[str], out: Path) -> None:
 
     content = f"{fence}\n{options_block}\n{fence}\n{prompts_block}"
 
-    aillyrc_path = out / ".aillyrc"
-    aillyrc_path.parent.mkdir(parents=True, exist_ok=True)
+    aillyrc_path = out_dir / ".aillyrc"
     aillyrc_path.write_text(content, encoding="utf-8")
 
 
-def read_system_prompts(values: List[str]) -> List[str]:
-    """Parse system prompts from a list of strings or file paths."""
-    prompts = []
+def read_files(values: List[str]) -> List[str]:
+    """Read contents of files into a list of file contents."""
+    contents = []
     for value in values:
         if os.path.isfile(value):
             with open(value, "r", encoding="utf-8") as f:
-                prompts.append(f.read())
+                contents.append(f.read())
         else:
-            prompts.append(value)
-    return prompts
+            contents.append(value)
+    return contents
 
 
 def validate_root_path(doc_gen_root: Path):
-    assert "AWSIAMPolicyExampleReservoir" in str(doc_gen_root)
     assert doc_gen_root.is_dir()
 
 
-def main(doc_gen_root: Path, system_prompts: List[str], out: Path) -> None:
+def make_prompts(
+    doc_gen_root: Path, system_prompts: List[str], out_dir: Path, language: str
+) -> None:
     """Generate prompts and configuration files for Ailly."""
-    system_prompts = read_system_prompts(system_prompts)
-    setup_ailly(system_prompts, out)
     validate_root_path(doc_gen_root)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    system_prompts = read_files(system_prompts)
+    setup_ailly(system_prompts, out_dir)
     doc_gen = make_doc_gen(doc_gen_root)
-    write_prompts(doc_gen, out)
+    write_prompts(doc_gen=doc_gen, out_dir=out_dir, language=language)
