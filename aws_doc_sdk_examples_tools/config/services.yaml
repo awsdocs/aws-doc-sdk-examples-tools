@@ -2436,7 +2436,7 @@ neptune:
   guide:
     subtitle: User Guide
     url: neptune/latest/userguide/intro.html
-  api_ref: neptune/latest/userguide/api.html
+  api_ref: neptune/latest/apiref/Welcome.html
   tags:
     product_categories: {'Databases'}
   version: neptune-2018-06-26
