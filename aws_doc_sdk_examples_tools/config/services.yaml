@@ -2439,7 +2439,7 @@ neptune:
   api_ref: neptune/latest/apiref/Welcome.html
   tags:
     product_categories: {'Databases'}
-  version: neptune-2018-06-26
+  version: neptune-2014-10-31
 networkmanager:
   api_ref: networkmanager/latest/APIReference/Welcome.html
   blurb: ''
