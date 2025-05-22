@@ -2424,6 +2424,22 @@ memorydb:
   tags:
     product_categories: {}
   version: memorydb-2021-01-01
+neptune:
+  long: '&neptunelong;'
+  short: '&neptune;'
+  sort: Neptune
+  sdk_id: neptune
+  expanded:
+    long: Amazon Neptune
+    short: Neptune
+  blurb: is a serverless graph database designed for superior scalability and availability. 
+  guide:
+    subtitle: User Guide
+    url: neptune/latest/userguide/intro.html
+  api_ref: neptune/latest/apiref/Welcome.html
+  tags:
+    product_categories: {'Databases'}
+  version: neptune-2014-10-31
 networkmanager:
   api_ref: networkmanager/latest/APIReference/Welcome.html
   blurb: ''
