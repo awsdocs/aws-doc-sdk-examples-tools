@@ -270,6 +270,17 @@ PowerShell:
         uid: "ToolsForPowerShell4"
         name: "&guide-twp-ref;"
         link_template: "https://docs.aws.amazon.com/powershell/latest/reference"
+    5:
+      long: "&TWPALLlong; v5"
+      short: "&TWPALL; v5"
+      expanded:
+        long: "AWS Tools for PowerShell v5"
+        short: "Tools for PowerShell v5"
+      guide: "powershell/latest/userguide/pstools-welcome.html"
+      api_ref:
+        uid: "ToolsForPowerShell5"
+        name: "&guide-twp-ref;"
+        link_template: "https://docs.aws.amazon.com/powershell/latest/reference"
   guide: "&guide-twp-ug;"
 Python:
   property: python
