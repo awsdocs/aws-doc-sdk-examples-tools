@@ -843,7 +843,7 @@ connect:
 controltower:
   api_ref: controltower/latest/APIReference/Welcome.html
   blurb: enables you to enforce and manage governance rules for security, operations, and compliance 
-    at scale across all your organizations and accounts
+    at scale across all your organizations and accounts.
   sdk_id: ControlTower
   expanded:
     long: AWS Control Tower
