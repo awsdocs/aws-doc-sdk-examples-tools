@@ -840,6 +840,23 @@ connect:
   tags:
     product_categories: {}
   version: connect-2017-08-08
+controltower:
+  api_ref: controltower/latest/APIReference/Welcome.html
+  blurb: enables you to enforce and manage governance rules for security, operations, and compliance 
+    at scale across all your organizations and accounts.
+  sdk_id: ControlTower
+  expanded:
+    long: AWS Control Tower
+    short: AWS Control Tower
+  guide:
+    subtitle: User Guide
+    url: controltower/latest/userguide/what-is-control-tower.html
+  long: '&CTowerlong;'
+  short: '&CTower;'
+  sort: Control Tower
+  tags:
+    product_categories: {'Management &amp; Governance'}
+  version: controltower-2018-05-10
 cost-and-usage-report-service:
   api_ref: aws-cost-management/latest/APIReference/Welcome.html
   blurb: ''
