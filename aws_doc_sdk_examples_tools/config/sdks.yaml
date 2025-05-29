@@ -268,7 +268,7 @@ PowerShell:
       guide: "powershell/latest/v4/pstools-welcome.html"
       api_ref:
         uid: "ToolsForPowerShell4"
-        name: "&guide-twp-ref; (V4)"
+        name: "&guide-twp-ref-v4;"
         link_template: "https://docs.aws.amazon.com/powershell/v4/reference"
     5:
       long: "&TWPALLlong; V5"
@@ -279,7 +279,7 @@ PowerShell:
       guide: "powershell/v5/userguide/pstools-welcome.html"
       api_ref:
         uid: "ToolsForPowerShell5"
-        name: "&guide-twp-ref; (V5)"
+        name: "&guide-twp-ref-v5;"
         link_template: "https://docs.aws.amazon.com/powershell/v5/reference"
   guide: "&guide-twp-ug;"
 Python:
