@@ -179,3 +179,7 @@
 
 <!ENTITY GeoRouteslong 'Amazon Location Service Routes V2'>
 <!ENTITY GeoRoutes 'Location Service Routes V2'>
+
+<!-- Tools for PowerShell -->
+<!ENTITY guide-twp-ref-v4 '&guide-twp-ref; (V4)'>
+<!ENTITY guide-twp-ref-v5 '&guide-twp-ref; (V5)'>

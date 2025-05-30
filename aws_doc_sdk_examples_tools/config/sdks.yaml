@@ -260,16 +260,27 @@ PowerShell:
   property: powershell
   sdk:
     4:
-      long: "&TWPALLlong;"
-      short: "&TWPALL;"
+      long: "&TWPALLlong; V4"
+      short: "&TWPALL; V4"
       expanded:
-        long: "AWS Tools for PowerShell"
-        short: "Tools for PowerShell"
-      guide: "powershell/latest/userguide/pstools-welcome.html"
+        long: "AWS Tools for PowerShell V4"
+        short: "Tools for PowerShell V4"
+      guide: "powershell/latest/v4/pstools-welcome.html"
       api_ref:
         uid: "ToolsForPowerShell4"
-        name: "&guide-twp-ref;"
-        link_template: "https://docs.aws.amazon.com/powershell/latest/reference"
+        name: "&guide-twp-ref-v4;"
+        link_template: "https://docs.aws.amazon.com/powershell/v4/reference"
+    5:
+      long: "&TWPALLlong; V5"
+      short: "&TWPALL; V5"
+      expanded:
+        long: "AWS Tools for PowerShell V5"
+        short: "Tools for PowerShell V5"
+      guide: "powershell/v5/userguide/pstools-welcome.html"
+      api_ref:
+        uid: "ToolsForPowerShell5"
+        name: "&guide-twp-ref-v5;"
+        link_template: "https://docs.aws.amazon.com/powershell/v5/reference"
   guide: "&guide-twp-ug;"
 Python:
   property: python
