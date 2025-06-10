@@ -9,6 +9,9 @@ from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
+from yaml.parser import ParserError
+
+from yaml import YAMLError
 
 # from os import glob
 
@@ -28,6 +31,7 @@ from .metadata_errors import (
     NameFormat,
     ActionNameFormat,
     ServiceNameFormat,
+    YamlParseError,
 )
 from .metadata_validator import validate_metadata
 from .project_validator import ValidationConfig
@@ -211,25 +215,28 @@ class DocGen:
     def process_metadata(self, path: Path) -> "DocGen":
         if path in self._loaded:
             return self
-        with open(path) as file:
-            examples, errs = parse_examples(
-                path,
-                yaml.safe_load(file),
-                self.sdks,
-                self.services,
-                self.standard_categories,
-                self.cross_blocks,
-                self.validation,
-            )
-            self.extend_examples(examples, self.errors)
-            self.errors.extend(errs)
-            for example in examples:
-                for lang in example.languages:
-                    language = example.languages[lang]
-                    for version in language.versions:
-                        for excerpt in version.excerpts:
-                            self.snippet_files.update(excerpt.snippet_files)
-        self._loaded.add(path)
+        try:
+            with open(path) as file:
+                examples, errs = parse_examples(
+                    path,
+                    yaml.safe_load(file),
+                    self.sdks,
+                    self.services,
+                    self.standard_categories,
+                    self.cross_blocks,
+                    self.validation,
+                )
+                self.extend_examples(examples, self.errors)
+                self.errors.extend(errs)
+                for example in examples:
+                    for lang in example.languages:
+                        language = example.languages[lang]
+                        for version in language.versions:
+                            for excerpt in version.excerpts:
+                                self.snippet_files.update(excerpt.snippet_files)
+            self._loaded.add(path)
+        except ParserError as e:
+            self.errors.append(YamlParseError(file=path, parser_error=str(e)))
         return self
 
     @classmethod
