@@ -4,6 +4,7 @@ import logging
 import os
 from pathlib import Path
 from typing import List
+import yaml
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Snippet
 
@@ -26,8 +27,9 @@ def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
     examples = doc_gen.examples
     snippets = doc_gen.snippets
     for example_id, example in examples.items():
-        # "Title" and "Abbrev" are the defaults. If they're not there, it suggests we've already
-        # added new titles.
+        # TCXContentAnalyzer prefixes new metadata title/title_abbrev entries with
+        # the DEFAULT_METADATA_PREFIX. Checking this here to make sure we're only
+        # running the LLM tool on new extractions.
         title = example.title or ""
         title_abbrev = example.title_abbrev or ""
         if title.startswith(DEFAULT_METADATA_PREFIX) and title_abbrev.startswith(
@@ -48,8 +50,17 @@ def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
 def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
     """Create the .aillyrc configuration file."""
     fence = "---"
-    options = {"isolated": "true"}
-    options_block = "\n".join(f"{key}: {value}" for key, value in options.items())
+    options = {
+        "isolated": "true",
+        "mcp": {
+            "awslabs.aws-documentation-mcp-server": {
+                "type": "stdio",
+                "command": "uvx",
+                "args": ["awslabs.aws-documentation-mcp-server@latest"],
+            }
+        },
+    }
+    options_block = yaml.dump(options).strip()
     prompts_block = "\n".join(system_prompts)
 
     content = f"{fence}\n{options_block}\n{fence}\n{prompts_block}"

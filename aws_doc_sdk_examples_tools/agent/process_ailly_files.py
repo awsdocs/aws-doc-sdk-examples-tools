@@ -15,10 +15,7 @@ logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 EXPECTED_KEYS: Set[str] = set(["title", "title_abbrev"])
-VALUE_PREFIXES: Dict[str, str] = {
-    "title": "Example policy: ",
-    "title_abbrev": "Example: ",
-}
+VALUE_PREFIXES: Dict[str, str] = {"title": "", "title_abbrev": "", "synopsis": ""}
 
 
 class MissingExpectedKeys(Exception):
@@ -84,6 +81,7 @@ def parse_ailly_file(
             if key in result:
                 result[key] = f"{prefix}{result[key]}"
 
+        result["title_abbrev"] = result["title"]
         result["id"] = Path(file_path).name.split(".md.ailly.md")[0]
         result["_source_file"] = file_path
 

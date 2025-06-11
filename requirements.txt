@@ -9,3 +9,4 @@ requests==2.32.0
 types-PyYAML==6.0.12.12
 yamale==4.0.4
 typer==0.15.3
+uv==0.7.10
