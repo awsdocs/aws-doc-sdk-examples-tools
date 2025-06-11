@@ -36,7 +36,11 @@ python -m aws_doc_sdk_examples_tools.agent.bin.main \
 
 ### 🔧 Arguments
 
-Run `python -m aws_doc_sdk_examples_tools.agent.bin.main --help` for more info.
+- `iam_tributary_root`: Path to the root directory of your IAM policy tributary
+- `--system-prompts`: List of system prompt files or strings to include in the Ailly configuration
+- `--skip-generation`: Skip the prompt generation and Ailly execution steps (useful for reprocessing existing outputs)
+
+Run `python -m aws_doc_sdk_examples_tools.agent.bin.main update --help` for more info.
 
 ---
 
