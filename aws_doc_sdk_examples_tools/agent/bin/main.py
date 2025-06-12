@@ -17,18 +17,24 @@ IAM_UPDATES_PATH = AILLY_DIR_PATH / "iam_updates.json"
 
 
 @app.command()
-def update(iam_tributary_root: str, system_prompts: List[str] = []) -> None:
+def update(
+    iam_tributary_root: str,
+    system_prompts: List[str] = [],
+    skip_generation: bool = False,
+) -> None:
     """
     Generate new IAM policy metadata for a tributary.
     """
     doc_gen_root = Path(iam_tributary_root)
-    make_prompts(
-        doc_gen_root=doc_gen_root,
-        system_prompts=system_prompts,
-        out_dir=AILLY_DIR_PATH,
-        language="IAMPolicyGrammar",
-    )
-    run(["npx", "@ailly/cli", "--root", AILLY_DIR])
+
+    if not skip_generation:
+        make_prompts(
+            doc_gen_root=doc_gen_root,
+            system_prompts=system_prompts,
+            out_dir=AILLY_DIR_PATH,
+            language="IAMPolicyGrammar",
+        )
+        run(["npx @ailly/cli@1.7.0-rc1", "--root", AILLY_DIR])
 
     process_ailly_files(
         input_dir=str(AILLY_DIR_PATH), output_file=str(IAM_UPDATES_PATH)
