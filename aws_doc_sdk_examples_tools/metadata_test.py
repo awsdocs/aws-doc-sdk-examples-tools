@@ -500,6 +500,62 @@ def test_parse_cross():
     assert actual[0] == example
 
 
+CATEGORY_FIELD_ERRORS = """
+medical-imaging_TestRequiredCategoryFields:
+  title: Delete Topic
+  title_abbrev: Delete topic
+  synopsis: this is a synopsis.
+  category: IAMPolicy
+  languages:
+   PHP:
+     versions:
+       - sdk_version: 1
+         excerpts:
+         - snippet_files:
+           - snippet_files/AccountControlApiDoc/iam-policies.AccountControlApiDoc.src.manage-acct-update-contact-alternate.xml.1.xml  
+  services:
+    medical-imaging:
+"""
+
+
+def test_parse_required_category_fields_errors():
+    meta = yaml.safe_load(CATEGORY_FIELD_ERRORS)
+    _, errors = parse_examples(
+        Path("test_meta.yaml"),
+        meta,
+        SDKS,
+        SERVICES,
+        STANDARD_CATS,
+        set(),
+        ValidationConfig(strict_titles=True),
+    )
+    expected = [
+        metadata_errors.MissingField(
+            file=Path("test_meta.yaml"),
+            id="medical-imaging_TestRequiredCategoryFields",
+            language="PHP",
+            sdk_version=1,
+            field="owner",
+        ),
+        metadata_errors.MissingField(
+            file=Path("test_meta.yaml"),
+            id="medical-imaging_TestRequiredCategoryFields",
+            language="PHP",
+            sdk_version=1,
+            field="source",
+        ),
+        metadata_errors.MissingField(
+            file=Path("test_meta.yaml"),
+            id="medical-imaging_TestRequiredCategoryFields",
+            language="PHP",
+            sdk_version=1,
+            field="authors",
+        ),
+    ]
+    for e in expected:
+        assert e in errors
+
+
 def test_verify_load_successful():
     actual, errors = load(
         TEST_RESOURCES_PATH / "valid_metadata.yaml",
