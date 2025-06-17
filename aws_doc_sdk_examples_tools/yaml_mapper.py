@@ -18,11 +18,7 @@ from .project_validator import ValidationConfig
 from .metadata_validator import StringExtension
 
 
-CATEGORY_REQUIRED_FIELDS = {
-    "IAMPolicy": {
-        "version": {"authors", "owner", "source"}
-    }
-}
+CATEGORY_REQUIRED_FIELDS = {"IAMPolicy": {"version": {"authors", "owner", "source"}}}
 
 
 def example_from_yaml(

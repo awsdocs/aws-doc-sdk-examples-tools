@@ -102,8 +102,10 @@ class YamlParseError(MetadataError):
         return prefix
 
     def message(self) -> str:
-        return (f"incorrect YAML format {self.parser_error}.\n"
-                f"\tThis indicates a problem with the YAML itself. Use a YAML authoring tool to help diagnose further.")
+        return (
+            f"incorrect YAML format {self.parser_error}.\n"
+            f"\tThis indicates a problem with the YAML itself. Use a YAML authoring tool to help diagnose further."
+        )
 
 
 @dataclass
@@ -347,8 +349,10 @@ class UnknownService(MetadataParseError):
     service: str = ""
 
     def message(self):
-        return (f"has unknown service '{self.service}'. Typically this indicates a typo in the name of the service, "
-                f"which must match a key used in services.yaml.")
+        return (
+            f"has unknown service '{self.service}'. Typically this indicates a typo in the name of the service, "
+            f"which must match a key used in services.yaml."
+        )
 
 
 @dataclass
@@ -399,8 +403,10 @@ class PersonMissingField(SdkVersionError):
     alias: str = ""
 
     def message(self):
-        return (f"person is missing a field: name: {self.name}, alias: {self.alias}. A person must have both a name "
-                f"and an alias.")
+        return (
+            f"person is missing a field: name: {self.name}, alias: {self.alias}. A person must have both a name "
+            f"and an alias."
+        )
 
 
 @dataclass

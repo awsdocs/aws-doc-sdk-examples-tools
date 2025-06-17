@@ -261,8 +261,10 @@ class MissingSnippetFile(MetadataError):
     snippet_file: Optional[str] = None
 
     def message(self):
-        return (f"missing snippet_file {self.snippet_file}. The relative path to the snippet_file listed in the "
-                f"metadata for this example must map to an actual file in the file system.")
+        return (
+            f"missing snippet_file {self.snippet_file}. The relative path to the snippet_file listed in the "
+            f"metadata for this example must map to an actual file in the file system."
+        )
 
 
 @dataclass
