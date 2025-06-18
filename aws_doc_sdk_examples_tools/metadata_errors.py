@@ -94,6 +94,21 @@ class MetadataErrors(ErrorsList[MetadataError]):
 
 
 @dataclass
+class YamlParseError(MetadataError):
+    parser_error: Optional[str] = None
+
+    def prefix(self):
+        prefix = f"In {self.file},"
+        return prefix
+
+    def message(self) -> str:
+        return (
+            f"incorrect YAML format {self.parser_error}.\n"
+            f"\tThis indicates a problem with the YAML itself. Use a YAML authoring tool to help diagnose further."
+        )
+
+
+@dataclass
 class MetadataParseError(MetadataError):
     id: Optional[str] = None
     language: Optional[str] = None
@@ -172,7 +187,7 @@ class FieldError(MetadataParseError):
 @dataclass
 class MissingField(FieldError):
     def message(self):
-        return f"missing field {self.field}"
+        return f"missing field '{self.field}'"
 
 
 @dataclass
@@ -213,7 +228,8 @@ class LanguageError(MetadataParseError):
 class UnknownLanguage(LanguageError):
     def message(self):
         return (
-            f"contains {self.language} as a language, which is not listed in sdks.yaml."
+            f"contains '{self.language}' as a language, which is not listed in sdks.yaml. Typically, this indicates a "
+            f"typo in the name of the language."
         )
 
 
@@ -333,7 +349,10 @@ class UnknownService(MetadataParseError):
     service: str = ""
 
     def message(self):
-        return f"has unknown service {self.service}"
+        return (
+            f"has unknown service '{self.service}'. Typically this indicates a typo in the name of the service, "
+            f"which must match a key used in services.yaml."
+        )
 
 
 @dataclass
@@ -384,7 +403,10 @@ class PersonMissingField(SdkVersionError):
     alias: str = ""
 
     def message(self):
-        return f"person is missing a field: name: {self.name}, alias: {self.alias}"
+        return (
+            f"person is missing a field: name: {self.name}, alias: {self.alias}. A person must have both a name "
+            f"and an alias."
+        )
 
 
 @dataclass

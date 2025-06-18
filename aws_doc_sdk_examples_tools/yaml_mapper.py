@@ -18,6 +18,9 @@ from .project_validator import ValidationConfig
 from .metadata_validator import StringExtension
 
 
+CATEGORY_REQUIRED_FIELDS = {"IAMPolicy": {"version": {"authors", "owner", "source"}}}
+
+
 def example_from_yaml(
     yaml: Any,
     sdks: Dict[str, Sdk],
@@ -83,7 +86,7 @@ def example_from_yaml(
     else:
         for name in yaml_languages:
             language, errs = language_from_yaml(
-                name, yaml_languages[name], sdks, blocks, is_action
+                name, yaml_languages[name], sdks, blocks, is_action, category
             )
             languages[language.name] = language
             errors.extend(errs)
@@ -146,6 +149,7 @@ def language_from_yaml(
     sdks: Dict[str, Sdk],
     blocks: Set[str],
     is_action: bool,
+    category: str,
 ) -> Tuple[Language, MetadataErrors]:
     errors = MetadataErrors()
     if name not in sdks:
@@ -161,7 +165,7 @@ def language_from_yaml(
 
     versions: List[Version] = []
     for version in yaml_versions:
-        vers, version_errors = version_from_yaml(version, blocks, is_action)
+        vers, version_errors = version_from_yaml(version, blocks, is_action, category)
         errors.extend(version_errors)
         versions.append(vers)
 
@@ -222,8 +226,13 @@ def version_from_yaml(
     yaml: Dict[str, Any],
     cross_content_blocks: Set[str],
     is_action: bool,
+    category: str,
 ) -> Tuple["Version", MetadataErrors]:
     errors = MetadataErrors()
+
+    for field in CATEGORY_REQUIRED_FIELDS.get(category, {}).get("version", {}):
+        if not yaml.get(field):
+            errors.append(metadata_errors.MissingField(field=field))
 
     sdk_version = int(yaml.get("sdk_version", 0))
     if sdk_version == 0:

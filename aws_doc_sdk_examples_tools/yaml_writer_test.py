@@ -18,7 +18,10 @@ def test_doc_gen(sample_doc_gen: DocGen):
     writes = prepare_write(sample_doc_gen.examples)
     assert writes
 
-    writes = {k.replace(str(ROOT) + "/", ""): v for k, v in writes.items()}
+    writes = {
+        Path(k.replace(str(ROOT), "")).as_posix().lstrip("/"): v
+        for k, v in writes.items()
+    }
 
     expected_writes = {
         ".doc_gen/metadata/aws_entity_metadata.yaml": """sns_EntitySuccesses:

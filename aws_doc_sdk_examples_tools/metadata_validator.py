@@ -14,6 +14,7 @@ import os
 import re
 import xml.etree.ElementTree as xml_tree
 import yaml
+import yaml.parser
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set
@@ -200,6 +201,8 @@ def validate_files(
             data = yamale.make_data(meta_name)
             yamale.validate(schema, data, strict=strict)
             print(f"{meta_name.resolve()} validation success! 👍")
+        except yaml.parser.ParserError as e:
+            pass  # YAML parse errors are found and reported by the DocGen validator so we won't report them here.
         except YamaleError as e:
             errors.append(ValidateYamaleError(file=meta_name, yamale_error=e))
     return errors
