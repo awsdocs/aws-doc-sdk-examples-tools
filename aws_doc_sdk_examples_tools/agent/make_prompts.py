@@ -2,17 +2,14 @@
 
 import logging
 import os
+import yaml
 from pathlib import Path
 from typing import List
-import yaml
 
-from aws_doc_sdk_examples_tools.doc_gen import DocGen, Snippet
+from aws_doc_sdk_examples_tools.doc_gen import DocGen
 
-DEFAULT_METADATA_PREFIX = "[DEFAULT]"
+DEFAULT_METADATA_PREFIX = "DEFAULT"
 
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -26,6 +23,8 @@ def make_doc_gen(root: Path) -> DocGen:
 def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
     examples = doc_gen.examples
     snippets = doc_gen.snippets
+
+    filtered_examples = []
     for example_id, example in examples.items():
         # TCXContentAnalyzer prefixes new metadata title/title_abbrev entries with
         # the DEFAULT_METADATA_PREFIX. Checking this here to make sure we're only
@@ -35,16 +34,39 @@ def write_prompts(doc_gen: DocGen, out_dir: Path, language: str) -> None:
         if title.startswith(DEFAULT_METADATA_PREFIX) and title_abbrev.startswith(
             DEFAULT_METADATA_PREFIX
         ):
-            prompt_path = out_dir / f"{example_id}.md"
-            snippet_key = (
-                example.languages[language]
-                .versions[0]
-                .excerpts[0]
-                .snippet_files[0]
-                .replace("/", ".")
-            )
-            snippet = snippets[snippet_key]
-            prompt_path.write_text(snippet.code, encoding="utf-8")
+            filtered_examples.append((example_id, example))
+
+    batch_size = 150
+    total_examples = len(filtered_examples)
+    num_batches = (total_examples + batch_size - 1) // batch_size
+
+    logger.info(
+        f"Splitting {total_examples} examples into {num_batches} batches of {batch_size}"
+    )
+
+    for batch_num in range(num_batches):
+        batch_dir = out_dir / f"batch_{(batch_num + 1):03}"
+        batch_dir.mkdir(exist_ok=True)
+
+        start_idx = batch_num * batch_size
+        end_idx = min((batch_num + 1) * batch_size, total_examples)
+
+        for i in range(start_idx, end_idx):
+            example_id, example = filtered_examples[i]
+            prompt_path = batch_dir / f"{example_id}.md"
+
+            try:
+                snippet_key = (
+                    example.languages[language]
+                    .versions[0]
+                    .excerpts[0]
+                    .snippet_files[0]
+                    .replace("/", ".")
+                )
+                snippet = snippets[snippet_key]
+                prompt_path.write_text(snippet.code, encoding="utf-8")
+            except (KeyError, IndexError, AttributeError) as e:
+                logger.warning(f"Error processing example {example_id}: {e}")
 
 
 def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
@@ -52,13 +74,16 @@ def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
     fence = "---"
     options = {
         "isolated": "true",
-        "mcp": {
-            "awslabs.aws-documentation-mcp-server": {
-                "type": "stdio",
-                "command": "uvx",
-                "args": ["awslabs.aws-documentation-mcp-server@latest"],
-            }
-        },
+        "overwrite": "true",
+        # MCP assistance did not produce noticeably different results, but it was
+        # slowing things down by 10x. Disabled for now.
+        # "mcp": {
+        #     "awslabs.aws-documentation-mcp-server": {
+        #         "type": "stdio",
+        #         "command": "uvx",
+        #         "args": ["awslabs.aws-documentation-mcp-server@latest"],
+        #     }
+        # },
     }
     options_block = yaml.dump(options).strip()
     prompts_block = "\n".join(system_prompts)
