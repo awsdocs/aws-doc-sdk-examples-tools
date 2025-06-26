@@ -1,0 +1,21 @@
+iam_policies_example:
+  category: IAMPolicy
+  languages:
+    IAMPolicyGrammar:
+      versions:
+      - authors:
+        - alias: amazonian@amazon.com
+          name: Sir Peccy
+        excerpts:
+          - description: test
+        owner: AWS/Documentation/Accounts Management Docs
+        sdk_version: 1
+        source:
+          title: AWS Account Management
+          url: https://code.amazon.com/packages/AccountControlApiDoc
+  services:
+    iam: {}
+  synopsis: This identity-based policy allows the attached identity to retrieve the
+    billing alternate contact information for a specific account within an organization.
+  title: Allow retrieval of a specific alternate contact type for an account
+  title_abbrev: Allow retrieval of a specific alternate contact type for an account

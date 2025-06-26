@@ -81,7 +81,6 @@ def parse_ailly_file(
             if key in result:
                 result[key] = f"{prefix}{result[key]}"
 
-        result["title_abbrev"] = result["title"]
         result["id"] = Path(file_path).name.split(".md.ailly.md")[0]
         result["_source_file"] = file_path
 

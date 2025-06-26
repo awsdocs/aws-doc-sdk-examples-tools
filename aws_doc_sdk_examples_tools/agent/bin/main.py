@@ -25,11 +25,8 @@ IAM_UPDATES_PATH = AILLY_DIR_PATH / "iam_updates.json"
 
 
 def format_duration(seconds: float) -> str:
-    """Format duration in seconds to hours:minutes:seconds format."""
     td = timedelta(seconds=seconds)
-    hours, remainder = divmod(td.total_seconds(), 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+    return str(td).zfill(8)
 
 
 @app.command()
