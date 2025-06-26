@@ -19,5 +19,6 @@ setup(
         "pathspec==0.11.2",
         "PyYAML==6.0.1",
         "yamale==4.0.4",
+        "typer==0.16.0",
     ],
 )

@@ -8,6 +8,8 @@ from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+IAM_LANGUAGE = "IAMPolicyGrammar"
+
 
 def examples_from_updates(updates_path: Path) -> Iterable[Example]:
     """
@@ -44,7 +46,9 @@ def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> None:
     for example in examples:
         if doc_gen_example := doc_gen.examples.get(example.id):
             doc_gen_example.title = example.title
-            doc_gen_example.title_abbrev = example.title_abbrev
+            # This reduces the number of duplicate title_abbrev that occur due to similar policies
+            source = doc_gen_example.languages[IAM_LANGUAGE].versions[0].source.title
+            doc_gen_example.title_abbrev = f"{example.title_abbrev} (from {source})"
             doc_gen_example.synopsis = example.synopsis
         else:
             logger.warning(f"Could not find example with id: {example.id}")

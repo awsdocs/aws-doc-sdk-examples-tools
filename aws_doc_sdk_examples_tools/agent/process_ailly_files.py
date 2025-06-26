@@ -81,7 +81,6 @@ def parse_ailly_file(
             if key in result:
                 result[key] = f"{prefix}{result[key]}"
 
-        result["title_abbrev"] = result["title"]
         result["id"] = Path(file_path).name.split(".md.ailly.md")[0]
         result["_source_file"] = file_path
 
@@ -106,7 +105,7 @@ def process_ailly_files(
     input_path = Path(input_dir)
 
     try:
-        for file_path in input_path.glob(file_pattern):
+        for file_path in input_path.rglob(file_pattern):
             logger.info(f"Processing file: {file_path}")
             parsed_data = parse_ailly_file(str(file_path))
             if parsed_data:

@@ -11,3 +11,16 @@ IAMPolicy:
         name: "&SAZR;"
         link_template: "SomeTemplate"
   guide: "&guide-iam-user;"
+IAMPolicyGrammar:
+    property: json
+    syntax: json
+    sdk:
+      1:
+        long: "IAM policy"
+        short: "IAM policy"
+        guide: "IAM/latest/UserGuide/introduction.html"
+        api_ref:
+          uid: "IAMPolicy"
+          name: "&SAZR;"
+          link_template: "SomeTemplate"
+    guide: "&guide-iam-user;"
