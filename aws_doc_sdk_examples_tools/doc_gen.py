@@ -16,6 +16,7 @@ from yaml import YAMLError
 # from os import glob
 
 from .categories import Category, parse as parse_categories
+from .fs import Fs, PathFs
 from .metadata import (
     Example,
     DocFilenames,
@@ -55,6 +56,7 @@ class DocGenMergeWarning(MetadataError):
 class DocGen:
     root: Path
     errors: MetadataErrors
+    fs: Fs = field(default_factory=PathFs)
     entities: Dict[str, str] = field(default_factory=dict)
     prefix: Optional[str] = None
     validation: ValidationConfig = field(default_factory=ValidationConfig)
@@ -171,8 +173,12 @@ class DocGen:
                 self.examples[id] = example
 
     @classmethod
-    def empty(cls, validation: ValidationConfig = ValidationConfig()) -> "DocGen":
-        return DocGen(root=Path("/"), errors=MetadataErrors(), validation=validation)
+    def empty(
+        cls, validation: ValidationConfig = ValidationConfig(), fs: Fs = PathFs()
+    ) -> "DocGen":
+        return DocGen(
+            root=Path("/"), errors=MetadataErrors(), validation=validation, fs=fs
+        )
 
     @classmethod
     def default(cls) -> "DocGen":
@@ -190,6 +196,7 @@ class DocGen:
             snippet_files=set(),
             cross_blocks=set(),
             examples={},
+            fs=self.fs,
         )
 
     def for_root(
@@ -199,7 +206,7 @@ class DocGen:
 
         config = config or Path(__file__).parent / "config"
 
-        doc_gen = DocGen.empty()
+        doc_gen = DocGen.empty(fs=self.fs)
         parse_config(doc_gen, root, config, self.validation.strict_titles)
         self.merge(doc_gen)
 
@@ -209,31 +216,31 @@ class DocGen:
         return self
 
     def find_and_process_metadata(self, metadata_path: Path):
-        for path in metadata_path.glob("*_metadata.yaml"):
+        for path in self.fs.glob(metadata_path, "*_metadata.yaml"):
             self.process_metadata(path)
 
     def process_metadata(self, path: Path) -> "DocGen":
         if path in self._loaded:
             return self
         try:
-            with open(path) as file:
-                examples, errs = parse_examples(
-                    path,
-                    yaml.safe_load(file),
-                    self.sdks,
-                    self.services,
-                    self.standard_categories,
-                    self.cross_blocks,
-                    self.validation,
-                )
-                self.extend_examples(examples, self.errors)
-                self.errors.extend(errs)
-                for example in examples:
-                    for lang in example.languages:
-                        language = example.languages[lang]
-                        for version in language.versions:
-                            for excerpt in version.excerpts:
-                                self.snippet_files.update(excerpt.snippet_files)
+            content = self.fs.read(path)
+            examples, errs = parse_examples(
+                path,
+                yaml.safe_load(content),
+                self.sdks,
+                self.services,
+                self.standard_categories,
+                self.cross_blocks,
+                self.validation,
+            )
+            self.extend_examples(examples, self.errors)
+            self.errors.extend(errs)
+            for example in examples:
+                for lang in example.languages:
+                    language = example.languages[lang]
+                    for version in language.versions:
+                        for excerpt in version.excerpts:
+                            self.snippet_files.update(excerpt.snippet_files)
             self._loaded.add(path)
         except ParserError as e:
             self.errors.append(YamlParseError(file=path, parser_error=str(e)))
@@ -246,8 +253,9 @@ class DocGen:
         config: Optional[Path] = None,
         validation: ValidationConfig = ValidationConfig(),
         incremental: bool = False,
+        fs: Fs = PathFs(),
     ) -> "DocGen":
-        return DocGen.empty(validation=validation).for_root(
+        return DocGen.empty(validation=validation, fs=fs).for_root(
             root, config, incremental=incremental
         )
 
@@ -348,6 +356,10 @@ class DocGenEncoder(json.JSONEncoder):
                 "__entity_errors__": [{error.entity: error.message()} for error in obj]
             }
 
+        if isinstance(obj, Fs):
+            # Don't serialize filesystem objects for security
+            return {"__fs__": obj.__class__.__name__}
+
         if isinstance(obj, set):
             return {"__set__": list(obj)}
 
@@ -356,55 +368,53 @@ class DocGenEncoder(json.JSONEncoder):
 
 def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     try:
-        with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
-            validation = yaml.safe_load(file)
-            validation = validation or {}
-            doc_gen.validation.allow_list.update(validation.get("allow_list", []))
-            doc_gen.validation.sample_files.update(validation.get("sample_files", []))
+        content = doc_gen.fs.read(root / ".doc_gen" / "validation.yaml")
+        validation = yaml.safe_load(content)
+        validation = validation or {}
+        doc_gen.validation.allow_list.update(validation.get("allow_list", []))
+        doc_gen.validation.sample_files.update(validation.get("sample_files", []))
     except Exception:
         pass
 
     try:
         sdk_path = config / "sdks.yaml"
-        with sdk_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            sdks, errs = parse_sdks(sdk_path, meta, strict)
-            doc_gen.sdks = sdks
-            doc_gen.errors.extend(errs)
+        content = doc_gen.fs.read(sdk_path)
+        meta = yaml.safe_load(content)
+        sdks, errs = parse_sdks(sdk_path, meta, strict)
+        doc_gen.sdks = sdks
+        doc_gen.errors.extend(errs)
     except Exception:
         pass
 
     try:
         services_path = config / "services.yaml"
-        with services_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            services, service_errors = parse_services(services_path, meta)
-            doc_gen.services = services
-            for service in doc_gen.services.values():
-                if service.expanded:
-                    doc_gen.entities[service.long] = service.expanded.long
-                    doc_gen.entities[service.short] = service.expanded.short
-            doc_gen.errors.extend(service_errors)
+        content = doc_gen.fs.read(services_path)
+        meta = yaml.safe_load(content)
+        services, service_errors = parse_services(services_path, meta)
+        doc_gen.services = services
+        for service in doc_gen.services.values():
+            if service.expanded:
+                doc_gen.entities[service.long] = service.expanded.long
+                doc_gen.entities[service.short] = service.expanded.short
+        doc_gen.errors.extend(service_errors)
     except Exception:
         pass
 
     try:
         categories_path = config / "categories.yaml"
-        with categories_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
-            standard_categories, categories, errs = parse_categories(
-                categories_path, meta
-            )
-            doc_gen.standard_categories = standard_categories
-            doc_gen.categories = categories
-            doc_gen.errors.extend(errs)
+        content = doc_gen.fs.read(categories_path)
+        meta = yaml.safe_load(content)
+        standard_categories, categories, errs = parse_categories(categories_path, meta)
+        doc_gen.standard_categories = standard_categories
+        doc_gen.categories = categories
+        doc_gen.errors.extend(errs)
     except Exception:
         pass
 
     try:
         entities_config_path = config / "entities.yaml"
-        with entities_config_path.open(encoding="utf-8") as file:
-            entities_config = yaml.safe_load(file)
+        content = doc_gen.fs.read(entities_config_path)
+        entities_config = yaml.safe_load(content)
         for entity, expanded in entities_config["expanded_override"].items():
             doc_gen.entities[entity] = expanded
     except Exception:
@@ -412,8 +422,9 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
 
     metadata = root / ".doc_gen/metadata"
     try:
+        cross_content_path = metadata.parent / "cross-content"
         doc_gen.cross_blocks = set(
-            [path.name for path in (metadata.parent / "cross-content").glob("*.xml")]
+            [path.name for path in doc_gen.fs.glob(cross_content_path, "*.xml")]
         )
     except Exception:
         pass
