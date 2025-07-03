@@ -16,6 +16,9 @@ from .metadata_errors import MetadataErrors, MetadataError, UnknownLanguage
 from .sdks import Sdk, SdkVersion
 from .services import Service, ServiceExpanded
 from .snippets import Snippet
+from .fs import PathFs
+
+SHARED_FS = PathFs()
 
 
 @pytest.mark.parametrize(
@@ -24,6 +27,7 @@ from .snippets import Snippet
         (
             DocGen(
                 root=Path("/a"),
+                fs=SHARED_FS,
                 errors=MetadataErrors(),
                 sdks={
                     "a": Sdk(
@@ -43,6 +47,7 @@ from .snippets import Snippet
             ),
             DocGen(
                 root=Path("/b"),
+                fs=SHARED_FS,
                 errors=MetadataErrors(),
                 sdks={
                     "b": Sdk(
@@ -62,6 +67,7 @@ from .snippets import Snippet
             ),
             DocGen(
                 root=Path("/a"),
+                fs=SHARED_FS,
                 errors=MetadataErrors(),
                 sdks={
                     "a": Sdk(
