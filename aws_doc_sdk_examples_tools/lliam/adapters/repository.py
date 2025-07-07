@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Generator, Iterable, List, Tuple
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
-from aws_doc_sdk_examples_tools.fs import PathFs 
+from aws_doc_sdk_examples_tools.fs import Fs, PathFs 
 from aws_doc_sdk_examples_tools.lliam.domain.model import Prompt
 from aws_doc_sdk_examples_tools.lliam.shared_constants import BATCH_PREFIX
 
@@ -76,9 +76,9 @@ class AbstractPromptRepository(abc.ABC):
 
 
 class FsPromptRepository(AbstractPromptRepository):
-    def __init__(self):
+    def __init__(self, fs: Fs = PathFs()):
         super().__init__()
-        self.fs = PathFs()
+        self.fs = fs
 
     def rollback(self):
         # TODO: This is not what rollback is for. We should be rolling back any
@@ -120,13 +120,19 @@ class AbstractDocGenRepository(abc.ABC):
 
 
 class FsDocGenRepository(AbstractDocGenRepository):
+    def __init__(self, fs: Fs = PathFs()):
+        super().__init__()
+        self.fs = fs
+    
     def rollback(self):
         # TODO: This is not what rollback is for. We should be rolling back any
         # file changes
         self._doc_gen = None
 
     def _get_new_prompts(self, doc_gen_root: str) -> List[Prompt]:
-        self._doc_gen = DocGen.from_root(Path(doc_gen_root))
+        # Right now this is the only instance of DocGen used in this Repository,
+        # but if that changes we need to move it up.
+        self._doc_gen = DocGen.from_root(Path(doc_gen_root), fs=self.fs)
         self._doc_gen.collect_snippets()
         new_examples = self._get_new_examples()
         prompts = self._examples_to_prompts(new_examples)
