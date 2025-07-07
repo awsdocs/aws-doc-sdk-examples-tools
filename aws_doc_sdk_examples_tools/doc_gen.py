@@ -358,7 +358,7 @@ class DocGenEncoder(json.JSONEncoder):
 
         if isinstance(obj, Fs):
             # Don't serialize filesystem objects for security
-            return {"__fs__": obj.__class__.__name__}
+            return {}
 
         if isinstance(obj, set):
             return {"__set__": list(obj)}
