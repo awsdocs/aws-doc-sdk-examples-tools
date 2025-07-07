@@ -28,6 +28,10 @@ class Fs(ABC):
         pass
 
     @abstractmethod
+    def readlines(self, path: Path) -> List[str]:
+        pass
+
+    @abstractmethod
     def write(self, path: Path, content: str):
         pass
 
@@ -49,8 +53,12 @@ class PathFs(Fs):
         return path.glob(glob)
 
     def read(self, path: Path) -> str:
-        with path.open("r") as file:
+        with path.open("r", encoding="utf-8") as file:
             return file.read()
+
+    def readlines(self, path: Path) -> List[str]:
+        with path.open("r") as file:
+            return file.readlines()
 
     def write(self, path: Path, content: str):
         with path.open("w") as file:
@@ -87,6 +95,10 @@ class RecordFs(Fs):
     def read(self, path: Path) -> str:
         return self.fs[path]
 
+    def readlines(self, path: Path) -> List[str]:
+        content = self.fs[path]
+        return content.splitlines(keepends=True)
+
     def write(self, path: Path, content: str):
         base = str(path.parent)
         assert any(
@@ -106,7 +118,24 @@ class RecordFs(Fs):
         self.fs.setdefault(path, "")
 
     def list(self, path: Path) -> List[Path]:
-        return [item for item in self.fs.keys() if item.parent == path]
+        # If it's a file, return an empty list
+        if self.stat(path).is_file:
+            return []
+
+        # Gather all entries that are immediate children of `path`
+        prefix = str(path).rstrip("/") + "/"
+        children = set()
+
+        for item in self.fs.keys():
+            item_s = str(item)
+            if item_s.startswith(prefix):
+                # Determine the remainder path after the prefix
+                remainder = item_s[len(prefix) :]
+                # Split off the first component
+                first_part = remainder.split("/", 1)[0]
+                children.add(Path(prefix + first_part))
+
+        return sorted(children)
 
 
 fs = PathFs()
