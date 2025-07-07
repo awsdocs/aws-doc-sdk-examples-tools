@@ -8,6 +8,7 @@ from typing import Callable, Generator, List
 from shutil import rmtree
 
 from pathspec import GitIgnoreSpec
+from aws_doc_sdk_examples_tools.fs import Fs, PathFs
 
 
 def match_path_to_specs(path: Path, specs: List[GitIgnoreSpec]) -> bool:
@@ -21,7 +22,7 @@ def match_path_to_specs(path: Path, specs: List[GitIgnoreSpec]) -> bool:
 
 
 def walk_with_gitignore(
-    root: Path, specs: List[GitIgnoreSpec] = []
+    root: Path, specs: List[GitIgnoreSpec] = [], fs: Fs = PathFs()
 ) -> Generator[Path, None, None]:
     """
     Starting from a root directory, walk the file system yielding a path for each file.
@@ -30,27 +31,31 @@ def walk_with_gitignore(
     fiddling with a number of flags.
     """
     gitignore = root / ".gitignore"
-    if gitignore.exists():
-        with open(root / ".gitignore", "r", encoding="utf-8") as ignore_file:
-            specs = [*specs, GitIgnoreSpec.from_lines(ignore_file.readlines())]
-    for entry in os.scandir(root):
-        path = Path(entry.path)
+    gitignore_stat = fs.stat(gitignore)
+    if gitignore_stat.exists:
+        lines = fs.readlines(gitignore)
+        specs = [*specs, GitIgnoreSpec.from_lines(lines)]
+
+    for path in fs.list(root):
         if not match_path_to_specs(path, specs):
-            if entry.is_dir():
-                yield from walk_with_gitignore(path, specs)
+            path_stat = fs.stat(path)
+            if path_stat.is_dir:
+                yield from walk_with_gitignore(path, specs, fs)
             else:
-                yield path
+                # Don't yield .gitignore files themselves
+                if path.name != ".gitignore":
+                    yield path
 
 
 def get_files(
-    root: Path, skip: Callable[[Path], bool] = lambda _: False
+    root: Path, skip: Callable[[Path], bool] = lambda _: False, fs: Fs = PathFs()
 ) -> Generator[Path, None, None]:
     """
     Yield non-skipped files, that is, anything not matching git ls-files and not
     in the "to skip" files that are in git but are machine generated, so we don't
     want to validate them.
     """
-    for path in walk_with_gitignore(root):
+    for path in walk_with_gitignore(root, fs=fs):
         if not skip(path):
             yield path
 
