@@ -28,7 +28,7 @@ class Fs(ABC):
         pass
 
     @abstractmethod
-    def readlines(self, path: Path) -> List[str]:
+    def readlines(self, path: Path, encoding: str = "utf-8") -> List[str]:
         pass
 
     @abstractmethod
@@ -56,8 +56,8 @@ class PathFs(Fs):
         with path.open("r", encoding="utf-8") as file:
             return file.read()
 
-    def readlines(self, path: Path) -> List[str]:
-        with path.open("r", encoding="utf-8") as file:
+    def readlines(self, path: Path, encoding: str = "utf-8") -> List[str]:
+        with path.open("r", encoding=encoding) as file:
             return file.readlines()
 
     def write(self, path: Path, content: str):
@@ -95,7 +95,7 @@ class RecordFs(Fs):
     def read(self, path: Path) -> str:
         return self.fs[path]
 
-    def readlines(self, path: Path) -> List[str]:
+    def readlines(self, path: Path, encoding: str = "utf-8") -> List[str]:
         content = self.fs[path]
         return content.splitlines(keepends=True)
 
