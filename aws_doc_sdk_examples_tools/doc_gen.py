@@ -75,13 +75,14 @@ class DocGen:
     ):
         prefix = prefix or ""
         snippets_root = snippets_root or self.root
-        snippets, errs = collect_snippets(snippets_root)
+        snippets, errs = collect_snippets(snippets_root, fs=self.fs)
         collect_snippet_files(
             self.examples.values(),
             prefix=prefix,
             snippets=snippets,
             errors=errs,
             root=self.root,
+            fs=self.fs,
         )
         self.snippets = snippets
         self.errors.extend(errs)
