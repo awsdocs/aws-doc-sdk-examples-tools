@@ -7,8 +7,8 @@ Tests for file_utils.py with filesystem abstraction.
 
 from pathlib import Path
 
-from .fs import RecordFs
-from .file_utils import walk_with_gitignore, get_files
+from aws_doc_sdk_examples_tools.fs import RecordFs
+from aws_doc_sdk_examples_tools.file_utils import walk_with_gitignore, get_files
 
 
 class TestWalkWithGitignore:
@@ -18,16 +18,16 @@ class TestWalkWithGitignore:
         """Test basic directory traversal without gitignore."""
         fs = RecordFs(
             {
-                Path("root/file1.py"): "print('file1')",
-                Path("root/file2.js"): "console.log('file2')",
+                Path("/root/file1.py"): "print('file1')",
+                Path("/root/file2.js"): "console.log('file2')",
             }
         )
 
-        files = list(walk_with_gitignore(Path("root"), fs=fs))
+        files = list(walk_with_gitignore(Path("/root"), fs=fs))
 
         expected = [
-            Path("root/file1.py"),
-            Path("root/file2.js"),
+            Path("/root/file1.py"),
+            Path("/root/file2.js"),
         ]
         assert sorted(files) == sorted(expected)
 
@@ -35,20 +35,20 @@ class TestWalkWithGitignore:
         """Test that gitignore rules are applied correctly."""
         fs = RecordFs(
             {
-                Path("root/.gitignore"): "*.tmp\n*.log\n",
-                Path("root/keep.py"): "print('keep')",
-                Path("root/ignore.tmp"): "temporary",
-                Path("root/keep.js"): "console.log('keep')",
-                Path("root/debug.log"): "log content",
+                Path("/root/.gitignore"): "*.tmp\n*.log\n",
+                Path("/root/keep.py"): "print('keep')",
+                Path("/root/ignore.tmp"): "temporary",
+                Path("/root/keep.js"): "console.log('keep')",
+                Path("/root/debug.log"): "log content",
             }
         )
 
-        files = list(walk_with_gitignore(Path("root"), fs=fs))
+        files = list(walk_with_gitignore(Path("/root"), fs=fs))
 
         # .gitignore files should not be included in results
         expected = [
-            Path("root/keep.py"),
-            Path("root/keep.js"),
+            Path("/root/keep.py"),
+            Path("/root/keep.js"),
         ]
         assert sorted(files) == sorted(expected)
 
@@ -56,18 +56,18 @@ class TestWalkWithGitignore:
         """Test directory traversal when no .gitignore exists."""
         fs = RecordFs(
             {
-                Path("root/file1.py"): "print('file1')",
-                Path("root/file2.js"): "console.log('file2')",
-                Path("root/file3.txt"): "text content",
+                Path("/root/file1.py"): "print('file1')",
+                Path("/root/file2.js"): "console.log('file2')",
+                Path("/root/file3.txt"): "text content",
             }
         )
 
-        files = list(walk_with_gitignore(Path("root"), fs=fs))
+        files = list(walk_with_gitignore(Path("/root"), fs=fs))
 
         expected = [
-            Path("root/file1.py"),
-            Path("root/file2.js"),
-            Path("root/file3.txt"),
+            Path("/root/file1.py"),
+            Path("/root/file2.js"),
+            Path("/root/file3.txt"),
         ]
         assert sorted(files) == sorted(expected)
 
@@ -75,7 +75,7 @@ class TestWalkWithGitignore:
         """Test walking an empty directory."""
         fs = RecordFs({})
 
-        files = list(walk_with_gitignore(Path("empty"), fs=fs))
+        files = list(walk_with_gitignore(Path("/empty"), fs=fs))
 
         assert files == []
 
@@ -83,13 +83,42 @@ class TestWalkWithGitignore:
         """Test directory that only contains .gitignore file."""
         fs = RecordFs(
             {
-                Path("root/.gitignore"): "*.tmp\n",
+                Path("/root/.gitignore"): "*.tmp\n",
             }
         )
 
-        files = list(walk_with_gitignore(Path("root"), fs=fs))
+        files = list(walk_with_gitignore(Path("/root"), fs=fs))
 
         assert files == []
+
+    def test_nested_gitignores(self):
+        """Test nested gitignore files with different rules."""
+        fs = RecordFs(
+            {
+                # Root level gitignore ignores *.log files
+                Path("/root/.gitignore"): "*.log\n",
+                Path("/root/keep.py"): "print('keep')",
+                Path("/root/debug.log"): "root log",  # Should be ignored
+                # Nested directory with its own gitignore ignoring *.tmp files
+                Path("/root/subdir/.gitignore"): "*.tmp\n",
+                Path("/root/subdir/keep.js"): "console.log('keep')",
+                Path(
+                    "/root/subdir/ignore.tmp"
+                ): "temporary",  # Should be ignored by subdir gitignore
+                Path(
+                    "/root/subdir/keep.log"
+                ): "nested log",  # Should be ignored by root gitignore
+            }
+        )
+
+        files = list(walk_with_gitignore(Path("/root"), fs=fs))
+
+        # Only files that don't match any gitignore pattern should be returned
+        expected = [
+            Path("/root/keep.py"),
+            Path("/root/subdir/keep.js"),
+        ]
+        assert sorted(files) == sorted(expected)
 
 
 class TestGetFiles:
@@ -99,16 +128,16 @@ class TestGetFiles:
         """Test basic get_files functionality."""
         fs = RecordFs(
             {
-                Path("root/file1.py"): "print('file1')",
-                Path("root/file2.js"): "console.log('file2')",
+                Path("/root/file1.py"): "print('file1')",
+                Path("/root/file2.js"): "console.log('file2')",
             }
         )
 
-        files = list(get_files(Path("root"), fs=fs))
+        files = list(get_files(Path("/root"), fs=fs))
 
         expected = [
-            Path("root/file1.py"),
-            Path("root/file2.js"),
+            Path("/root/file1.py"),
+            Path("/root/file2.js"),
         ]
         assert sorted(files) == sorted(expected)
 
@@ -116,21 +145,21 @@ class TestGetFiles:
         """Test get_files with skip function."""
         fs = RecordFs(
             {
-                Path("root/keep.py"): "print('keep')",
-                Path("root/skip.py"): "print('skip')",
-                Path("root/keep.js"): "console.log('keep')",
-                Path("root/skip.js"): "console.log('skip')",
+                Path("/root/keep.py"): "print('keep')",
+                Path("/root/skip.py"): "print('skip')",
+                Path("/root/keep.js"): "console.log('keep')",
+                Path("/root/skip.js"): "console.log('skip')",
             }
         )
 
         def skip_function(path: Path) -> bool:
             return "skip" in path.name
 
-        files = list(get_files(Path("root"), skip=skip_function, fs=fs))
+        files = list(get_files(Path("/root"), skip=skip_function, fs=fs))
 
         expected = [
-            Path("root/keep.py"),
-            Path("root/keep.js"),
+            Path("/root/keep.py"),
+            Path("/root/keep.js"),
         ]
         assert sorted(files) == sorted(expected)
 
@@ -138,21 +167,21 @@ class TestGetFiles:
         """Test get_files with both gitignore and skip function."""
         fs = RecordFs(
             {
-                Path("root/.gitignore"): "*.tmp\n",
-                Path("root/keep.py"): "print('keep')",
-                Path("root/skip.py"): "print('skip')",
-                Path("root/ignore.tmp"): "temporary",
-                Path("root/keep.js"): "console.log('keep')",
+                Path("/root/.gitignore"): "*.tmp\n",
+                Path("/root/keep.py"): "print('keep')",
+                Path("/root/skip.py"): "print('skip')",
+                Path("/root/ignore.tmp"): "temporary",
+                Path("/root/keep.js"): "console.log('keep')",
             }
         )
 
         def skip_function(path: Path) -> bool:
             return "skip" in path.name
 
-        files = list(get_files(Path("root"), skip=skip_function, fs=fs))
+        files = list(get_files(Path("/root"), skip=skip_function, fs=fs))
 
         expected = [
-            Path("root/keep.py"),
-            Path("root/keep.js"),
+            Path("/root/keep.py"),
+            Path("/root/keep.js"),
         ]
         assert sorted(files) == sorted(expected)

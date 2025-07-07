@@ -8,7 +8,7 @@ from typing import Callable, Generator, List
 from shutil import rmtree
 
 from pathspec import GitIgnoreSpec
-from .fs import Fs, PathFs
+from aws_doc_sdk_examples_tools.fs import Fs, PathFs
 
 
 def match_path_to_specs(path: Path, specs: List[GitIgnoreSpec]) -> bool:
