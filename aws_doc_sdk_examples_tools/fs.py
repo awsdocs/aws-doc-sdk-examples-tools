@@ -57,11 +57,11 @@ class PathFs(Fs):
             return file.read()
 
     def readlines(self, path: Path) -> List[str]:
-        with path.open("r") as file:
+        with path.open("r", encoding="utf-8") as file:
             return file.readlines()
 
     def write(self, path: Path, content: str):
-        with path.open("w") as file:
+        with path.open("w", encoding="utf-8") as file:
             file.write(content)
 
     def stat(self, path: Path) -> Stat:

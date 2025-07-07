@@ -8,6 +8,7 @@ import re
 
 from .validator_config import skip
 from .file_utils import get_files, clear
+from .fs import Fs, PathFs
 from .metadata import Example
 from .metadata_errors import MetadataErrors, MetadataError
 from .project_validator import (
@@ -145,16 +146,17 @@ def parse_snippets(
     return snippets, errors
 
 
-def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], MetadataErrors]:
+def find_snippets(
+    file: Path, prefix: str, fs: Fs = PathFs()
+) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     errors = MetadataErrors()
     snippets: Dict[str, Snippet] = {}
     try:
-        with open(file, encoding="utf-8") as snippet_file:
-            try:
-                snippets, errs = parse_snippets(snippet_file.readlines(), file, prefix)
-                errors.extend(errs)
-            except UnicodeDecodeError as err:
-                errors.append(MetadataUnicodeError(file=file, err=err))
+        lines = fs.readlines(file)
+        snippets, errs = parse_snippets(lines, file, prefix)
+        errors.extend(errs)
+    except UnicodeDecodeError as err:
+        errors.append(MetadataUnicodeError(file=file, err=err))
     except FileNotFoundError:
         pass
     except Exception as e:
@@ -163,12 +165,12 @@ def find_snippets(file: Path, prefix: str) -> Tuple[Dict[str, Snippet], Metadata
 
 
 def collect_snippets(
-    root: Path, prefix: str = ""
+    root: Path, prefix: str = "", fs: Fs = PathFs()
 ) -> Tuple[Dict[str, Snippet], MetadataErrors]:
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
-    for file in get_files(root, skip):
-        snips, errs = find_snippets(file, prefix)
+    for file in get_files(root, skip, fs=fs):
+        snips, errs = find_snippets(file, prefix, fs=fs)
         snippets.update(snips)
         errors.extend(errs)
     return snippets, errors
@@ -180,6 +182,7 @@ def collect_snippet_files(
     prefix: str,
     errors: MetadataErrors,
     root: Path,
+    fs: Fs = PathFs(),
 ):
     for example in examples:
         for lang in example.languages:
@@ -187,7 +190,9 @@ def collect_snippet_files(
             for version in language.versions:
                 for excerpt in version.excerpts:
                     for snippet_file in excerpt.snippet_files:
-                        if not (root / snippet_file).exists():
+                        snippet_path = root / snippet_file
+                        snippet_stat = fs.stat(snippet_path)
+                        if not snippet_stat.exists:
                             # Ensure all snippet_files exist
                             errors.append(
                                 MissingSnippetFile(
@@ -207,17 +212,14 @@ def collect_snippet_files(
                             )
                             continue
                         name = prefix + str(snippet_file).replace("/", ".")
-                        with open(root / snippet_file, encoding="utf-8") as file:
-                            code = file.readlines()
-                            snippets[name] = Snippet(
-                                id=name,
-                                file=snippet_file,
-                                line_start=0,
-                                line_end=len(code),
-                                code="".join(
-                                    strip_snippet_tags(strip_spdx_header(code))
-                                ),
-                            )
+                        code = fs.readlines(snippet_path)
+                        snippets[name] = Snippet(
+                            id=name,
+                            file=snippet_file,
+                            line_start=0,
+                            line_end=len(code),
+                            code="".join(strip_snippet_tags(strip_spdx_header(code))),
+                        )
 
 
 def strip_snippet_tags(lines: List[str]) -> List[str]:
