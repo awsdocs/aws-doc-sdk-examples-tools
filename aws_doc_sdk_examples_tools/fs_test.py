@@ -60,9 +60,20 @@ class TestPathFs:
             run_common_readlines_scenarios(fs, path_factory)
         finally:
             # Clean up temp files
+            errors = []
             for path in temp_files:
-                if path.exists():
-                    path.unlink()
+                try:
+                    if path.exists():
+                        path.unlink()
+                except Exception as e:
+                    errors.append((path, e))
+            if errors:
+                messages = "\n".join(
+                    f"{path}: {type(e).__name__}: {e}" for path, e in errors
+                )
+                pytest.fail(
+                    f"Errors occurred while cleaning up temp files:\n{messages}"
+                )
 
 
 class TestRecordFs:
