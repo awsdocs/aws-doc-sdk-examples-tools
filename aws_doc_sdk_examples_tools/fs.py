@@ -28,6 +28,10 @@ class Fs(ABC):
         pass
 
     @abstractmethod
+    def readlines(self, path: Path) -> List[str]:
+        pass
+
+    @abstractmethod
     def write(self, path: Path, content: str):
         pass
 
@@ -51,6 +55,10 @@ class PathFs(Fs):
     def read(self, path: Path) -> str:
         with path.open("r") as file:
             return file.read()
+
+    def readlines(self, path: Path) -> List[str]:
+        with path.open("r") as file:
+            return file.readlines()
 
     def write(self, path: Path, content: str):
         with path.open("w") as file:
@@ -86,6 +94,10 @@ class RecordFs(Fs):
 
     def read(self, path: Path) -> str:
         return self.fs[path]
+
+    def readlines(self, path: Path) -> List[str]:
+        content = self.fs[path]
+        return content.splitlines(keepends=True)
 
     def write(self, path: Path, content: str):
         base = str(path.parent)
