@@ -2,14 +2,12 @@ import logging
 
 from aws_doc_sdk_examples_tools.lliam.domain.operations import build_ailly_config
 from aws_doc_sdk_examples_tools.lliam.domain.commands import CreatePrompts
-from aws_doc_sdk_examples_tools.lliam.service_layer.unit_of_work import (
-    AbstractUnitOfWork,
-)
+from aws_doc_sdk_examples_tools.lliam.service_layer.unit_of_work import FsUnitOfWork
 
 logger = logging.getLogger(__name__)
 
 
-def create_prompts(cmd: CreatePrompts, uow: AbstractUnitOfWork):
+def create_prompts(cmd: CreatePrompts, uow: FsUnitOfWork):
     with uow:
         system_prompts = uow.prompts.get_all(cmd.system_prompts)
         ailly_config = build_ailly_config(system_prompts)

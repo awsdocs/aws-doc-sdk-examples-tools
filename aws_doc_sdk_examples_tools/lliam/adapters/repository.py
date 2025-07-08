@@ -1,10 +1,10 @@
 import abc
 from itertools import islice
 from pathlib import Path
-from typing import Any, Generator, Iterable, List, Tuple
+from typing import Any, Dict, Generator, Iterable, List, Tuple
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
-from aws_doc_sdk_examples_tools.fs import Fs, PathFs 
+from aws_doc_sdk_examples_tools.fs import Fs, PathFs
 from aws_doc_sdk_examples_tools.lliam.domain.model import Prompt
 from aws_doc_sdk_examples_tools.lliam.shared_constants import BATCH_PREFIX
 
@@ -23,31 +23,47 @@ def batched(iterable: Iterable, n: int) -> Generator[Tuple, Any, None]:
         yield batch
 
 
-class AbstractPromptRepository(abc.ABC):
-    def __init__(self):
+class FsPromptRepository:
+    to_write: Dict[str, str] = {}
+
+    def __init__(self, fs: Fs = PathFs()):
+        self.fs = fs
+
+    def rollback(self):
+        # TODO: This is not what rollback is for. We should be rolling back any
+        # file changes
         self.to_write = {}
 
     def add(self, prompt: Prompt):
-        self._add(prompt)
+        self.to_write[prompt.id] = prompt.content
 
     def all_all(self, prompts: List[Prompt]):
         for prompt in prompts:
-            self._add(prompt)
+            self.add(prompt)
 
     def batch(self, prompts: List[Prompt]):
-        self._batch(prompts)
+        for batch_num, batch in enumerate(batched(prompts, DEFAULT_BATCH_SIZE)):
+            batch_name = f"{BATCH_PREFIX}{(batch_num + 1):03}"
+            for prompt in batch:
+                prompt.id = f"{batch_name}/{prompt.id}"
+                self.add(prompt)
 
-    def commit(self): 
-        self._commit()
+    def commit(self):
+        base_path = Path(self.partition) if self.partition else Path(".")
 
-    def get(self, id: str) -> Prompt:
-        prompt = self._get(id)
-        return prompt
+        for file_path, content in self.to_write.items():
+            if content:
+                full_path = base_path / file_path
+                self.fs.mkdir(full_path.parent)
+                self.fs.write(full_path, content)
+
+    def get(self, id: str):
+        return Prompt(id, self.fs.read(Path(id)))
 
     def get_all(self, ids: List[str]) -> List[Prompt]:
         prompts = []
         for id in ids:
-            prompt = self._get(id)
+            prompt = self.get(id)
             prompts.append(prompt)
         return prompts
 
@@ -58,78 +74,17 @@ class AbstractPromptRepository(abc.ABC):
     def partition(self):
         return self.partition_name or ""
 
-    @abc.abstractmethod
-    def _add(self, product: Prompt):
-        raise NotImplementedError
 
-    @abc.abstractmethod
-    def _batch(self, prompts: List[Prompt]):
-        raise NotImplementedError
-    
-    @abc.abstractmethod
-    def _commit(self):
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def _get(self, id: str) -> Prompt:
-        raise NotImplementedError
-
-
-class FsPromptRepository(AbstractPromptRepository):
+class FsDocGenRepository:
     def __init__(self, fs: Fs = PathFs()):
-        super().__init__()
         self.fs = fs
 
-    def rollback(self):
-        # TODO: This is not what rollback is for. We should be rolling back any
-        # file changes
-        self.to_write = {}
-
-    def _add(self, prompt: Prompt):
-        self.to_write[prompt.id] = prompt.content
-
-    def _batch(self, prompts: List[Prompt]):
-        for batch_num, batch in enumerate(batched(prompts, DEFAULT_BATCH_SIZE)):
-            batch_name = f"{BATCH_PREFIX}{(batch_num + 1):03}"
-            for prompt in batch:
-                prompt.id = f"{batch_name}/{prompt.id}"
-                self._add(prompt)
-
-    def _commit(self):
-        base_path = (
-            Path(self.partition) if self.partition else Path(".")
-        )
-
-        for file_path, content in self.to_write.items():
-            if content:
-                full_path = base_path / file_path
-                self.fs.mkdir(full_path.parent)
-                self.fs.write(full_path, content)
-
-    def _get(self, id: str):
-        return Prompt(id, self.fs.read(Path(id)))
-
-
-class AbstractDocGenRepository(abc.ABC):
-    def get_new_prompts(self, doc_gen_root: str) -> List[Prompt]:
-        return self._get_new_prompts(doc_gen_root)
-
-    @abc.abstractmethod
-    def _get_new_prompts(self, doc_gen_root: str) -> List[Prompt]:
-        raise NotImplementedError
-
-
-class FsDocGenRepository(AbstractDocGenRepository):
-    def __init__(self, fs: Fs = PathFs()):
-        super().__init__()
-        self.fs = fs
-    
     def rollback(self):
         # TODO: This is not what rollback is for. We should be rolling back any
         # file changes
         self._doc_gen = None
 
-    def _get_new_prompts(self, doc_gen_root: str) -> List[Prompt]:
+    def get_new_prompts(self, doc_gen_root: str) -> List[Prompt]:
         # Right now this is the only instance of DocGen used in this Repository,
         # but if that changes we need to move it up.
         self._doc_gen = DocGen.from_root(Path(doc_gen_root), fs=self.fs)

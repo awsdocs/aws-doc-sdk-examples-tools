@@ -9,7 +9,7 @@ class Command:
 
 @dataclass
 class CreatePrompts(Command):
-    doc_gen_root: str 
+    doc_gen_root: str
     system_prompts: List[str]
     out_dir: str
 
