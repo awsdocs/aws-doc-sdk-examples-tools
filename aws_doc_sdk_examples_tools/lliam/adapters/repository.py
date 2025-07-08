@@ -1,12 +1,12 @@
-import abc
 from itertools import islice
+from math import ceil, floor, log
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Tuple
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
 from aws_doc_sdk_examples_tools.fs import Fs, PathFs
 from aws_doc_sdk_examples_tools.lliam.domain.model import Prompt
-from aws_doc_sdk_examples_tools.lliam.shared_constants import BATCH_PREFIX
+from aws_doc_sdk_examples_tools.lliam.config import BATCH_PREFIX
 
 DEFAULT_METADATA_PREFIX = "DEFAULT"
 DEFAULT_BATCH_SIZE = 150
@@ -23,7 +23,7 @@ def batched(iterable: Iterable, n: int) -> Generator[Tuple, Any, None]:
         yield batch
 
 
-class FsPromptRepository:
+class PromptRepository:
     to_write: Dict[str, str] = {}
 
     def __init__(self, fs: Fs = PathFs()):
@@ -37,13 +37,20 @@ class FsPromptRepository:
     def add(self, prompt: Prompt):
         self.to_write[prompt.id] = prompt.content
 
-    def all_all(self, prompts: List[Prompt]):
+    def all_all(self, prompts: Iterable[Prompt]):
         for prompt in prompts:
             self.add(prompt)
 
-    def batch(self, prompts: List[Prompt]):
+    def batch(self, prompts: Iterable[Prompt]):
+        prompt_list = list(prompts)
+
+        if not prompt_list:
+            return
+
+        batches_count = ceil(len(prompt_list) / DEFAULT_BATCH_SIZE)
+        padding = floor(log(batches_count, 10)) + 1
         for batch_num, batch in enumerate(batched(prompts, DEFAULT_BATCH_SIZE)):
-            batch_name = f"{BATCH_PREFIX}{(batch_num + 1):03}"
+            batch_name = f"{BATCH_PREFIX}{(batch_num + 1):0{padding}}"
             for prompt in batch:
                 prompt.id = f"{batch_name}/{prompt.id}"
                 self.add(prompt)
@@ -51,9 +58,9 @@ class FsPromptRepository:
     def commit(self):
         base_path = Path(self.partition) if self.partition else Path(".")
 
-        for file_path, content in self.to_write.items():
+        for id, content in self.to_write.items():
             if content:
-                full_path = base_path / file_path
+                full_path = base_path / id
                 self.fs.mkdir(full_path.parent)
                 self.fs.write(full_path, content)
 
@@ -75,7 +82,7 @@ class FsPromptRepository:
         return self.partition_name or ""
 
 
-class FsDocGenRepository:
+class DocGenRepository:
     def __init__(self, fs: Fs = PathFs()):
         self.fs = fs
 
