@@ -1,78 +1,108 @@
-# Ailly Prompt Workflow
+# Lliam - LLM-powered IAM Policy Metadata Enhancement
 
-This project automates the process of generating, running, parsing, and applying [Ailly](https://www.npmjs.com/package/@ailly/cli) prompt outputs to an AWS DocGen project. It combines all steps into one streamlined command using a single Python script.
+Lliam automates the process of generating, running, parsing, and applying [Ailly](https://www.npmjs.com/package/@ailly/cli) prompt outputs to enhance AWS DocGen IAM policy examples with rich metadata.
 
 ---
 
 ## 📦 Overview
 
-This tool:
-1. **Generates** Ailly prompts from DocGen snippets.
-2. **Runs** Ailly CLI to get enhanced metadata.
-3. **Parses** Ailly responses into structured JSON.
-4. **Updates** your DocGen examples with the new metadata.
+Lliam provides a multi-step workflow to:
+1. **Generate** Ailly prompts from DocGen IAM policy snippets
+2. **Execute** Ailly CLI to get LLM-enhanced metadata
+3. **Update** your DocGen examples with the enhanced metadata
 
-All of this is done with one command.
+The workflow is designed around three main commands that can be run independently or in sequence.
 
 ---
 
 ## ✅ Prerequisites
 
 - Python 3.8+
-- Node.js and npm (for `npx`)
-- A DocGen project directory
+- Node.js and npm (for `npx @ailly/cli`)
+- A DocGen project directory with IAM policy examples
 
 ---
 
 ## 🚀 Usage
 
-From your project root, run:
+### Step 1: Create Prompts
+
+Generate Ailly prompts from your DocGen IAM policy examples:
 
 ```bash
-python -m aws_doc_sdk_examples_tools.agent.bin.main \
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app create-prompts \
   /path/to/your/docgen/project \
   --system-prompts path/to/system_prompt.txt
 ```
 
-### 🔧 Arguments
+### Step 2: Run Ailly
 
-- `iam_tributary_root`: Path to the root directory of your IAM policy tributary
-- `--system-prompts`: List of system prompt files or strings to include in the Ailly configuration
-- `--skip-generation`: Skip the prompt generation and Ailly execution steps (useful for reprocessing existing outputs)
-
-Run `python -m aws_doc_sdk_examples_tools.agent.bin.main update --help` for more info.
-
----
-
-## 🗂 What This Does
-
-Under the hood, this script:
-
-1. Creates a directory `.ailly_iam_policy` containing:
-   - One Markdown file per snippet.
-   - A `.aillyrc` configuration file.
-
-2. Runs `npx @ailly/cli` to generate `.ailly.md` outputs.
-
-3. Parses the Ailly `.ailly.md` files into a single `iam_updates.json` file.
-
-4. Updates each matching `Example` in the DocGen instance with:
-   - `title`
-   - `title_abbrev`
-   - `synopsis`
-
----
-
-## 💡 Example
+Execute Ailly to generate enhanced metadata:
 
 ```bash
-python -m aws_doc_sdk_examples_tools.agent.bin.main \
-  ~/projects/AWSIAMPolicyExampleReservoir \
-  --system-prompts prompts/system_prompt.txt
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app run-ailly
 ```
 
-This will:
-- Write prompts and config to `.ailly_iam_policy/`
-- Run Ailly and capture results
-- Parse and save output as `.ailly_iam_policy/iam_updates.json`
-- Apply updates to your DocGen examples
+Optionally process specific batches:
+```bash
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app run-ailly --batches "batch_01,batch_02"
+```
+
+### Step 3: Update Repository
+
+Apply the enhanced metadata back to your DocGen examples:
+
+```bash
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app update-reservoir \
+  /path/to/your/docgen/project
+```
+
+Optionally update specific batches or packages:
+```bash
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app update-reservoir \
+  /path/to/your/docgen/project \
+  --batches "batch_01,batch_02" \
+  --packages "package1,package2"
+```
+
+---
+
+## 🗂 Workflow Details
+
+1. **Prompt Generation**: 
+   - Scans DocGen examples for IAM policies with default metadata prefixes
+   - Creates batched Markdown files in `.ailly_iam_policy/`
+   - Generates `.aillyrc` configuration with system prompts
+
+2. **Ailly Execution**:
+   - Runs `npx @ailly/cli` on generated prompts
+   - Processes batches to manage large datasets
+   - Generates `.ailly.md` response files
+
+3. **Metadata Update**:
+   - Parses Ailly responses for enhanced metadata
+   - Updates DocGen examples with `title`, `title_abbrev`, `synopsis`, and `description`
+   - Applies service-specific suffixes to metadata
+
+---
+
+## 💡 Example Workflow
+
+```bash
+# Generate prompts from IAM policy examples
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app create-prompts \
+  ~/projects/AWSIAMPolicyExampleReservoir \
+  --system-prompts prompts/iam_system_prompt.txt
+
+# Run Ailly on all generated prompts
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app run-ailly
+
+# Update the repository with enhanced metadata
+python -m aws_doc_sdk_examples_tools.lliam.entry_points.lliam_app update-reservoir \
+  ~/projects/AWSIAMPolicyExampleReservoir
+```
+
+This workflow will:
+- Extract IAM policy snippets and create batched prompts in `.ailly_iam_policy/`
+- Execute Ailly to generate enhanced metadata
+- Parse responses and update your DocGen examples with rich metadata
