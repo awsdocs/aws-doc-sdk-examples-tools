@@ -1,11 +1,18 @@
+from argparse import ArgumentParser
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List
+
+import logging
 import yaml
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.metadata import Example
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__file__)
 
 
 def write_many(root: Path, to_write: Dict[str, str]):
@@ -104,11 +111,22 @@ def excerpt_dict(excerpt: Dict) -> Dict:
     return reordered
 
 
-# For testing
-if __name__ == "__main__":
-    doc_gen = DocGen.from_root(
-        Path(__file__).parent / "test_resources" / "doc_gen_test"
+def main():
+    parser = ArgumentParser(
+        description="Build a DocGen instance and normalize the metadata."
     )
+    parser.add_argument("root", type=str, help="The root of a DocGen project")
+
+    args = parser.parse_args()
+    root = Path(args.root)
+
+    if not root.is_dir():
+        logger.error(f"Expected {root} to be a directory.")
+
+    doc_gen = DocGen.from_root(root)
     writes = prepare_write(doc_gen.examples)
-    write_many(Path("/"), writes)
-    # print(writes)
+    write_many(root, writes)
+
+
+if __name__ == "__main__":
+    main()
