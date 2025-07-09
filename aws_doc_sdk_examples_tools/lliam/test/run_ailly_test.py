@@ -8,31 +8,7 @@ from aws_doc_sdk_examples_tools.lliam.service_layer.run_ailly import (
     VALUE_PREFIXES,
 )
 
-
-@pytest.fixture
-def test_environment():
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_path = Path(temp_dir)
-        ailly_dir = temp_path / "ailly_dir"
-        ailly_dir.mkdir(exist_ok=True)
-
-        output_path = temp_path / "iam_updates.json"
-
-        create_sample_ailly_files(ailly_dir)
-
-        yield {
-            "ailly_dir": ailly_dir,
-            "output_path": output_path,
-            "temp_dir": temp_path,
-        }
-
-
-def create_sample_ailly_files(ailly_dir):
-    # Sample file 1
-    file1_path = ailly_dir / "iam-policies.SomeGuide.1.md.ailly.md"
-    with open(file1_path, "w") as f:
-        f.write(
-            """# IAM Policy Example for S3 Bucket Access
+SAMPLE_PROMPT_RESPONSE_1 = """# IAM Policy Example for S3 Bucket Access
 
 This example demonstrates how to create an IAM policy that grants read-only access to an S3 bucket.
 
@@ -75,13 +51,8 @@ Here's how you would implement this policy:
 
 Remember to replace 'example-bucket' with your actual bucket name when using this policy.
 """
-        )
 
-    # Sample file 2
-    file2_path = ailly_dir / "iam-policies.SomeGuide.2.md.ailly.md"
-    with open(file2_path, "w") as f:
-        f.write(
-            """# IAM Policy Example for EC2 Instance Management
+SAMPLE_PROMPT_RESPONSE_2 = """# IAM Policy Example for EC2 Instance Management
 
 This example demonstrates how to create an IAM policy for EC2 instance management.
 
@@ -128,7 +99,36 @@ Here's how you would implement this policy:
 
 Modify the region condition to match your specific requirements.
 """
-        )
+
+
+@pytest.fixture
+def test_environment():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        ailly_dir = temp_path / "ailly_dir"
+        ailly_dir.mkdir(exist_ok=True)
+
+        output_path = temp_path / "iam_updates.json"
+
+        create_sample_ailly_files(ailly_dir)
+
+        yield {
+            "ailly_dir": ailly_dir,
+            "output_path": output_path,
+            "temp_dir": temp_path,
+        }
+
+
+def create_sample_ailly_files(ailly_dir):
+    # Sample file 1
+    file1_path = ailly_dir / "iam-policies.SomeGuide.1.md.ailly.md"
+    with open(file1_path, "w") as f:
+        f.write(SAMPLE_PROMPT_RESPONSE_1)
+
+    # Sample file 2
+    file2_path = ailly_dir / "iam-policies.SomeGuide.2.md.ailly.md"
+    with open(file2_path, "w") as f:
+        f.write(SAMPLE_PROMPT_RESPONSE_2)
 
 
 def test_process_ailly_files(test_environment):
