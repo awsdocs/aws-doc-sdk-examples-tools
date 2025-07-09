@@ -17,6 +17,7 @@ class CreatePrompts(Command):
 @dataclass
 class RunAilly(Command):
     batches: List[str]
+    packages: List[str]
 
 
 @dataclass
