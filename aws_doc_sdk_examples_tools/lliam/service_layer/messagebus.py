@@ -12,9 +12,7 @@ from aws_doc_sdk_examples_tools.lliam.service_layer import (
 Message = commands.Command
 
 
-def handle(
-    message: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork] = None
-):
+def handle(message: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork] = None):
     queue = [message]
 
     while queue:
@@ -25,9 +23,7 @@ def handle(
             raise Exception(f"{message} was not a Command")
 
 
-def handle_command(
-    command: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork]
-):
+def handle_command(command: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork]):
     handler = COMMAND_HANDLERS[type(command)]
     handler(command, uow)
 

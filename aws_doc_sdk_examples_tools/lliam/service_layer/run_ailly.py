@@ -1,5 +1,6 @@
 import json
 import logging
+import sys
 import time
 from collections import defaultdict
 from datetime import timedelta
@@ -13,6 +14,14 @@ from aws_doc_sdk_examples_tools.lliam.config import (
     BATCH_PREFIX,
 )
 
+AILLY_CMD_BASE = [
+    "ailly",
+    "--max-depth",
+    "10",
+    "--root",
+    str(AILLY_DIR_PATH),
+]
+
 logger = logging.getLogger(__file__)
 
 
@@ -23,7 +32,7 @@ def handle_run_ailly(cmd: RunAilly, uow: None):
         total_start_time = time.time()
 
         for batch in resolved_batches:
-            run_ailly_single_batch(batch)
+            run_ailly_single_batch(batch, cmd.packages)
 
         total_end_time = time.time()
         total_duration = total_end_time - total_start_time
@@ -56,19 +65,27 @@ def resolve_requested_batches(batch_names: List[str]) -> List[Path]:
     return batch_paths
 
 
-def run_ailly_single_batch(batch: Path) -> None:
+def run_ailly_single_batch(batch: Path, packages: List[str] = []) -> None:
     """Run ailly and process files for a single batch."""
     batch_start_time = time.time()
     iam_updates_path = AILLY_DIR_PATH / f"updates_{batch.name}.json"
 
-    cmd = [
-        "ailly",
-        "--max-depth",
-        "10",
-        "--root",
-        str(AILLY_DIR_PATH),
-        batch.name,
-    ]
+    if packages:
+        paths = []
+        for package in packages:
+            package_files = [
+                f"{batch.name}/{p.name}" for p in batch.glob(f"*{package}*.md")
+            ]
+            paths.extend(package_files)
+
+        if not paths:
+            logger.error(f"No matching files found for packages: {packages}")
+            sys.exit(1)
+
+        cmd = AILLY_CMD_BASE + paths
+    else:
+        cmd = AILLY_CMD_BASE + [batch.name]
+
     logger.info(f"Running {cmd}")
     run(cmd)
 
@@ -79,7 +96,9 @@ def run_ailly_single_batch(batch: Path) -> None:
     )
 
     logger.info(f"Processing generated content for {batch.name}")
-    process_ailly_files(input_dir=batch, output_file=iam_updates_path)
+    process_ailly_files(
+        input_dir=batch, output_file=iam_updates_path, packages=packages
+    )
 
 
 EXPECTED_KEYS: Set[str] = set(["title", "title_abbrev"])
@@ -177,7 +196,10 @@ def parse_package_name(policy_update: Dict[str, str]) -> Optional[str]:
 
 
 def process_ailly_files(
-    input_dir: Path, output_file: Path, file_pattern: str = "*.md.ailly.md"
+    input_dir: Path,
+    output_file: Path,
+    file_pattern: str = "*.md.ailly.md",
+    packages: List[str] = [],
 ) -> None:
     """
     Process all .md.ailly.md files in the input directory and write the results as JSON to the output file.
@@ -186,6 +208,7 @@ def process_ailly_files(
         input_dir: Directory containing .md.ailly.md files
         output_file: Path to the output JSON file
         file_pattern: Pattern to match files (default: "*.md.ailly.md")
+        packages: Optional list of packages to filter by
     """
     results = defaultdict(list)
 
@@ -197,6 +220,13 @@ def process_ailly_files(
                 package_name = parse_package_name(policy_update)
                 if not package_name:
                     raise TypeError(f"Could not get package name from policy update.")
+
+                if packages and package_name not in packages:
+                    logger.info(
+                        f"Skipping package {package_name} (not in requested packages)"
+                    )
+                    continue
+
                 results[package_name].append(policy_update)
 
         with open(output_file, "w", encoding="utf-8") as out_file:
