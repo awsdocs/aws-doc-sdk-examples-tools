@@ -2,7 +2,10 @@ from pathlib import Path
 import pytest
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
-from aws_doc_sdk_examples_tools.yaml_writer import prepare_write
+from aws_doc_sdk_examples_tools.yaml_writer import (
+    prepare_write,
+    report_yaml_differences,
+)
 
 
 ROOT = Path(__file__).parent / "test_resources" / "doc_gen_test"
@@ -46,3 +49,42 @@ def test_doc_gen(sample_doc_gen: DocGen):
     }
 
     assert writes == expected_writes
+
+
+def test_report_yaml_differences_with_changes():
+    """Test that report_yaml_differences correctly identifies added, removed, and modified files."""
+    before = {
+        "file1.yaml": {"key1": "value1"},
+        "file2.yaml": {"key2": "value2"},
+        "file3.yaml": {"key3": "value3"},
+    }
+
+    after = {
+        "file1.yaml": {"key1": "changed_value"},  # Modified
+        "file3.yaml": {"key3": "value3"},  # Unchanged
+        "file4.yaml": {"key4": "value4"},  # Added
+        # file2.yaml is removed
+    }
+
+    differences = report_yaml_differences(before, after)
+
+    # Sort the differences for consistent comparison
+    differences.sort()
+
+    expected = [
+        ("file1.yaml", "modified"),
+        ("file2.yaml", "removed"),
+        ("file4.yaml", "added"),
+    ]
+    expected.sort()
+
+    assert differences == expected
+
+
+def test_report_yaml_differences_no_changes():
+    """Test that report_yaml_differences returns an empty list when dictionaries are identical."""
+    before = {"file1.yaml": {"key": "value"}}
+    after = {"file1.yaml": {"key": "value"}}
+
+    differences = report_yaml_differences(before, after)
+    assert differences == []
