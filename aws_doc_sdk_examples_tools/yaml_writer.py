@@ -2,8 +2,9 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List
+from typing import Any, DefaultDict, Dict, List, Set, Tuple
 
+import difflib
 import logging
 import yaml
 
@@ -12,7 +13,7 @@ from aws_doc_sdk_examples_tools.metadata import Example
 
 logging.basicConfig(level=logging.INFO)
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(Path(__file__).name)
 
 
 def write_many(root: Path, to_write: Dict[str, str]):
@@ -111,6 +112,45 @@ def excerpt_dict(excerpt: Dict) -> Dict:
     return reordered
 
 
+def collect_yaml(root: Path) -> Dict[str, Dict]:
+    yaml_files: Dict[str, Dict] = {}
+    metadata_dir = root / ".doc_gen" / "metadata"
+
+    if not metadata_dir.exists():
+        return yaml_files
+
+    for yaml_path in metadata_dir.glob("**/*.yaml"):
+        rel_path = yaml_path.relative_to(root)
+
+        with open(yaml_path, "r") as file:
+            try:
+                content = yaml.safe_load(file)
+                yaml_files[str(rel_path)] = content
+            except yaml.YAMLError as e:
+                logger.error(f"Error parsing YAML file {yaml_path}: {e}")
+
+    return yaml_files
+
+
+def report_yaml_differences(
+    before_values: Dict[str, Dict], after_values: Dict[str, Dict]
+) -> List[Tuple[str, str]]:
+    differences = []
+    for file_path in set(before_values.keys()) | set(after_values.keys()):
+        before = before_values.get(file_path)
+        after = after_values.get(file_path)
+
+        if before != after:
+            if file_path not in before_values:
+                differences.append((file_path, "added"))
+            elif file_path not in after_values:
+                differences.append((file_path, "removed"))
+            else:
+                differences.append((file_path, "modified"))
+
+    return differences
+
+
 def main():
     parser = ArgumentParser(
         description="Build a DocGen instance and normalize the metadata."
@@ -123,9 +163,21 @@ def main():
     if not root.is_dir():
         logger.error(f"Expected {root} to be a directory.")
 
+    before_values = collect_yaml(root)
     doc_gen = DocGen.from_root(root)
     writes = prepare_write(doc_gen.examples)
     write_many(root, writes)
+    after_values = collect_yaml(root)
+
+    if before_values != after_values:
+        differences = report_yaml_differences(before_values, after_values)
+        logger.error(f"YAML content changed in {len(differences)} files after writing:")
+        for file_path, diff_type in differences:
+            logger.error(f"  - {file_path}: {diff_type}")
+    else:
+        logger.info(
+            f"Metadata for {root.name} has been normalized and verified for consistency."
+        )
 
 
 if __name__ == "__main__":
