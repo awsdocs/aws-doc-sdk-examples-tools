@@ -48,7 +48,7 @@ def make_title_abbreviation(old: Example, new: Example, abbreviations: Counter):
     version = language.versions[0]
     source = version.source
     source_title = source.title if source else ""
-    base = f"{new.title_abbrev} (from '{source_title}' docs)"
+    base = f"{new.title_abbrev} (from '{source_title}' guide)"
     abbreviations[base] += 1
     count = abbreviations[base]
     return f"{base} ({count})" if count > 1 else base
