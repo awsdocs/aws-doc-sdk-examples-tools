@@ -5,11 +5,8 @@ from datetime import datetime
 import logging
 import typer
 
-from aws_doc_sdk_examples_tools.lliam.config import (
-    AILLY_DIR,
-    BATCH_PREFIX
-)
-from aws_doc_sdk_examples_tools.lliam.domain import commands
+from aws_doc_sdk_examples_tools.lliam.config import AILLY_DIR, BATCH_PREFIX
+from aws_doc_sdk_examples_tools.lliam.domain import commands, errors
 from aws_doc_sdk_examples_tools.lliam.service_layer import messagebus, unit_of_work
 
 logging.basicConfig(
@@ -31,26 +28,31 @@ def create_prompts(iam_tributary_root: str, system_prompts: List[str] = []):
         out_dir=AILLY_DIR,
     )
     uow = unit_of_work.FsUnitOfWork()
-    messagebus.handle(cmd, uow)
+    errors = messagebus.handle(cmd, uow)
+    handle_domain_errors(errors)
 
 
 @app.command()
 def run_ailly(
     batches: Annotated[
         Optional[str],
-        typer.Option(
-            help="Batch names to process (comma-separated list)"
-        ),
+        typer.Option(help="Batch names to process (comma-separated list)"),
+    ] = None,
+    packages: Annotated[
+        Optional[str], typer.Option(help="Comma delimited list of packages to update")
     ] = None,
 ) -> None:
     """
     Run ailly to generate IAM policy content and process the results.
     If batches is specified, only those batches will be processed.
     If batches is omitted, all batches will be processed.
+    If packages is specified, only those packages will be processed.
     """
     requested_batches = parse_batch_names(batches)
-    cmd = commands.RunAilly(batches=requested_batches)
-    messagebus.handle(cmd)
+    package_names = parse_package_names(packages)
+    cmd = commands.RunAilly(batches=requested_batches, packages=package_names)
+    errors = messagebus.handle(cmd)
+    handle_domain_errors(errors)
 
 
 @app.command()
@@ -58,9 +60,7 @@ def update_reservoir(
     iam_tributary_root: str,
     batches: Annotated[
         Optional[str],
-        typer.Option(
-            help="Batch names to process (comma-separated list)"
-        ),
+        typer.Option(help="Batch names to process (comma-separated list)"),
     ] = None,
     packages: Annotated[
         Optional[str], typer.Option(help="Comma delimited list of packages to update")
@@ -77,7 +77,15 @@ def update_reservoir(
     cmd = commands.UpdateReservoir(
         root=doc_gen_root, batches=batch_names, packages=package_names
     )
-    messagebus.handle(cmd)
+    errors = messagebus.handle(cmd)
+    handle_domain_errors(errors)
+
+
+def handle_domain_errors(errors: List[errors.DomainError]):
+    if errors:
+        for error in errors:
+            logger.error(error)
+        typer.Exit(code=1)
 
 
 def parse_batch_names(batch_names_str: Optional[str]) -> List[str]:
@@ -86,7 +94,7 @@ def parse_batch_names(batch_names_str: Optional[str]) -> List[str]:
     """
     if not batch_names_str:
         return []
-    
+
     batch_names = []
 
     for name in batch_names_str.split(","):

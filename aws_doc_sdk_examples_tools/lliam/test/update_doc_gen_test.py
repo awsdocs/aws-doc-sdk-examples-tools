@@ -44,5 +44,5 @@ def test_update_examples_title_abbrev(doc_gen_tributary: DocGen):
     updated_example = doc_gen_tributary.examples["iam_policies_example"]
     assert (
         updated_example.title_abbrev
-        == "Updated Title Abbrev (from 'AWS Account Management' docs)"
+        == "Updated Title Abbrev (from 'AWS Account Management' guide)"
     )
