@@ -1,14 +1,18 @@
 import json
 import logging
-import sys
 import time
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from subprocess import run
 from typing import Any, Dict, List, Optional, Set
 
 from aws_doc_sdk_examples_tools.lliam.domain.commands import RunAilly
+from aws_doc_sdk_examples_tools.lliam.domain.errors import (
+    CommandExecutionError,
+    DomainError,
+)
 from aws_doc_sdk_examples_tools.lliam.config import (
     AILLY_DIR_PATH,
     BATCH_PREFIX,
@@ -28,11 +32,20 @@ logger = logging.getLogger(__file__)
 def handle_run_ailly(cmd: RunAilly, uow: None):
     resolved_batches = resolve_requested_batches(cmd.batches)
 
+    errors: List[DomainError] = []
+
     if resolved_batches:
         total_start_time = time.time()
 
         for batch in resolved_batches:
-            run_ailly_single_batch(batch, cmd.packages)
+            try:
+                run_ailly_single_batch(batch, cmd.packages)
+            except FileNotFoundError as e:
+                errors.append(
+                    CommandExecutionError(
+                        command_name=cmd.__class__.__name__, message=str(e)
+                    )
+                )
 
         total_end_time = time.time()
         total_duration = total_end_time - total_start_time
@@ -40,6 +53,8 @@ def handle_run_ailly(cmd: RunAilly, uow: None):
         logger.info(
             f"[TIMECHECK] {num_batches} batches took {format_duration(total_duration)} to run"
         )
+
+    return errors
 
 
 def resolve_requested_batches(batch_names: List[str]) -> List[Path]:
@@ -79,8 +94,7 @@ def run_ailly_single_batch(batch: Path, packages: List[str] = []) -> None:
             paths.extend(package_files)
 
         if not paths:
-            logger.error(f"No matching files found for packages: {packages}")
-            sys.exit(1)
+            raise FileNotFoundError(f"No matching files found for packages: {packages}")
 
         cmd = AILLY_CMD_BASE + paths
     else:

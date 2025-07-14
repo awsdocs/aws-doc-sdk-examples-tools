@@ -18,14 +18,15 @@ def handle(message: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork] =
     while queue:
         message = queue.pop(0)
         if isinstance(message, commands.Command):
-            handle_command(message, uow)
+            return handle_command(message, uow)
         else:
             raise Exception(f"{message} was not a Command")
 
 
 def handle_command(command: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork]):
     handler = COMMAND_HANDLERS[type(command)]
-    handler(command, uow)
+    errors = handler(command, uow)
+    return errors
 
 
 COMMAND_HANDLERS: Dict[Type[commands.Command], Callable] = {

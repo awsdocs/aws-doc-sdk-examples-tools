@@ -6,7 +6,7 @@ import logging
 import typer
 
 from aws_doc_sdk_examples_tools.lliam.config import AILLY_DIR, BATCH_PREFIX
-from aws_doc_sdk_examples_tools.lliam.domain import commands
+from aws_doc_sdk_examples_tools.lliam.domain import commands, errors
 from aws_doc_sdk_examples_tools.lliam.service_layer import messagebus, unit_of_work
 
 logging.basicConfig(
@@ -28,7 +28,8 @@ def create_prompts(iam_tributary_root: str, system_prompts: List[str] = []):
         out_dir=AILLY_DIR,
     )
     uow = unit_of_work.FsUnitOfWork()
-    messagebus.handle(cmd, uow)
+    errors = messagebus.handle(cmd, uow)
+    handle_domain_errors(errors)
 
 
 @app.command()
@@ -50,7 +51,8 @@ def run_ailly(
     requested_batches = parse_batch_names(batches)
     package_names = parse_package_names(packages)
     cmd = commands.RunAilly(batches=requested_batches, packages=package_names)
-    messagebus.handle(cmd)
+    errors = messagebus.handle(cmd)
+    handle_domain_errors(errors)
 
 
 @app.command()
@@ -75,7 +77,15 @@ def update_reservoir(
     cmd = commands.UpdateReservoir(
         root=doc_gen_root, batches=batch_names, packages=package_names
     )
-    messagebus.handle(cmd)
+    errors = messagebus.handle(cmd)
+    handle_domain_errors(errors)
+
+
+def handle_domain_errors(errors: List[errors.DomainError]):
+    if errors:
+        for error in errors:
+            logger.error(error)
+        typer.Exit(code=1)
 
 
 def parse_batch_names(batch_names_str: Optional[str]) -> List[str]:
