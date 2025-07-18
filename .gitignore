@@ -6,5 +6,3 @@ __pycache__
 .idea/
 build/
 dist/
-.ailly_iam_policy
-*.log

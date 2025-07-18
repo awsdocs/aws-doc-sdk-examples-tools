@@ -25,3 +25,9 @@ class UpdateReservoir(Command):
     root: Path
     batches: List[str]
     packages: List[str]
+
+
+@dataclass
+class DedupeReservoir(Command):
+    root: Path
+    packages: List[str]

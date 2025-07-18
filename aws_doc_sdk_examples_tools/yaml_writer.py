@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 from dataclasses import asdict
+from difflib import unified_diff
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List, Set, Tuple
+from typing import Any, DefaultDict, Dict, List, Tuple
 
-import difflib
 import logging
 import yaml
 
@@ -146,7 +146,8 @@ def report_yaml_differences(
             elif file_path not in after_values:
                 differences.append((file_path, "removed"))
             else:
-                differences.append((file_path, "modified"))
+                diff = unified_diff(before, after)
+                differences.append((file_path, diff))
 
     return differences
 
@@ -172,8 +173,8 @@ def main():
     if before_values != after_values:
         differences = report_yaml_differences(before_values, after_values)
         logger.error(f"YAML content changed in {len(differences)} files after writing:")
-        for file_path, diff_type in differences:
-            logger.error(f"  - {file_path}: {diff_type}")
+        for difference in differences:
+            logger.error(difference)
     else:
         logger.info(
             f"Metadata for {root.name} has been normalized and verified for consistency."
