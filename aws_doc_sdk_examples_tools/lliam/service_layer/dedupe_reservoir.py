@@ -24,14 +24,14 @@ def handle_dedupe_reservoir(cmd: DedupeReservoir, uow: None):
     examples: Dict[str, Example] = {}
 
     for id, example in doc_gen.examples.items():
-        if cmd.packages:
+        if cmd.packages and example.file:
             package = example.file.name.split("_metadata.yaml")[0]
             if package in cmd.packages:
                 examples[id] = example
         else:
             examples[id] = example
 
-    title_abbrev_counts = Counter()
+    title_abbrev_counts: Counter = Counter()
 
     for id, example in examples.items():
         examples[id] = replace(
