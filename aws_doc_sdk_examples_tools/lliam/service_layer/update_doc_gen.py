@@ -1,9 +1,11 @@
+from dataclasses import replace
 import json
 import logging
 from collections import Counter
 from pathlib import Path
 from typing import Dict, Iterable, List
 
+from aws_doc_sdk_examples_tools.lliam.adapters.repository import DEFAULT_METADATA_PREFIX
 from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
 
 from aws_doc_sdk_examples_tools.lliam.config import (
@@ -15,19 +17,22 @@ from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
 
 logger = logging.getLogger(__name__)
 
+Updates = Dict[str, List[Dict[str, str]]]
+
 IAM_LANGUAGE = "IAMPolicyGrammar"
 
 
-def examples_from_updates(updates: List[Dict]) -> Iterable[Example]:
+def examples_from_updates(updates: Updates) -> Iterable[Example]:
     """
     Takes a list of example metadata updates and returns an
     iterable of examples with the applied updates.
     """
 
     indexed_updates = {}
-    for item in updates:
-        if "id" in item:
-            indexed_updates[item["id"]] = item
+    for update_list in updates.values():
+        for item in update_list:
+            if "id" in item:
+                indexed_updates[item["id"]] = item
 
     examples = [
         Example(
@@ -43,43 +48,53 @@ def examples_from_updates(updates: List[Dict]) -> Iterable[Example]:
     return examples
 
 
-def make_title_abbreviation(old: Example, new: Example, abbreviations: Counter):
-    language = old.languages[IAM_LANGUAGE]
+def get_source_title(example: Example) -> str:
+    language = example.languages[IAM_LANGUAGE]
     version = language.versions[0]
     source = version.source
-    source_title = source.title if source else ""
-    base = f"{new.title_abbrev} (from '{source_title}' guide)"
-    abbreviations[base] += 1
-    count = abbreviations[base]
-    return f"{base} ({count})" if count > 1 else base
+    return source.title if source else ""
 
 
 def update_examples(doc_gen: DocGen, examples: Iterable[Example]) -> Dict[str, Example]:
     """
     Merge a subset of example properties into a DocGen instance.
     """
-    title_abbrevs = Counter(
-        [example.title_abbrev for example in doc_gen.examples.values()]
-    )
-    updated = {}
+
     for example in examples:
-        if doc_gen_example := doc_gen.examples.get(example.id):
-            doc_gen_example.title = example.title
-            doc_gen_example.title_abbrev = make_title_abbreviation(
-                old=doc_gen_example, new=example, abbreviations=title_abbrevs
+        if example.id in doc_gen.examples:
+            source_title = get_source_title(doc_gen.examples[example.id])
+            # This is a hack. TCA is replacing AWS with &AWS;, which entity converter
+            # then does another pass on. So we end up with things like "&AWS; &GLUlong;"
+            # which render as "AWS AWS Glue". We should look at this closer when time permits.
+            source_title = source_title.replace("&AWS;", "AWS")
+            new_abbrev = f"{example.title_abbrev} (from '{source_title}' guide)"
+            doc_gen_example = replace(
+                doc_gen.examples[example.id],
+                title=example.title,
+                title_abbrev=new_abbrev,
+                synopsis=example.synopsis,
             )
-            doc_gen_example.synopsis = example.synopsis
-            updated[doc_gen_example.id] = doc_gen_example
+            doc_gen.examples[example.id] = doc_gen_example
         else:
             logger.warning(f"Could not find example with id: {example.id}")
-    return updated
+    return doc_gen.examples
 
 
-def update_doc_gen(doc_gen_root: Path, updates: List[Dict]) -> Dict[str, Example]:
-    doc_gen = DocGen.from_root(doc_gen_root)
+def update_doc_gen(doc_gen: DocGen, updates: Updates) -> Dict[str, Example]:
     examples = examples_from_updates(updates)
     updated_examples = update_examples(doc_gen, examples)
     return updated_examples
+
+
+def merge_updates(a: Updates, b: Updates) -> Updates:
+    merged: Updates = dict(a)
+    for package_name, updates in b.items():
+        if package_name not in merged:
+            merged[package_name] = updates
+        else:
+            # Assumption: Updates will not conflict.
+            merged[package_name].extend(updates)
+    return merged
 
 
 def handle_update_reservoir(cmd: UpdateReservoir, uow: None):
@@ -93,23 +108,29 @@ def handle_update_reservoir(cmd: UpdateReservoir, uow: None):
         logger.warning("No IAM update files found to process")
         return
 
+    doc_gen = DocGen.from_root(cmd.root)
+
+    combined_updates: Updates = {}
+
     for update_file in sorted(update_files):
         if update_file.exists():
-            logger.info(f"Processing updates from {update_file.name}")
-            updates = json.loads(update_file.read_text())
+            updates: Updates = json.loads(update_file.read_text())
             if cmd.packages:
-                updates = [
-                    update
-                    for package, update_list in updates.items()
-                    if package in cmd.packages
-                    for update in update_list
-                ]
+                updates = {
+                    package_name: update_list
+                    for package_name, update_list in updates.items()
+                    if package_name in cmd.packages
+                }
+
             if not updates:
                 logger.warning(f"No matching updates to run in {update_file.name}")
                 continue
-            examples = update_doc_gen(doc_gen_root=cmd.root, updates=updates)
 
-            writes = prepare_write(examples)
-            write_many(cmd.root, writes)
+            combined_updates = merge_updates(combined_updates, updates)
+
         else:
             logger.warning(f"Update file not found: {update_file}")
+
+    updated_examples = update_doc_gen(doc_gen=doc_gen, updates=combined_updates)
+    writes = prepare_write(updated_examples)
+    write_many(cmd.root, writes)

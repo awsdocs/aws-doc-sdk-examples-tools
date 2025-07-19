@@ -163,7 +163,11 @@ class StringExtension(String):
         If these counts differ, there's an invalid usage.
         """
         xval = value.replace("&", "&amp;")
-        xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
+        try:
+            xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
+        except Exception as e:
+            print(xval)
+            raise e
         blocks = (
             xtree.findall(".//programlisting")
             + xtree.findall(".//code")

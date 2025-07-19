@@ -72,12 +72,11 @@ def test_report_yaml_differences_with_changes():
     differences.sort()
 
     expected = [
-        ("file1.yaml", "modified"),
+        ("file1.yaml", "{'key1': 'value1'}\n\n---\n\n{'key1': 'changed_value'}"),
         ("file2.yaml", "removed"),
         ("file4.yaml", "added"),
     ]
     expected.sort()
-
     assert differences == expected
 
 

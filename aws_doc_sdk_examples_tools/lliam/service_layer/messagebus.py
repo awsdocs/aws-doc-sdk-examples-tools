@@ -3,6 +3,7 @@ from typing import Callable, Dict, Optional, Type
 from aws_doc_sdk_examples_tools.lliam.domain import commands
 from aws_doc_sdk_examples_tools.lliam.service_layer import (
     create_prompts,
+    dedupe_reservoir,
     update_doc_gen,
     run_ailly,
     unit_of_work,
@@ -33,4 +34,5 @@ COMMAND_HANDLERS: Dict[Type[commands.Command], Callable] = {
     commands.CreatePrompts: create_prompts.create_prompts,
     commands.RunAilly: run_ailly.handle_run_ailly,
     commands.UpdateReservoir: update_doc_gen.handle_update_reservoir,
+    commands.DedupeReservoir: dedupe_reservoir.handle_dedupe_reservoir,
 }

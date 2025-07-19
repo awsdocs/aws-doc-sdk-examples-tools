@@ -81,6 +81,23 @@ def update_reservoir(
     handle_domain_errors(errors)
 
 
+@app.command()
+def dedupe_reservoir(
+    iam_tributary_root: str,
+    packages: Annotated[
+        Optional[str], typer.Option(help="Comma delimited list of packages to update")
+    ] = None,
+) -> None:
+    """
+    Enumerate fields that must be unique (e.g. title_abbrev)
+    """
+    doc_gen_root = Path(iam_tributary_root)
+    package_names = parse_package_names(packages)
+    cmd = commands.DedupeReservoir(root=doc_gen_root, packages=package_names)
+    errors = messagebus.handle(cmd)
+    handle_domain_errors(errors)
+
+
 def handle_domain_errors(errors: List[errors.DomainError]):
     if errors:
         for error in errors:
