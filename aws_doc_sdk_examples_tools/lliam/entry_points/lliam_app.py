@@ -93,9 +93,7 @@ def dedupe_reservoir(
     """
     doc_gen_root = Path(iam_tributary_root)
     package_names = parse_package_names(packages)
-    cmd = commands.DedupeReservoir(
-        root=doc_gen_root, packages=package_names
-    )
+    cmd = commands.DedupeReservoir(root=doc_gen_root, packages=package_names)
     errors = messagebus.handle(cmd)
     handle_domain_errors(errors)
 

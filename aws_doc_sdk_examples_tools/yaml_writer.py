@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 from collections import defaultdict
 from dataclasses import asdict
-from difflib import unified_diff
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Tuple
 
@@ -146,7 +145,7 @@ def report_yaml_differences(
             elif file_path not in after_values:
                 differences.append((file_path, "removed"))
             else:
-                diff = unified_diff(before, after)
+                diff = f"{before}\n\n---\n\n{after}"
                 differences.append((file_path, diff))
 
     return differences
