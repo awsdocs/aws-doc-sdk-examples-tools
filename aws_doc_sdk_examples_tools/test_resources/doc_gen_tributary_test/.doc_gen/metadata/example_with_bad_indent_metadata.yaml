@@ -1,0 +1,42 @@
+iam-policies.AWSQuickBeamDocs.latest.ug.security.security-iam.xml.5:
+  title: Allow deletion of an &ACM; certificate
+  title_abbrev: Allow deletion of an &ACM; certificate (from '&ACMlong; (&ACM;)' guide)
+  synopsis: This identity-based policy allows the attached identity to delete a specific &ACMlong; (&ACM;) certificate.
+  category: IAMPolicy
+  languages:
+    IAMPolicy:
+      versions:
+      - sdk_version: 1
+        owner: AWS/Documentation/AWS Certificate Management (ACM)
+        authors:
+        - name: Chuck Bigham
+          alias: bigchuck
+        source:
+          title: '&AWS; Certificate Manager (ACM)'
+          url: https://code.amazon.com/packages/AWSQuickBeamDocs
+        excerpts:
+        - description: test
+  services:
+    acm: {}
+    iam: {}
+    iam-policies.AWSQuickBeamDocs.latest.ug.vpc-interface-endpoints.xml.1.xml:
+    title: VPC endpoint policy allows list and describe of &ACM; certificates.
+  title_abbrev: Allows list and describe of &ACM; certificates (from '&ACMlong; (&ACM;)' guide)
+  synopsis: This VPC endpoint policy allows the attached identity to list and describe &ACMlong; (&ACM;) certificates.
+  category: IAMPolicy
+  languages:
+    IAMPolicy:
+      versions:
+      - sdk_version: 1
+        owner: AWS/Documentation/AWS Certificate Management (ACM)
+        authors:
+        - name: Shelby White
+          alias: shelbyx
+        source:
+          title: '&AWS; Certificate Manager (ACM)'
+          url: https://code.amazon.com/packages/AWSQuickBeamDocs
+        excerpts:
+        - description: test
+  services:
+    acm: {}
+    iam: {}

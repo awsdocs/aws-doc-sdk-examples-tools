@@ -6,7 +6,7 @@ This script contains tests that verify the examples loader finds appropriate err
 """
 
 import pytest
-import yaml
+import ruamel.yaml
 from pathlib import Path
 from typing import List, Set, Tuple
 
@@ -26,12 +26,14 @@ from .project_validator import ValidationConfig
 from .sdks import Sdk
 from .services import Service, ServiceExpanded
 
+yaml = ruamel.yaml.YAML(typ="safe", pure=True)
+
 
 def load(
     path: Path, doc_gen: DocGen, blocks: Set[str] = set()
 ) -> Tuple[List[Example], metadata_errors.MetadataErrors]:
     with path.open() as file:
-        meta = yaml.safe_load(file)
+        meta = yaml.load(file)
     return parse_examples(
         path,
         meta,
@@ -157,7 +159,7 @@ medical-imaging_CreateDatastore:
 
 
 def test_parse():
-    meta = yaml.safe_load(GOOD_SINGLE_CPP)
+    meta = yaml.load(GOOD_SINGLE_CPP)
     parsed, errors = parse_examples(
         Path("test_cpp.yaml"),
         meta,
@@ -261,7 +263,7 @@ medical-imaging_GoodScenario:
 
 
 def test_parse_strict_titles():
-    meta = yaml.safe_load(STRICT_TITLE_META)
+    meta = yaml.load(STRICT_TITLE_META)
     parsed, errors = parse_examples(
         Path("test_cpp.yaml"),
         meta,
@@ -396,7 +398,7 @@ medical-imaging_BadBasics:
 
 
 def test_parse_strict_title_errors():
-    meta = yaml.safe_load(STRICT_TITLE_ERRORS)
+    meta = yaml.load(STRICT_TITLE_ERRORS)
     _, errors = parse_examples(
         Path("test_cpp.yaml"),
         meta,
@@ -444,7 +446,7 @@ cross_DeleteTopic:
 
 
 def test_parse_cross():
-    meta = yaml.safe_load(CROSS_META)
+    meta = yaml.load(CROSS_META)
     actual, errors = parse_examples(
         Path("cross.yaml"),
         meta,
@@ -519,7 +521,7 @@ medical-imaging_TestRequiredCategoryFields:
 
 
 def test_parse_required_category_fields_errors():
-    meta = yaml.safe_load(CATEGORY_FIELD_ERRORS)
+    meta = yaml.load(CATEGORY_FIELD_ERRORS)
     _, errors = parse_examples(
         Path("test_meta.yaml"),
         meta,

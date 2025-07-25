@@ -4,9 +4,8 @@ mypy==1.8.0
 mypy-extensions==1.0.0
 pathspec==0.11.2
 pytest==8.0.0
-PyYAML==6.0.1
 requests==2.32.0
-types-PyYAML==6.0.12.12
+ruamel.yaml==0.17.21
 yamale==4.0.4
 typer==0.15.3
 uv==0.7.10

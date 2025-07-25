@@ -4,7 +4,7 @@
 from pathlib import Path
 from typing import Dict, Tuple
 import pytest
-import yaml
+import ruamel.yaml
 
 from aws_doc_sdk_examples_tools import metadata_errors
 from .services import (
@@ -16,10 +16,11 @@ from .services import (
 
 
 def load(path: str) -> Tuple[Dict[str, Service], metadata_errors.MetadataErrors]:
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
-        meta = yaml.safe_load(file)
+        meta = yaml.load(file)
     return parse(filename, meta)
 
 

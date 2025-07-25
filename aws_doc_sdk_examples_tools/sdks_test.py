@@ -6,7 +6,7 @@ This script contains tests that verify the examples loader finds appropriate err
 """
 
 import pytest
-import yaml
+import ruamel.yaml
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -23,10 +23,11 @@ from .sdks import (
 def load(
     path: str, strict: bool = True
 ) -> Tuple[Dict[str, Sdk], metadata_errors.MetadataErrors]:
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     root = Path(__file__).parent
     filename = root / "test_resources" / path
     with open(filename) as file:
-        meta = yaml.safe_load(file)
+        meta = yaml.load(file)
     return parse(filename, meta, strict)
 
 

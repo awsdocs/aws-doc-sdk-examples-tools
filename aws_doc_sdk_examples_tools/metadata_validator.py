@@ -11,9 +11,8 @@ import argparse
 import datetime
 import os
 import re
+import ruamel.yaml
 import xml.etree.ElementTree as xml_tree
-import yaml
-import yaml.parser
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set
@@ -205,13 +204,13 @@ def validate_files(
 ):
     """Iterate a list of files and validate each one against a schema."""
 
-    schema = yamale.make_schema(schema_name, validators=validators)
+    schema = yamale.make_schema(schema_name, validators=validators, parser="ruamel")
     for meta_name in meta_names:
         try:
-            data = yamale.make_data(meta_name)
+            data = yamale.make_data(meta_name, parser="ruamel")
             yamale.validate(schema, data, strict=strict)
             print(f"{meta_name.resolve()} validation success! 👍")
-        except yaml.parser.ParserError as e:
+        except ruamel.yaml.YAMLError as e:
             pass  # YAML parse errors are found and reported by the DocGen validator so we won't report them here.
         except YamaleError as e:
             errors.append(ValidateYamaleError(file=meta_name, yamale_error=e))
@@ -221,12 +220,13 @@ def validate_files(
 def validate_metadata(
     doc_gen_root: Path, strict: bool, errors: MetadataErrors
 ) -> MetadataErrors:
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     config = Path(__file__).parent / "config"
     with open(config / "sdks.yaml") as sdks_file:
-        sdks_yaml: Dict[str, Any] = yaml.safe_load(sdks_file)
+        sdks_yaml: Dict[str, Any] = yaml.load(sdks_file)
 
     with open(config / "services.yaml") as services_file:
-        services_yaml = yaml.safe_load(services_file)
+        services_yaml = yaml.load(services_file)
 
     SdkVersion.sdks = sdks_yaml
     ServiceName.services = services_yaml

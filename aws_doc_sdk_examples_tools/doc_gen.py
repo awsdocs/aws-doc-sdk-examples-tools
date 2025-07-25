@@ -1,7 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import yaml
+import ruamel.yaml
 import json
 
 from collections import defaultdict
@@ -9,9 +9,6 @@ from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
-from yaml.parser import ParserError
-
-from yaml import YAMLError
 
 # from os import glob
 
@@ -224,26 +221,27 @@ class DocGen:
         if path in self._loaded:
             return self
         try:
-            content = self.fs.read(path)
-            examples, errs = parse_examples(
-                path,
-                yaml.safe_load(content),
-                self.sdks,
-                self.services,
-                self.standard_categories,
-                self.cross_blocks,
-                self.validation,
-            )
-            self.extend_examples(examples, self.errors)
-            self.errors.extend(errs)
-            for example in examples:
-                for lang in example.languages:
-                    language = example.languages[lang]
-                    for version in language.versions:
-                        for excerpt in version.excerpts:
-                            self.snippet_files.update(excerpt.snippet_files)
+            yaml = ruamel.yaml.YAML(typ="safe", pure=True)
+            with open(path) as file:
+                examples, errs = parse_examples(
+                    path,
+                    yaml.load(file),
+                    self.sdks,
+                    self.services,
+                    self.standard_categories,
+                    self.cross_blocks,
+                    self.validation,
+                )
+                self.extend_examples(examples, self.errors)
+                self.errors.extend(errs)
+                for example in examples:
+                    for lang in example.languages:
+                        language = example.languages[lang]
+                        for version in language.versions:
+                            for excerpt in version.excerpts:
+                                self.snippet_files.update(excerpt.snippet_files)
             self._loaded.add(path)
-        except ParserError as e:
+        except ruamel.yaml.YAMLError as e:
             self.errors.append(YamlParseError(file=path, parser_error=str(e)))
         return self
 
@@ -368,54 +366,57 @@ class DocGenEncoder(json.JSONEncoder):
 
 
 def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     try:
-        content = doc_gen.fs.read(root / ".doc_gen" / "validation.yaml")
-        validation = yaml.safe_load(content)
-        validation = validation or {}
-        doc_gen.validation.allow_list.update(validation.get("allow_list", []))
-        doc_gen.validation.sample_files.update(validation.get("sample_files", []))
+        with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
+            validation = yaml.load(file)
+            validation = validation or {}
+            doc_gen.validation.allow_list.update(validation.get("allow_list", []))
+            doc_gen.validation.sample_files.update(validation.get("sample_files", []))
     except Exception:
         pass
 
     try:
         sdk_path = config / "sdks.yaml"
-        content = doc_gen.fs.read(sdk_path)
-        meta = yaml.safe_load(content)
-        sdks, errs = parse_sdks(sdk_path, meta, strict)
-        doc_gen.sdks = sdks
-        doc_gen.errors.extend(errs)
+        with sdk_path.open(encoding="utf-8") as file:
+            meta = yaml.load(file)
+            sdks, errs = parse_sdks(sdk_path, meta, strict)
+            doc_gen.sdks = sdks
+            doc_gen.errors.extend(errs)
     except Exception:
         pass
 
     try:
         services_path = config / "services.yaml"
-        content = doc_gen.fs.read(services_path)
-        meta = yaml.safe_load(content)
-        services, service_errors = parse_services(services_path, meta)
-        doc_gen.services = services
-        for service in doc_gen.services.values():
-            if service.expanded:
-                doc_gen.entities[service.long] = service.expanded.long
-                doc_gen.entities[service.short] = service.expanded.short
-        doc_gen.errors.extend(service_errors)
+        with services_path.open(encoding="utf-8") as file:
+            meta = yaml.load(file)
+            services, service_errors = parse_services(services_path, meta)
+            doc_gen.services = services
+            for service in doc_gen.services.values():
+                if service.expanded:
+                    doc_gen.entities[service.long] = service.expanded.long
+                    doc_gen.entities[service.short] = service.expanded.short
+            doc_gen.errors.extend(service_errors)
     except Exception:
         pass
 
     try:
         categories_path = config / "categories.yaml"
-        content = doc_gen.fs.read(categories_path)
-        meta = yaml.safe_load(content)
-        standard_categories, categories, errs = parse_categories(categories_path, meta)
-        doc_gen.standard_categories = standard_categories
-        doc_gen.categories = categories
-        doc_gen.errors.extend(errs)
+        with categories_path.open(encoding="utf-8") as file:
+            meta = yaml.load(file)
+            standard_categories, categories, errs = parse_categories(
+                categories_path, meta
+            )
+            doc_gen.standard_categories = standard_categories
+            doc_gen.categories = categories
+            doc_gen.errors.extend(errs)
     except Exception:
         pass
 
     try:
         entities_config_path = config / "entities.yaml"
-        content = doc_gen.fs.read(entities_config_path)
-        entities_config = yaml.safe_load(content)
+        with entities_config_path.open(encoding="utf-8") as file:
+            entities_config = yaml.load(file)
         for entity, expanded in entities_config["expanded_override"].items():
             doc_gen.entities[entity] = expanded
     except Exception:

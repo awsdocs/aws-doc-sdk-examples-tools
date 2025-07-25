@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Optional, Tuple
 
 import logging
-import yaml
+import ruamel.yaml
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.metadata import Example
@@ -13,6 +13,8 @@ from aws_doc_sdk_examples_tools.metadata import Example
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(Path(__file__).name)
+yaml = ruamel.yaml.YAML(typ="safe", pure=True)
+yaml.width = 4096
 
 
 def write_many(root: Path, to_write: Dict[str, str]):
@@ -22,7 +24,7 @@ def write_many(root: Path, to_write: Dict[str, str]):
 
 
 def dump_yaml(value: Any) -> str:
-    repr: str = yaml.dump(value, sort_keys=False, width=float("inf"))
+    repr: str = yaml.dump(value)
     repr = repr.replace(r"!!set {}", r"{}")
     return repr
 
