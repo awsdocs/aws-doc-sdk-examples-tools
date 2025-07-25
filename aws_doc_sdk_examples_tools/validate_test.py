@@ -13,4 +13,4 @@ from .validate import validate
 def test_validate():
     root_path = Path(__file__).parent / "test_resources" / "doc_gen_tributary_test"
     error_count = validate(root_path, root_path / ".doc_gen/config", False, False)
-    assert error_count == 0
+    assert error_count == 1

@@ -4,7 +4,7 @@ import logging
 import os
 from pathlib import Path
 from typing import List
-import yaml
+import ruamel.yaml
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Snippet
 
@@ -60,6 +60,7 @@ def setup_ailly(system_prompts: List[str], out_dir: Path) -> None:
             }
         },
     }
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     options_block = yaml.dump(options).strip()
     prompts_block = "\n".join(system_prompts)
 

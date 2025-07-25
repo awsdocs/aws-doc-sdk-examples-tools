@@ -168,11 +168,12 @@ def parse(
 
 if __name__ == "__main__":
     from pprint import pp
-    import yaml
+    import ruamel.yaml
 
     path = Path(__file__).parent / "config" / "categories.yaml"
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     with open(path) as file:
-        meta = yaml.safe_load(file)
+        meta = yaml.load(file)
     standard_cats, cats, errs = parse(path, meta)
     pp(standard_cats)
     pp(cats)

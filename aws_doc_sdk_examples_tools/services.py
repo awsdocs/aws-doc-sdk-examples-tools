@@ -141,13 +141,14 @@ def parse(
 
 
 if __name__ == "__main__":
-    import yaml
+    import ruamel.yaml
     from pathlib import Path
 
     path = (
         Path(__file__).parent.parent.parent / ".doc_gen" / "metadata" / "services.yaml"
     )
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     with open(path) as file:
-        meta = yaml.safe_load(file)
+        meta = yaml.load(file)
     examples = parse(path, meta)
     print(f"{examples}")

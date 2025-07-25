@@ -1,7 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-import yaml
+import ruamel.yaml
 import json
 
 from collections import defaultdict
@@ -9,9 +9,6 @@ from dataclasses import dataclass, field, fields, is_dataclass, asdict
 from functools import reduce
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Set, Tuple, List, Any
-from yaml.parser import ParserError
-
-from yaml import YAMLError
 
 # from os import glob
 
@@ -216,10 +213,11 @@ class DocGen:
         if path in self._loaded:
             return self
         try:
+            yaml = ruamel.yaml.YAML(typ="safe", pure=True)
             with open(path) as file:
                 examples, errs = parse_examples(
                     path,
-                    yaml.safe_load(file),
+                    yaml.load(file),
                     self.sdks,
                     self.services,
                     self.standard_categories,
@@ -235,7 +233,7 @@ class DocGen:
                             for excerpt in version.excerpts:
                                 self.snippet_files.update(excerpt.snippet_files)
             self._loaded.add(path)
-        except ParserError as e:
+        except ruamel.yaml.YAMLError as e:
             self.errors.append(YamlParseError(file=path, parser_error=str(e)))
         return self
 
@@ -355,9 +353,10 @@ class DocGenEncoder(json.JSONEncoder):
 
 
 def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
+    yaml = ruamel.yaml.YAML(typ="safe", pure=True)
     try:
         with open(root / ".doc_gen" / "validation.yaml", encoding="utf-8") as file:
-            validation = yaml.safe_load(file)
+            validation = yaml.load(file)
             validation = validation or {}
             doc_gen.validation.allow_list.update(validation.get("allow_list", []))
             doc_gen.validation.sample_files.update(validation.get("sample_files", []))
@@ -367,7 +366,7 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     try:
         sdk_path = config / "sdks.yaml"
         with sdk_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
+            meta = yaml.load(file)
             sdks, errs = parse_sdks(sdk_path, meta, strict)
             doc_gen.sdks = sdks
             doc_gen.errors.extend(errs)
@@ -377,7 +376,7 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     try:
         services_path = config / "services.yaml"
         with services_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
+            meta = yaml.load(file)
             services, service_errors = parse_services(services_path, meta)
             doc_gen.services = services
             for service in doc_gen.services.values():
@@ -391,7 +390,7 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     try:
         categories_path = config / "categories.yaml"
         with categories_path.open(encoding="utf-8") as file:
-            meta = yaml.safe_load(file)
+            meta = yaml.load(file)
             standard_categories, categories, errs = parse_categories(
                 categories_path, meta
             )
@@ -404,7 +403,7 @@ def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
     try:
         entities_config_path = config / "entities.yaml"
         with entities_config_path.open(encoding="utf-8") as file:
-            entities_config = yaml.safe_load(file)
+            entities_config = yaml.load(file)
         for entity, expanded in entities_config["expanded_override"].items():
             doc_gen.entities[entity] = expanded
     except Exception:
