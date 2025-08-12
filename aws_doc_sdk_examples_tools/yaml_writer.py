@@ -50,6 +50,7 @@ EXAMPLE_FIELD_ORDER = [
     # "doc_filenames", # These are currently generated, and don't need to be stored.
     "source_key",
     "category",
+    "suppress_publish",
     "languages",
     "service_main",
     "services",

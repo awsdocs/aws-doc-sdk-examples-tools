@@ -161,6 +161,7 @@ class Example:
     doc_filenames: Optional[DocFilenames] = field(default=None)
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
+    suppress_publish: Optional[bool] = field(default=False)
 
     def fill_display_fields(self, categories: Dict[str, Category], service, action):
         category = self.choose_category(categories)
