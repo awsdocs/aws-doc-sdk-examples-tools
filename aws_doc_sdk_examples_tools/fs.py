@@ -85,9 +85,9 @@ class RecordFs(Fs):
         self.fs = fs
 
     def glob(self, path: Path, glob: str) -> Generator[Path, None, None]:
-        path_s = str(path)
+        path_s = path.as_posix()
         for key in self.fs.keys():
-            key_s = str(key)
+            key_s = key.as_posix()
             if key_s.startswith(path_s):
                 if fnmatch(key_s, glob):
                     yield key
@@ -100,9 +100,9 @@ class RecordFs(Fs):
         return content.splitlines(keepends=True)
 
     def write(self, path: Path, content: str):
-        base = str(path.parent)
+        base = path.parent.as_posix()
         assert any(
-            [str(key).startswith(base) for key in self.fs]
+            [key.as_posix().startswith(base) for key in self.fs]
         ), "No parent folder, this will probably fail without a call to mkdir in a real file system!"
         self.fs[path] = content
 
@@ -110,7 +110,7 @@ class RecordFs(Fs):
         if path in self.fs:
             return Stat(path, True, True)
         for item in self.fs.keys():
-            if str(item).startswith(str(path)):
+            if item.as_posix().startswith(path.as_posix()):
                 return Stat(path, True, False)
         return Stat(path, False, False)
 
@@ -123,11 +123,11 @@ class RecordFs(Fs):
             return []
 
         # Gather all entries that are immediate children of `path`
-        prefix = str(path).rstrip("/") + "/"
+        prefix = path.as_posix().rstrip("/") + "/"
         children = set()
 
         for item in self.fs.keys():
-            item_s = str(item)
+            item_s = item.as_posix()
             if item_s.startswith(prefix):
                 # Determine the remainder path after the prefix
                 remainder = item_s[len(prefix) :]

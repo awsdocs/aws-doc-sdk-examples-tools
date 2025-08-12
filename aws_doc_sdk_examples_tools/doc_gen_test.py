@@ -253,6 +253,7 @@ def test_doc_gen_encoder(sample_doc_gen: DocGen):
     assert "examples" in decoded
     assert decoded["examples"] == {
         "s3_PutObject": {
+            "suppress_publish": False,
             "category": None,
             "doc_filenames": None,
             "file": "filea.txt",
