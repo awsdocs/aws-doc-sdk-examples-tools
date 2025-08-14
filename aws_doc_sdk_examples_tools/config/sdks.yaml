@@ -295,6 +295,16 @@ Python:
       api_ref:
         uid: "boto3"
         name: "&guide-python3-api;"
+    301:
+      long: "&PythonAsynclong;"
+      short: "&PythonAsync;"
+      expanded:
+        long: "AWS SDK for Python Async"
+        short: "SDK for Python Async"
+      guide: "https://github.com/awslabs/aws-sdk-python/blob/develop/dev-guide/index.md"
+      api_ref:
+        uid: "python-async"
+        name: "&guide-python3-async-api;"
   guide: "&guide-python3-gsg;"
 Ruby:
   property: ruby
