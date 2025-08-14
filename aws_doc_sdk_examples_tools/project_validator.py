@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ValidationConfig:
     allow_list: Set[str] = field(default_factory=set)
+    check_aws: bool = True
     sample_files: Set[Path] = field(default_factory=set)
     strict_titles: bool = False
 

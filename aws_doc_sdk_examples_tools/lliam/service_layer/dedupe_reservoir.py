@@ -7,6 +7,7 @@ from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.lliam.domain.commands import DedupeReservoir
 from aws_doc_sdk_examples_tools.metadata import Example
 from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
+from aws_doc_sdk_examples_tools.project_validator import ValidationConfig
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def make_title_abbreviation(example: Example, counter: Counter):
 
 
 def handle_dedupe_reservoir(cmd: DedupeReservoir, uow: None):
-    doc_gen = DocGen.from_root(cmd.root)
+    doc_gen = DocGen.from_root(cmd.root, validation=ValidationConfig(check_aws=False))
 
     examples: Dict[str, Example] = {}
 

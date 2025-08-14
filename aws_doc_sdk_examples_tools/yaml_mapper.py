@@ -30,9 +30,27 @@ def example_from_yaml(
 ) -> Tuple[Example, MetadataErrors]:
     errors = MetadataErrors()
 
-    title = get_with_valid_entities("title", yaml, errors, True)
-    title_abbrev = get_with_valid_entities("title_abbrev", yaml, errors, True)
-    synopsis = get_with_valid_entities("synopsis", yaml, errors, opt=True)
+    title = get_field(
+        name="title",
+        d=yaml,
+        errors=errors,
+        opt=True,
+        check_aws=validation.check_aws,
+    )
+    title_abbrev = get_field(
+        name="title_abbrev",
+        d=yaml,
+        errors=errors,
+        opt=True,
+        check_aws=validation.check_aws,
+    )
+    synopsis = get_field(
+        name="synopsis",
+        d=yaml,
+        errors=errors,
+        opt=True,
+        check_aws=validation.check_aws,
+    )
     synopsis_list = [str(syn) for syn in yaml.get("synopsis_list", [])]
 
     source_key = yaml.get("source_key")
@@ -123,8 +141,12 @@ def excerpt_from_yaml(yaml: Any) -> Tuple["Excerpt", MetadataErrors]:
     return (Excerpt(description, snippet_tags, snippet_files, genai), errors)
 
 
-def get_with_valid_entities(
-    name: str, d: Dict[str, str], errors: MetadataErrors, opt: bool = False
+def get_field(
+    name: str,
+    d: Dict[str, str],
+    errors: MetadataErrors,
+    opt: bool = False,
+    check_aws=True,
 ) -> str:
     field = d.get(name)
     if field is None:
@@ -132,7 +154,7 @@ def get_with_valid_entities(
             errors.append(metadata_errors.MissingField(field=name))
         return ""
 
-    checker = StringExtension()
+    checker = StringExtension(check_aws=check_aws)
     if not checker.is_valid(field):
         errors.append(
             metadata_errors.AwsNotEntity(
@@ -195,7 +217,7 @@ def parse_services(yaml: Any, errors: MetadataErrors) -> Dict[str, Set[str]]:
 
 
 def url_from_yaml(
-    yaml: Union[None, Dict[str, Optional[str]]]
+    yaml: Union[None, Dict[str, Optional[str]]],
 ) -> Optional[Union[Url, MetadataParseError]]:
     if yaml is None:
         return None
@@ -209,7 +231,7 @@ def url_from_yaml(
 
 
 def person_from_yaml(
-    yaml: Union[None, Dict[str, Optional[str]]]
+    yaml: Union[None, Dict[str, Optional[str]]],
 ) -> Optional[Union[Person, MetadataParseError]]:
     if yaml is None:
         return None
