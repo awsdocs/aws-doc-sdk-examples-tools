@@ -115,7 +115,7 @@ def run_ailly_single_batch(batch: Path, packages: List[str] = []) -> None:
     )
 
 
-EXPECTED_KEYS: Set[str] = set(["title", "title_abbrev"])
+EXPECTED_KEYS: Set[str] = set(["title", "title_abbrev", "synopsis"])
 VALUE_PREFIXES: Dict[str, str] = {"title": "", "title_abbrev": "", "synopsis": ""}
 
 
