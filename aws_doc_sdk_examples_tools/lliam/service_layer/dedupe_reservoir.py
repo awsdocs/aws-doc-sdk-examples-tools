@@ -70,7 +70,7 @@ def dedupe_examples(
 
     reset_examples = reset_abbrev_count(filtered)
 
-    counter = Counter()
+    counter: Counter = Counter()
 
     return {
         id: replace(ex, title_abbrev=make_abbrev(ex, counter))

@@ -1,6 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
+from pathlib import Path
 from typing import Dict, Set, Tuple, Any, List, Optional, Union
 from .metadata import (
     Example,
@@ -112,7 +113,7 @@ def example_from_yaml(
     return (
         Example(
             id="",
-            file=None,
+            file=Path(),
             title=title,
             title_abbrev=title_abbrev,
             category=category,
