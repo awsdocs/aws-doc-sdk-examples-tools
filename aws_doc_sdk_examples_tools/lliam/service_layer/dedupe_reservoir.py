@@ -55,7 +55,7 @@ def reset_abbrev_count(examples: Dict[str, Example]) -> Dict[str, Example]:
 
 def example_in_packages(example: Example, packages: List[str]) -> bool:
     if packages and example.file:
-        example_pkg_name = example.file.name.split("_metadata.yaml")[0]
+        (example_pkg_name, *_) = example.file.name.split("_metadata.yaml")
         if not example_pkg_name in packages:
             return False
     return True
