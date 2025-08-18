@@ -22,6 +22,7 @@ AILLY_CMD_BASE = [
     "ailly",
     "--max-depth",
     "10",
+    "--no-overwrite",
     "--root",
     str(AILLY_DIR_PATH),
 ]
