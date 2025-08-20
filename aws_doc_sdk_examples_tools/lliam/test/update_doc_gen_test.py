@@ -32,7 +32,7 @@ def test_update_examples_title_abbrev(doc_gen_tributary: DocGen):
     # Create an example with a title_abbrev to update
     update_example = Example(
         id="iam_policies_example",
-        file=None,
+        file=Path(),
         languages={},
         title_abbrev="Updated Title Abbrev",
     )

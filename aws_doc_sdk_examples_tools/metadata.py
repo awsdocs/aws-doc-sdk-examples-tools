@@ -139,7 +139,7 @@ class Language:
 @dataclass
 class Example:
     id: str
-    file: Optional[Path]
+    file: Path
     languages: Dict[str, Language]
     # Human readable title.
     title: Optional[str] = field(default="")

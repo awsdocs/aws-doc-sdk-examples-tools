@@ -1,7 +1,6 @@
 from dataclasses import replace
 import json
 import logging
-from collections import Counter
 from pathlib import Path
 from typing import Dict, Iterable, List
 
@@ -37,7 +36,7 @@ def examples_from_updates(updates: Updates) -> Iterable[Example]:
     examples = [
         Example(
             id=id,
-            file=None,
+            file=Path(),
             languages={},
             title=update.get("title"),
             title_abbrev=update.get("title_abbrev"),

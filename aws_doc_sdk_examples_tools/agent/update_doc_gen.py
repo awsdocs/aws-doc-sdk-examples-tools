@@ -26,7 +26,7 @@ def examples_from_updates(updates_path: Path) -> Iterable[Example]:
     examples = [
         Example(
             id=id,
-            file=None,
+            file=Path(),
             languages={},
             title=update.get("title"),
             title_abbrev=update.get("title_abbrev"),
