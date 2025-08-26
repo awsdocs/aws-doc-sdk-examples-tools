@@ -12,7 +12,12 @@ import json
 from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
 from .metadata import Example
-from .metadata_errors import MetadataErrors, MetadataError, UnknownLanguage
+from .metadata_errors import (
+    MetadataErrors,
+    MetadataError,
+    UnknownLanguage,
+    ParseXMLError,
+)
 from .sdks import Sdk, SdkVersion
 from .services import Service, ServiceExpanded
 from .snippets import Snippet
@@ -304,3 +309,22 @@ def test_language_not_in_sdks():
     )
     doc_gen.process_metadata(doc_gen.root / "bad_language_example.yaml")
     assert isinstance(doc_gen.errors[0], UnknownLanguage)
+
+
+def test_invalid_xml():
+    errors = MetadataErrors()
+    doc_gen = DocGen(Path(), errors).for_root(
+        Path(__file__).parent / "test_resources", incremental=False
+    )
+    doc_gen.process_metadata(doc_gen.root / "invalid_xml_metadata.yaml")
+    assert doc_gen.errors
+    first_error, *_ = doc_gen.errors
+    assert isinstance(first_error, ParseXMLError)
+    assert (
+        first_error.value
+        == "<fake><para>Certain characters like < are invalid</para></fake>"
+    )
+    assert (
+        first_error.message()
+        == "ParseError('not well-formed (invalid token): line 1, column 37')"
+    )
