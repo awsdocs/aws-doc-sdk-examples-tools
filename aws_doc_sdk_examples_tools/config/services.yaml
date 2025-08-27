@@ -132,7 +132,7 @@ application-signals:
   sort: Application Signals 
   sdk_id: Application Signals
   expanded:
-    long: Application Signals
+    long: CloudWatch Application Signals
     short: Application Signals
   blurb: describes all API operations for Cloudwatch Application Signals.
   guide:
