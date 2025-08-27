@@ -16,7 +16,7 @@ from .services import Service
 from . import metadata_errors
 from .metadata_errors import MetadataErrors, DuplicateItemException, MetadataParseError
 from .project_validator import ValidationConfig
-from .metadata_validator import StringExtension
+from .metadata_validator import StringExtension, ElementTreeParseError
 
 
 CATEGORY_REQUIRED_FIELDS = {"IAMPolicy": {"version": {"authors", "owner", "source"}}}
@@ -156,13 +156,23 @@ def get_field(
         return ""
 
     checker = StringExtension(check_aws=check_aws)
-    if not checker.is_valid(field):
+    try:
+        if not checker.is_valid(field):
+            errors.append(
+                metadata_errors.AwsNotEntity(
+                    field=name, value=field, check_err=checker.get_name()
+                )
+            )
+            return ""
+    except ElementTreeParseError as e:
         errors.append(
-            metadata_errors.AwsNotEntity(
-                field=name, value=field, check_err=checker.get_name()
+            metadata_errors.ParseXMLError(
+                xml_err_message=e.msg,
+                value=e.raw,
             )
         )
         return ""
+
     return field
 
 

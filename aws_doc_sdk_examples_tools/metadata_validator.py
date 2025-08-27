@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
@@ -18,6 +17,7 @@ import yaml.parser
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set
+from xml.etree.ElementTree import ParseError
 
 import yamale  # type: ignore
 from yamale import YamaleError  # type: ignore
@@ -27,6 +27,12 @@ from .metadata_errors import (
     MetadataErrors,
     MetadataParseError,
 )
+
+
+class ElementTreeParseError(ParseError):
+    def __init__(self, message: str, raw: str):
+        super().__init__(message)
+        self.raw = raw
 
 
 class SdkVersion(Validator):
@@ -163,11 +169,11 @@ class StringExtension(String):
         If these counts differ, there's an invalid usage.
         """
         xval = value.replace("&", "&amp;")
+        xml_str = f"<fake><para>{xval}</para></fake>"
         try:
-            xtree = xml_tree.fromstring(f"<fake><para>{xval}</para></fake>")
-        except Exception as e:
-            print(xval)
-            raise e
+            xtree = xml_tree.fromstring(xml_str)
+        except ParseError as e:
+            raise ElementTreeParseError(message=f"{e}", raw=xml_str) from e
         blocks = (
             xtree.findall(".//programlisting")
             + xtree.findall(".//code")

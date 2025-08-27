@@ -6,7 +6,16 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Iterator, Iterable, List, TypeVar, Generic, Dict, Set
+from typing import (
+    Optional,
+    Iterator,
+    Iterable,
+    List,
+    TypeVar,
+    Generic,
+    Dict,
+    Set,
+)
 
 
 ErrorT = TypeVar("ErrorT")
@@ -106,6 +115,15 @@ class YamlParseError(MetadataError):
             f"incorrect YAML format {self.parser_error}.\n"
             f"\tThis indicates a problem with the YAML itself. Use a YAML authoring tool to help diagnose further."
         )
+
+
+@dataclass
+class ParseXMLError(MetadataError):
+    xml_err_message: Optional[str] = field(default=None)
+    value: Optional[str] = field(default=None)
+
+    def message(self) -> str:
+        return f"{self.xml_err_message}"
 
 
 @dataclass
