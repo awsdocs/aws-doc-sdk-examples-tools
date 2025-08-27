@@ -324,7 +324,4 @@ def test_invalid_xml():
         first_error.value
         == "<fake><para>Certain characters like < are invalid</para></fake>"
     )
-    assert (
-        first_error.message()
-        == "ParseError('not well-formed (invalid token): line 1, column 37')"
-    )
+    assert first_error.message() == "not well-formed (invalid token): line 1, column 37"

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
@@ -174,7 +173,7 @@ class StringExtension(String):
         try:
             xtree = xml_tree.fromstring(xml_str)
         except ParseError as e:
-            raise ElementTreeParseError(message=repr(e), raw=xml_str)
+            raise ElementTreeParseError(message=f"{e}", raw=xml_str) from e
         blocks = (
             xtree.findall(".//programlisting")
             + xtree.findall(".//code")
