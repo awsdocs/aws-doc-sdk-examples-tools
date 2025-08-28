@@ -128,11 +128,11 @@ application-auto-scaling:
   version: application-autoscaling-2016-02-06
 application-signals:
   long: '&CWSignalslong;'
-  short: '&CWSignals'
+  short: '&CWSignals;'
   sort: Application Signals 
   sdk_id: Application Signals
   expanded:
-    long: Application Signals
+    long: CloudWatch Application Signals
     short: Application Signals
   blurb: describes all API operations for Cloudwatch Application Signals.
   guide:
