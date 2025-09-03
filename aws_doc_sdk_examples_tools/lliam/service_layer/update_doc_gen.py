@@ -2,7 +2,7 @@ from dataclasses import replace
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Sequence
 
 from aws_doc_sdk_examples_tools.lliam.adapters.repository import DEFAULT_METADATA_PREFIX
 from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
@@ -12,6 +12,10 @@ from aws_doc_sdk_examples_tools.lliam.config import (
     BATCH_PREFIX,
 )
 from aws_doc_sdk_examples_tools.lliam.domain.commands import UpdateReservoir
+from aws_doc_sdk_examples_tools.lliam.domain.errors import (
+    DomainError,
+    CommandExecutionError,
+)
 from aws_doc_sdk_examples_tools.doc_gen import DocGen, Example
 
 logger = logging.getLogger(__name__)
@@ -96,7 +100,7 @@ def merge_updates(a: Updates, b: Updates) -> Updates:
     return merged
 
 
-def handle_update_reservoir(cmd: UpdateReservoir, uow: None):
+def handle_update_reservoir(cmd: UpdateReservoir, uow: None) -> Sequence[DomainError]:
     update_files = (
         [AILLY_DIR_PATH / f"updates_{batch}.json" for batch in cmd.batches]
         if cmd.batches
@@ -105,7 +109,7 @@ def handle_update_reservoir(cmd: UpdateReservoir, uow: None):
 
     if not update_files:
         logger.warning("No IAM update files found to process")
-        return
+        return []
 
     doc_gen = DocGen.from_root(cmd.root)
 
@@ -133,3 +137,5 @@ def handle_update_reservoir(cmd: UpdateReservoir, uow: None):
     updated_examples = update_doc_gen(doc_gen=doc_gen, updates=combined_updates)
     writes = prepare_write(updated_examples)
     write_many(cmd.root, writes)
+    # TODO Catch and return any errors
+    return []

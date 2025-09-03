@@ -1,6 +1,6 @@
-from typing import Callable, Dict, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Sequence, Type
 
-from aws_doc_sdk_examples_tools.lliam.domain import commands
+from aws_doc_sdk_examples_tools.lliam.domain import commands, errors
 from aws_doc_sdk_examples_tools.lliam.service_layer import (
     create_prompts,
     dedupe_reservoir,
@@ -13,24 +13,35 @@ from aws_doc_sdk_examples_tools.lliam.service_layer import (
 Message = commands.Command
 
 
-def handle(message: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork] = None):
-    queue = [message]
+def handle(
+    message: Any, uow: Optional[unit_of_work.FsUnitOfWork] = None
+) -> Sequence[errors.DomainError]:
+    if isinstance(message, commands.Command):
+        return handle_command(message, uow)
 
-    while queue:
-        message = queue.pop(0)
-        if isinstance(message, commands.Command):
-            return handle_command(message, uow)
-        else:
-            raise Exception(f"{message} was not a Command")
-
-
-def handle_command(command: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork]):
-    handler = COMMAND_HANDLERS[type(command)]
-    errors = handler(command, uow)
-    return errors
+    return [
+        errors.CommandExecutionError(
+            command_name="Unknown", message=f"{message} was not a Command"
+        )
+    ]
 
 
-COMMAND_HANDLERS: Dict[Type[commands.Command], Callable] = {
+def handle_command(
+    command: commands.Command, uow: Optional[unit_of_work.FsUnitOfWork]
+) -> Sequence[errors.DomainError]:
+    handler = COMMAND_HANDLERS.get(type(command))
+    if not handler:
+        return [
+            errors.CommandExecutionError(
+                command_name=command.name, message="Handler for not found."
+            )
+        ]
+    return handler(command, uow)
+
+
+COMMAND_HANDLERS: Dict[
+    Type[commands.Command], Callable[..., Sequence[errors.DomainError]]
+] = {
     commands.CreatePrompts: create_prompts.create_prompts,
     commands.RunAilly: run_ailly.handle_run_ailly,
     commands.UpdateReservoir: update_doc_gen.handle_update_reservoir,

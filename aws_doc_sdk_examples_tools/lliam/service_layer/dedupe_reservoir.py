@@ -4,10 +4,14 @@ import re
 from collections import Counter
 from dataclasses import replace
 from pathlib import Path
-from typing import Dict, Iterable, List
+from typing import Dict, List, Sequence
 
 from aws_doc_sdk_examples_tools.doc_gen import DocGen
 from aws_doc_sdk_examples_tools.lliam.domain.commands import DedupeReservoir
+from aws_doc_sdk_examples_tools.lliam.domain.errors import (
+    DomainError,
+    CommandExecutionError,
+)
 from aws_doc_sdk_examples_tools.metadata import Example
 from aws_doc_sdk_examples_tools.yaml_writer import prepare_write, write_many
 from aws_doc_sdk_examples_tools.project_validator import ValidationConfig
@@ -83,7 +87,9 @@ def write_examples(examples: Dict[str, Example], root: Path):
     write_many(root, writes)
 
 
-def handle_dedupe_reservoir(cmd: DedupeReservoir, uow: None):
+def handle_dedupe_reservoir(cmd: DedupeReservoir, uow: None) -> Sequence[DomainError]:
     doc_gen = DocGen.from_root(cmd.root, validation=ValidationConfig(check_aws=False))
     examples = dedupe_examples(doc_gen.examples, cmd.packages)
     write_examples(examples, cmd.root)
+    # TODO: Catch an return any errors
+    return []
