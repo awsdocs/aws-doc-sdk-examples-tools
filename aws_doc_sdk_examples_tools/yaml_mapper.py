@@ -53,6 +53,7 @@ def example_from_yaml(
         check_aws=validation.check_aws,
     )
     synopsis_list = [str(syn) for syn in yaml.get("synopsis_list", [])]
+    suppress_publish = yaml.get("suppress_publish", False)
 
     source_key = yaml.get("source_key")
     guide_topic = url_from_yaml(yaml.get("guide_topic"))
@@ -124,6 +125,7 @@ def example_from_yaml(
             synopsis=synopsis,
             synopsis_list=synopsis_list,
             source_key=source_key,
+            suppress_publish=suppress_publish,
         ),
         errors,
     )
