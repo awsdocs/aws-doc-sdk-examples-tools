@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List, Tuple
+from typing import Any, DefaultDict, Dict, List, Optional, Tuple
 
 import logging
 import yaml
@@ -112,7 +112,7 @@ def excerpt_dict(excerpt: Dict) -> Dict:
     return reordered
 
 
-def collect_yaml(root: Path) -> Dict[str, Dict]:
+def collect_yaml(root: Path, include: Optional[List[str]] = None) -> Dict[str, Dict]:
     yaml_files: Dict[str, Dict] = {}
     metadata_dir = root / ".doc_gen" / "metadata"
 
@@ -121,6 +121,12 @@ def collect_yaml(root: Path) -> Dict[str, Dict]:
 
     for yaml_path in metadata_dir.glob("**/*.yaml"):
         rel_path = yaml_path.relative_to(root)
+
+        if (
+            include is not None
+            and yaml_path.name.replace("_metadata.yaml", "") not in include
+        ):
+            continue
 
         with open(yaml_path, "r") as file:
             try:
@@ -157,6 +163,9 @@ def main():
         description="Build a DocGen instance and normalize the metadata."
     )
     parser.add_argument("root", type=str, help="The root of a DocGen project")
+    parser.add_argument(
+        "--include", nargs="*", default=None, help="Packages to include"
+    )
 
     args = parser.parse_args()
     root = Path(args.root)
@@ -164,11 +173,11 @@ def main():
     if not root.is_dir():
         logger.error(f"Expected {root} to be a directory.")
 
-    before_values = collect_yaml(root)
+    before_values = collect_yaml(root, args.include)
     doc_gen = DocGen.from_root(root)
     writes = prepare_write(doc_gen.examples)
     write_many(root, writes)
-    after_values = collect_yaml(root)
+    after_values = collect_yaml(root, args.include)
 
     if before_values != after_values:
         differences = report_yaml_differences(before_values, after_values)
