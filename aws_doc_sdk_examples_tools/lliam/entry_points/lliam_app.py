@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Sequence
 from typing_extensions import Annotated
 from datetime import datetime
 import logging
@@ -98,10 +98,10 @@ def dedupe_reservoir(
     handle_domain_errors(errors)
 
 
-def handle_domain_errors(errors: List[errors.DomainError]):
+def handle_domain_errors(errors: Sequence[errors.DomainError]):
     if errors:
         for error in errors:
-            logger.error(error)
+            logger.error(error.message)
         typer.Exit(code=1)
 
 

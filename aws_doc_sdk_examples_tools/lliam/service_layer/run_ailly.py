@@ -2,11 +2,10 @@ import json
 import logging
 import time
 from collections import defaultdict
-from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from subprocess import run
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Sequence
 
 from aws_doc_sdk_examples_tools.lliam.domain.commands import RunAilly
 from aws_doc_sdk_examples_tools.lliam.domain.errors import (
@@ -30,7 +29,7 @@ AILLY_CMD_BASE = [
 logger = logging.getLogger(__file__)
 
 
-def handle_run_ailly(cmd: RunAilly, uow: None):
+def handle_run_ailly(cmd: RunAilly, uow: None) -> Sequence[DomainError]:
     resolved_batches = resolve_requested_batches(cmd.batches)
 
     errors: List[DomainError] = []
@@ -43,9 +42,7 @@ def handle_run_ailly(cmd: RunAilly, uow: None):
                 run_ailly_single_batch(batch, cmd.packages)
             except FileNotFoundError as e:
                 errors.append(
-                    CommandExecutionError(
-                        command_name=cmd.__class__.__name__, message=str(e)
-                    )
+                    CommandExecutionError(message=str(e), command_name=cmd.name)
                 )
 
         total_end_time = time.time()
@@ -192,7 +189,7 @@ def parse_ailly_file(
     return result
 
 
-def parse_package_name(policy_update: Dict[str, str]) -> Optional[str]:
+def parse_package_name(policy_update: Any) -> Optional[str]:
     if not policy_update:
         return None
 
