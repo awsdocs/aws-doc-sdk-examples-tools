@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from fnmatch import fnmatch
 from os import listdir
 from pathlib import Path
+import shutil
 from stat import S_ISREG
 from typing import Dict, Generator, List
 
@@ -47,6 +48,9 @@ class Fs(ABC):
     def list(self, path: Path) -> List[Path]:
         pass
 
+    @abstractmethod
+    def copytree(self, source: Path, dest: Path):
+        pass
 
 class PathFs(Fs):
     def glob(self, path: Path, glob: str) -> Generator[Path, None, None]:
@@ -78,6 +82,9 @@ class PathFs(Fs):
         if self.stat(path).is_file:
             return []
         return [path / name for name in listdir(path)]
+    
+    def copytree(self, source: Path, dest: Path):
+        shutil.copytree(source, dest)
 
 
 class RecordFs(Fs):
@@ -136,6 +143,11 @@ class RecordFs(Fs):
                 children.add(Path(prefix + first_part))
 
         return sorted(children)
+
+    def copytree(self, source: Path, dest: Path):
+        for child in self.list(source):
+            path = child.relative_to(dest).absolute()
+            self.fs[path] = self.fs[child]
 
 
 fs = PathFs()
