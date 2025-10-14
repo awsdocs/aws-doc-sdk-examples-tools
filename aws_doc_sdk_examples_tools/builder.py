@@ -35,7 +35,7 @@ class Builder:
             raise
 
     def write_snippets(self):
-        write_snippets(self.dest / self.doc_gen_folder / self.snippet_files_folder, self._doc_gen.snippets)
+        write_snippets(self.dest / self.doc_gen_folder / self.snippet_files_folder, self._doc_gen.snippets, self.fs)
 
     def run(self):
         logger.debug("Copying docgen files...")

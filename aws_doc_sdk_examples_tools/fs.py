@@ -52,6 +52,7 @@ class Fs(ABC):
     def copytree(self, source: Path, dest: Path):
         pass
 
+
 class PathFs(Fs):
     def glob(self, path: Path, glob: str) -> Generator[Path, None, None]:
         return path.glob(glob)
@@ -65,6 +66,7 @@ class PathFs(Fs):
             return file.readlines()
 
     def write(self, path: Path, content: str):
+        self.mkdir(path.parent)
         with path.open("w", encoding="utf-8") as file:
             file.write(content)
 
@@ -82,9 +84,9 @@ class PathFs(Fs):
         if self.stat(path).is_file:
             return []
         return [path / name for name in listdir(path)]
-    
+
     def copytree(self, source: Path, dest: Path):
-        shutil.copytree(source, dest)
+        shutil.copytree(source, dest, dirs_exist_ok=True)
 
 
 class RecordFs(Fs):
