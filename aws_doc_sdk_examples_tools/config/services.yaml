@@ -1555,11 +1555,11 @@ geo-routes:
 glacier:
   long: '&GLlong;'
   short: '&GLshort;'
-  sort: S3 Glacier
+  sort: Glacier
   sdk_id: Glacier
   expanded:
-    long: Amazon S3 Glacier
-    short: S3 Glacier
+    long: Amazon Glacier
+    short: Amazon Glacier
   blurb: provides durable and extremely low-cost storage for infrequently used data with security features for data archiving and backup.
   guide:
     subtitle: Developer Guide
