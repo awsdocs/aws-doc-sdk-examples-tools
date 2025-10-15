@@ -17,6 +17,7 @@ from .project_validator import (
     ValidationConfig,
 )
 from . import validator_config
+from aws_doc_sdk_examples_tools import fs
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
@@ -309,16 +310,15 @@ def validate_snippets(
         verify_no_secret_keys(snippet.code, root / snippet.file, validation, errors)
 
 
-def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False):
+def write_snippets(root: Path, snippets: Dict[str, Snippet], check: bool = False, fs: Fs = fs.fs):
     errors = MetadataErrors()
     for tag in snippets:
         name = root / f"{tag}.txt"
-        if check and name.exists():
+        if check and fs.stat(name).exists:
             errors.append(SnippetAlreadyWritten(file=name))
         else:
             try:
-                with open(name, "w", encoding="utf-8") as file:
-                    file.write(snippets[tag].code)
+                fs.write(name, snippets[tag].code)
             except Exception as error:
                 errors.append(SnippetWriteError(file=name, error=error))
     return errors
