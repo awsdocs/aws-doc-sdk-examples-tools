@@ -341,30 +341,30 @@ class DocGen:
 # Path to the JSON, which was not very secure
 # and arguably not useful either.
 class DocGenEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if is_dataclass(obj) and not isinstance(obj, type):
-            return asdict(obj)
+    def default(self, o):
+        if is_dataclass(o) and not isinstance(o, type):
+            return asdict(o)
 
-        if isinstance(obj, Path):
+        if isinstance(o, Path):
             # Strip out paths to prevent leaking environment data.
-            return obj.name
+            return o.name
 
-        if isinstance(obj, MetadataErrors):
-            return {"__metadata_errors__": [asdict(error) for error in obj]}
+        if isinstance(o, MetadataErrors):
+            return {"__metadata_errors__": [asdict(error) for error in o]}
 
-        if isinstance(obj, EntityErrors):
+        if isinstance(o, EntityErrors):
             return {
-                "__entity_errors__": [{error.entity: error.message()} for error in obj]
+                "__entity_errors__": [{error.entity: error.message()} for error in o]
             }
 
-        if isinstance(obj, Fs):
+        if isinstance(o, Fs):
             # Don't serialize filesystem objects for security
             return {}
 
-        if isinstance(obj, set):
-            return {"__set__": list(obj)}
+        if isinstance(o, set):
+            return {"__set__": list(o)}
 
-        return super().default(obj)
+        return super().default(o)
 
 
 def parse_config(doc_gen: DocGen, root: Path, config: Path, strict: bool):
