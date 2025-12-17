@@ -11,6 +11,55 @@ from .doc_gen import DocGen, DocGenEncoder
 logging.basicConfig(level=logging.INFO)
 
 
+def merge_roots(doc_gen: DocGen, roots: list[str]):
+    for root in roots:
+        unmerged_doc_gen = DocGen.from_root(Path(root))
+        doc_gen.merge(unmerged_doc_gen)
+
+
+def write_doc_gen(doc_gen: DocGen, json_out: str):
+    serialized = json.dumps(doc_gen, cls=DocGenEncoder)
+
+    with open(json_out, "w") as out:
+        out.write(serialized)
+
+
+def write_snippets(doc_gen: DocGen, roots: list[str], snippets_out: str):
+    for root in roots:
+        doc_gen.collect_snippets(Path(root))
+
+    serialized_snippets = json.dumps(
+        {
+            "snippets": doc_gen.snippets,
+            "snippet_files": doc_gen.snippet_files,
+        },
+        cls=DocGenEncoder,
+    )
+    with open(snippets_out, "w") as out:
+        out.write(serialized_snippets)
+
+
+def build_doc_gen(args):
+    doc_gen = DocGen.empty()
+    merge_roots(doc_gen, args.from_root)
+    doc_gen.validate()
+    doc_gen.fill_missing_fields()
+
+    if not args.skip_entity_expansion:
+        doc_gen.expand_entity_fields(doc_gen)
+
+    if args.strict and doc_gen.errors:
+        logging.error("Errors found in metadata: %s", doc_gen.errors)
+        exit(1)
+
+    if args.write_snippets:
+        write_snippets(doc_gen, args.from_root, args.write_snippets)
+
+    write_doc_gen(doc_gen, args.write_json)
+
+    return doc_gen
+
+
 def main():
     parser = ArgumentParser(description="Parse examples from example metadata.")
     parser.add_argument(
@@ -47,41 +96,7 @@ def main():
     )
 
     args = parser.parse_args()
-
-    merged_doc_gen = DocGen.empty()
-    for root in args.from_root:
-        unmerged_doc_gen = DocGen.from_root(Path(root))
-        merged_doc_gen.merge(unmerged_doc_gen)
-
-    merged_doc_gen.validate()
-    merged_doc_gen.fill_missing_fields()
-
-    if not args.skip_entity_expansion:
-        # Replace entities
-        merged_doc_gen.expand_entity_fields(merged_doc_gen)
-
-    if args.strict and merged_doc_gen.errors:
-        logging.error("Errors found in metadata: %s", merged_doc_gen.errors)
-        exit(1)
-
-    serialized = json.dumps(merged_doc_gen, cls=DocGenEncoder)
-
-    with open(args.write_json, "w") as out:
-        out.write(serialized)
-
-    if args.write_snippets:
-        for root in args.from_root:
-            merged_doc_gen.collect_snippets(Path(root))
-
-        serialized_snippets = json.dumps(
-            {
-                "snippets": merged_doc_gen.snippets,
-                "snippet_files": merged_doc_gen.snippet_files,
-            },
-            cls=DocGenEncoder,
-        )
-        with open(args.write_snippets, "w") as out:
-            out.write(serialized_snippets)
+    build_doc_gen(args)
 
 
 if __name__ == "__main__":
