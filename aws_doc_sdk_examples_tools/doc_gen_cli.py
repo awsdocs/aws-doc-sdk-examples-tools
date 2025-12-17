@@ -4,6 +4,7 @@
 import json
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import List
 import logging
 
 from .doc_gen import DocGen, DocGenEncoder
@@ -11,7 +12,7 @@ from .doc_gen import DocGen, DocGenEncoder
 logging.basicConfig(level=logging.INFO)
 
 
-def merge_roots(doc_gen: DocGen, roots: list[str]):
+def merge_roots(doc_gen: DocGen, roots: List[str]):
     for root in roots:
         unmerged_doc_gen = DocGen.from_root(Path(root))
         doc_gen.merge(unmerged_doc_gen)
@@ -24,7 +25,7 @@ def write_doc_gen(doc_gen: DocGen, json_out: str):
         out.write(serialized)
 
 
-def write_snippets(doc_gen: DocGen, roots: list[str], snippets_out: str):
+def write_snippets(doc_gen: DocGen, roots: List[str], snippets_out: str):
     for root in roots:
         doc_gen.collect_snippets(Path(root))
 
