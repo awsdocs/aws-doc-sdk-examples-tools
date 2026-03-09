@@ -1081,6 +1081,23 @@ docdb:
   tags:
     product_categories: {}
   version: docdb-2014-10-31
+dsql:
+  long: '&DSQLlong;'
+  short: '&DSQL;'
+  sort: Aurora DSQL
+  sdk_id: DSQL
+  expanded:
+    long: Amazon Aurora DSQL
+    short: DSQL
+  blurb: is a serverless, distributed relational database service optimized for transactional workloads. Aurora DSQL offers virtually unlimited scale and doesn't require you to manage infrastructure.
+  guide:
+    subtitle: User Guide
+    url: aurora-dsql/latest/userguide/what-is-aurora-dsql.html
+  tags:
+    product_categories: {'Databases'}
+  api_client: dsql
+  version: dsql-2018-05-10
+  api_ref: aurora-dsql/latest/userguide/CHAP_api_reference.html
 dynamodb:
   long: '&DDBlong;'
   short: '&DDB;'
