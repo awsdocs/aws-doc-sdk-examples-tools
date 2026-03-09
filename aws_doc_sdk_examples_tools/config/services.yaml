@@ -1084,7 +1084,7 @@ docdb:
 dsql:
   long: '&DSQLlong;'
   short: '&DSQL;'
-  sort: DSQL
+  sort: Aurora DSQL
   sdk_id: DSQL
   expanded:
     long: Amazon Aurora DSQL
