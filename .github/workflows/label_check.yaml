@@ -10,6 +10,9 @@ on: # yamllint disable-line rule:truthy
       - labeled
       - unlabeled
 
+permissions:
+  contents: read
+
 jobs:
   check_stats_labels:
     name: Check Stats labels
