@@ -295,7 +295,7 @@ Python:
       api_ref:
         uid: "pythonv1"
         name: "&guide-python1-api;"
-    guide: "https://docs.aws.amazon.com/sdk-for-python/v1/reference/index.html"  
+        link_template: "https://docs.aws.amazon.com/sdk-for-python/v1/reference/index.html"
     3:
       long: "&Python3long;"
       short: "&Python3;"
@@ -306,7 +306,7 @@ Python:
       api_ref:
         uid: "boto3"
         name: "&guide-python3-api;"
-    guide: "https://docs.aws.amazon.com/boto3/latest/reference/services/index.html"
+  guide: "&guide-python3-dev;"
 Ruby:
   property: ruby
   sdk:
