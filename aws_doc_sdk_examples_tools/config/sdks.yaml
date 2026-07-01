@@ -285,17 +285,28 @@ PowerShell:
 Python:
   property: python
   sdk:
+    1:
+      long: "&Python1long;"
+      short: "&Python1;"
+      expanded:
+        long: "AWS SDK for Python"
+        short: "SDK for Python"
+      guide: "https://docs.aws.amazon.com/sdk-for-python/v1/guide/index.html"
+      api_ref:
+        uid: "pythonv1"
+        name: "&guide-python1-api;"
+    guide: "https://docs.aws.amazon.com/sdk-for-python/v1/reference/index.html"  
     3:
       long: "&Python3long;"
       short: "&Python3;"
       expanded:
         long: "AWS SDK for Python (Boto3)"
-        short: "SDK for Python"
-      guide: "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html"
+        short: "SDK for Python (Boto3)"
+      guide: "https://docs.aws.amazon.com/boto3/latest/guide/quickstart.html"
       api_ref:
         uid: "boto3"
         name: "&guide-python3-api;"
-  guide: "&guide-python3-gsg;"
+    guide: "https://docs.aws.amazon.com/boto3/latest/reference/services/index.html"
 Ruby:
   property: ruby
   sdk:
