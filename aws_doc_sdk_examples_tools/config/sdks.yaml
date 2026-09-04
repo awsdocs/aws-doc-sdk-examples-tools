@@ -285,7 +285,7 @@ PowerShell:
 Python:
   property: python
   sdk:
-    1:
+    4:
       long: "&Python4long;"
       short: "&Python4;"
       expanded:
