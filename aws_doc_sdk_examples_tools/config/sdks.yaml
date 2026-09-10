@@ -285,17 +285,17 @@ PowerShell:
 Python:
   property: python
   sdk:
-    1:
-      long: "&Python1long;"
-      short: "&Python1;"
+    4:
+      long: "&Python4long;"
+      short: "&Python4;"
       expanded:
-        long: "AWS SDK for Python"
-        short: "SDK for Python"
-      guide: "https://docs.aws.amazon.com/sdk-for-python/v1/guide/index.html"
+        long: "AWS SDK for Python v4"
+        short: "SDK for Python v4"
+      guide: "https://docs.aws.amazon.com/sdk-for-python/v4/guide/index.html"
       api_ref:
-        uid: "pythonv1"
-        name: "&guide-python1-api;"
-        link_template: "https://docs.aws.amazon.com/sdk-for-python/v1/reference/index.html"
+        uid: "pythonv4"
+        name: "&guide-python4-api;"
+        link_template: "https://docs.aws.amazon.com/sdk-for-python/v4/reference/index.html"
     3:
       long: "&Python3long;"
       short: "&Python3;"
