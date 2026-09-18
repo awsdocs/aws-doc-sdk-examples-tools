@@ -292,10 +292,6 @@ Python:
         long: "AWS SDK for Python v4"
         short: "SDK for Python v4"
       guide: "https://docs.aws.amazon.com/sdk-for-python/v4/guide/index.html"
-      api_ref:
-        uid: "pythonv4"
-        name: "&guide-python4-api;"
-        link_template: "https://docs.aws.amazon.com/sdk-for-python/v4/reference/index.html"
     3:
       long: "&Python3long;"
       short: "&Python3;"
