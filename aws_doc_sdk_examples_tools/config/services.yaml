@@ -2122,6 +2122,9 @@ lambda:
   long: '&LAMlong;'
   short: '&LAM;'
   sort: Lambda
+  chapter_override:
+    title: 'Code examples for &LAM; using &AWS; SDKs'
+    title_abbrev: 'Code examples using SDK'
   sdk_id: Lambda
   expanded:
     long: AWS Lambda
