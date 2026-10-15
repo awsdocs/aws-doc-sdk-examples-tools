@@ -120,6 +120,54 @@ class TestWalkWithGitignore:
         ]
         assert sorted(files) == sorted(expected)
 
+    def test_root_anchored_pattern_does_not_match_checkout_prefix(self):
+        """
+        A root-anchored pattern (e.g. `/local`) must be matched relative to the
+        walk root, not against the absolute checkout path. Previously, a checkout
+        under a path beginning with the pattern (e.g. /local/home/<user>/repo)
+        caused the pattern to match the leading segment of the absolute path and
+        silently exclude every file beneath the root.
+        """
+        fs = RecordFs(
+            {
+                Path("/local/home/user/repo/.gitignore"): "/local\n",
+                Path("/local/home/user/repo/src/Main.kt"): "code",
+                Path("/local/home/user/repo/README.md"): "docs",
+            }
+        )
+
+        files = list(walk_with_gitignore(Path("/local/home/user/repo"), fs=fs))
+
+        expected = [
+            Path("/local/home/user/repo/src/Main.kt"),
+            Path("/local/home/user/repo/README.md"),
+        ]
+        assert sorted(files) == sorted(expected)
+
+    def test_root_anchored_pattern_still_ignores_matching_dir(self):
+        """
+        Root-anchored patterns must still work relative to the walk root: a
+        `/build` pattern ignores `<root>/build` but not a nested `src/build`.
+        """
+        fs = RecordFs(
+            {
+                Path("/local/home/user/repo/.gitignore"): "/build\n",
+                Path("/local/home/user/repo/build/artifact.o"): "obj",
+                Path("/local/home/user/repo/src/Main.kt"): "code",
+                Path("/local/home/user/repo/src/build/nested.kt"): "nested",
+            }
+        )
+
+        files = list(walk_with_gitignore(Path("/local/home/user/repo"), fs=fs))
+
+        # Root-anchored /build excludes only the top-level build dir; the
+        # nested src/build is kept.
+        expected = [
+            Path("/local/home/user/repo/src/Main.kt"),
+            Path("/local/home/user/repo/src/build/nested.kt"),
+        ]
+        assert sorted(files) == sorted(expected)
+
 
 class TestGetFiles:
     """Test get_files with RecordFs."""
