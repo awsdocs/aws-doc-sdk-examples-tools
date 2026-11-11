@@ -776,6 +776,11 @@ cognito-identity-provider:
   api_ref: cognito-user-identity-pools/latest/APIReference/Welcome.html
 cognito-sync:
   bundle: cognito
+  caveat: Amazon Cognito Sync is no longer open to new customers. For alternatives to
+    &COGSYNC;, please explore <ulink url="https://docs.aws.amazon.com/appsync/">&AWS; AppSync</ulink>
+    and <ulink url="https://docs.aws.amazon.com/dynamodb/">&DDBlong;</ulink>.
+    <ulink type="documentation" url="cognito/latest/developerguide/cognito-sync-availability-change.html">Learn
+    more</ulink>.
   long: '&COGSYNClong;'
   short: '&COGSYNC;'
   sort: Cognito Sync
