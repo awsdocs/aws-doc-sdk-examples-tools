@@ -46,6 +46,11 @@ EXAMPLE_FIELD_ORDER = [
     "title_abbrev",
     "synopsis",
     "synopsis_list",
+    # Feature-level fields; must be listed here or a rewrite drops them.
+    "description",
+    "available_since",
+    "available_since_version",
+    "introduced_operations",
     "guide_topic",
     # "doc_filenames", # These are currently generated, and don't need to be stored.
     "source_key",
@@ -89,6 +94,13 @@ def reorder_dict(order: List[str], dict: Dict) -> Dict:
 def example_dict(example: Dict) -> Dict:
     replaced = reorder_dict(EXAMPLE_FIELD_ORDER, example)
 
+    # asdict() leaves unset optional sub-fields (major, basis) as None; drop them
+    # so a rewrite does not add "major: null" to existing entries.
+    if "available_since_version" in replaced:
+        replaced["available_since_version"] = {
+            lang: {k: v for k, v in version.items() if v is not None}
+            for lang, version in replaced["available_since_version"].items()
+        }
     replaced["languages"] = {
         k: dict(versions=[version_dict(version) for version in v["versions"]])
         for k, v in replaced["languages"].items()

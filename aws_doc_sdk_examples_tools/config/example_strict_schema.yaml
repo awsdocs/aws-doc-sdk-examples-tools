@@ -13,10 +13,31 @@ example:
   languages: map(include('language'))
   service_main: service_name(required=False)
   services: map(map(key=str(), required=False), key=str())
+  # Feature-level fields (optional, additive), written by the code example generator.
+  # description: what the feature does, in prose (service names as entities; may
+  # contain <code>). available_since (ISO date), available_since_version and
+  # introduced_operations are pass-through facts from the availability resolver,
+  # present only for newly launched features. available_since_version is keyed by
+  # language name (same keys as `languages`) and lists every SDK that supports the
+  # feature, including SDKs the example is not published in.
+  # description has no upper_start: it usually starts with a service entity
+  # (&S3long; ...), which upper_start rejects.
+  description: str(required=False, end_punc=True)
+  available_since: availability_date(required=False)
+  available_since_version: map(include('availability_version'), key=str(), required=False)
+  introduced_operations: list(regex('^[A-Za-z][A-Za-z0-9]*$', name='API operation name'), required=False)
 
 guide_topic:
   title: str(upper_start=True, no_end_punc=True)
   url: include('doc_url', required=False)
+
+# One SDK's minimum version for the feature. basis "exact": this is the first
+# version with the feature's operations. basis "at_least": the operations are
+# guaranteed from this version; the true first version may be older.
+availability_version:
+  version: str()
+  major: any(int(), str(), required=False)
+  basis: enum('exact', 'at_least', required=False)
 
 language:
   versions: list(include('version'))

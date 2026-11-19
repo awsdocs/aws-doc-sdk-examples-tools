@@ -104,6 +104,25 @@ class BlockContent(Validator):
         return value in self.block_names
 
 
+class AvailabilityDate(Validator):
+    """Validate that available_since is a well-formed ISO date (YYYY-MM-DD).
+
+    The value is an authoritative pass-through fact from the availability resolver;
+    this only checks shape, not correctness (correctness is enforced by the
+    exact-match-vs-sidecar check in the semantic validator)."""
+
+    tag = "availability_date"
+
+    def _is_valid(self, value: str):
+        if not isinstance(value, str):
+            return False
+        try:
+            datetime.date.fromisoformat(value)
+            return True
+        except ValueError:
+            return False
+
+
 class StringExtension(String):
     """Validate that strings don't contain non-entity AWS usage."""
 
@@ -240,6 +259,7 @@ def validate_metadata(
     validators[ServiceVersion.tag] = ServiceVersion
     validators[ExampleId.tag] = ExampleId
     validators[BlockContent.tag] = BlockContent
+    validators[AvailabilityDate.tag] = AvailabilityDate
     validators[String.tag] = StringExtension
 
     config_root = Path(__file__).parent / "config"

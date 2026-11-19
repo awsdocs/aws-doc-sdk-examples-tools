@@ -355,6 +355,38 @@ class BasicsMustHaveSynopsisField(MetadataParseError):
 
 
 @dataclass
+class AvailabilityVersionLanguageMismatch(MetadataParseError):
+    extra_languages: str = ""
+
+    def message(self):
+        return (
+            f" is published in languages that have no `available_since_version` entry: "
+            f"{self.extra_languages}. Every published language must have a minimum-version "
+            "entry so its row in the availability table shows a version. (Extra version "
+            "entries for SDKs NOT published on the page are allowed — the table is a coverage "
+            "view of all supported SDKs.)"
+        )
+
+
+@dataclass
+class AvailabilityMissingDate(MetadataParseError):
+    def message(self):
+        return (
+            " defines available_since_version or introduced_operations but is missing "
+            "available_since. An availability header requires the launch date."
+        )
+
+
+@dataclass
+class AvailabilityMissingVersions(MetadataParseError):
+    def message(self):
+        return (
+            " defines available_since but no available_since_version. An availability "
+            "header requires the minimum SDK versions."
+        )
+
+
+@dataclass
 class MissingSnippetTag(SdkVersionError):
     tag: str = ""
 
