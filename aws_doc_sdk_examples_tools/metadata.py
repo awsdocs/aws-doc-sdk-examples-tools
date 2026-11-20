@@ -34,6 +34,19 @@ class Person:
 
 
 @dataclass
+class AvailabilityVersion:
+    # Minimum SDK version containing the feature's operations (e.g. "1.43.31").
+    version: str
+    # SDK MAJOR version (e.g. 2 for Go v2, 3 for Boto3) — used to resolve the
+    # decorated display label from sdks.yaml. Required for non-published SDKs,
+    # which have no example content to infer the major from.
+    major: Optional[str] = field(default=None)
+    # "exact": the first version with the feature's operations. "at_least": the
+    # operations are guaranteed from this version; the true first may be older.
+    basis: Optional[str] = field(default=None)
+
+
+@dataclass
 class Excerpt:
     description: Optional[str]
     # Tags embedded in source files to extract as snippets.
@@ -162,6 +175,18 @@ class Example:
     synopsis_list: List[str] = field(default_factory=list)
     source_key: Optional[str] = field(default=None)
     suppress_publish: Optional[bool] = field(default=False)
+    # Feature-level fields (optional, additive). description is prose about the
+    # feature. available_since / available_since_version / introduced_operations
+    # are pass-through facts from the availability resolver, present only for
+    # newly launched features. available_since_version is keyed by language name;
+    # each value carries the minimum version, the SDK major (for decorated-label
+    # resolution) and the basis of the version.
+    description: Optional[str] = field(default=None)
+    available_since: Optional[str] = field(default=None)
+    available_since_version: Dict[str, AvailabilityVersion] = field(
+        default_factory=dict
+    )
+    introduced_operations: List[str] = field(default_factory=list)
 
     def fill_display_fields(self, categories: Dict[str, Category], service, action):
         category = self.choose_category(categories)
@@ -236,6 +261,34 @@ class Example:
                 )
         for language in self.languages.values():
             language.validate(errs, root)
+
+        # Availability header structural checks. The availability version table is
+        # a COVERAGE view: it lists EVERY SDK the feature supports
+        # (available_since_version), with a tick for the ones that have an example
+        # (a published language). So extra version entries for NON-published
+        # languages are expected and allowed. The checkable rule here is the
+        # reverse: every PUBLISHED language should have a version entry, so each
+        # code tab's row shows a minimum version. (Exact-match-vs-sidecar still
+        # runs in the resolver pipeline.)
+        if self.available_since_version:
+            missing = [
+                lang
+                for lang in self.languages
+                if lang not in self.available_since_version
+            ]
+            if missing:
+                errs.append(
+                    metadata_errors.AvailabilityVersionLanguageMismatch(
+                        extra_languages=", ".join(sorted(missing))
+                    )
+                )
+        if (
+            self.available_since_version or self.introduced_operations
+        ) and not self.available_since:
+            errs.append(metadata_errors.AvailabilityMissingDate())
+        if self.available_since and not self.available_since_version:
+            errs.append(metadata_errors.AvailabilityMissingVersions())
+
         for error in errs:
             error.file = self.file
             error.id = self.id

@@ -10,6 +10,7 @@ from .metadata import (
     Version,
     Excerpt,
     Person,
+    AvailabilityVersion,
 )
 from .sdks import Sdk
 from .services import Service
@@ -54,6 +55,26 @@ def example_from_yaml(
     )
     synopsis_list = [str(syn) for syn in yaml.get("synopsis_list", [])]
     suppress_publish = yaml.get("suppress_publish", False)
+
+    # Feature-level fields (optional, additive). available_since /
+    # available_since_version / introduced_operations are pass-through facts
+    # carried verbatim; description is prose about the feature.
+    description = yaml.get("description")
+    available_since = yaml.get("available_since")
+    available_since_version = {}
+    for lang, val in (yaml.get("available_since_version", {}) or {}).items():
+        if isinstance(val, dict):
+            available_since_version[str(lang)] = AvailabilityVersion(
+                version=str(val.get("version", "")),
+                major=None if val.get("major") is None else str(val.get("major")),
+                basis=None if val.get("basis") is None else str(val.get("basis")),
+            )
+        else:
+            # Backward-compatible: a bare version string, no major.
+            available_since_version[str(lang)] = AvailabilityVersion(version=str(val))
+    introduced_operations = [
+        str(op) for op in (yaml.get("introduced_operations", []) or [])
+    ]
 
     source_key = yaml.get("source_key")
     guide_topic = url_from_yaml(yaml.get("guide_topic"))
@@ -126,6 +147,10 @@ def example_from_yaml(
             synopsis_list=synopsis_list,
             source_key=source_key,
             suppress_publish=suppress_publish,
+            description=description,
+            available_since=available_since,
+            available_since_version=available_since_version,
+            introduced_operations=introduced_operations,
         ),
         errors,
     )

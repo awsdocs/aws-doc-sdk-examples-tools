@@ -13,10 +13,23 @@ example:
   languages: map(include('language'))
   service_main: service_name(required=False)
   services: map(key=str())
+  # Feature-level fields (optional, additive), written by the code example generator.
+  # description is prose about the feature; available_since, available_since_version
+  # and introduced_operations are pass-through facts from the availability resolver.
+  # See example_strict_schema.yaml for the full contract.
+  description: str(required=False)
+  available_since: str(required=False)
+  available_since_version: map(include('availability_version'), key=str(), required=False)
+  introduced_operations: list(str(), required=False)
 
 guide_topic:
   title: str(upper_start=True, no_end_punc=True)
   url: include('doc_url', required=False)
+
+availability_version:
+  version: str()
+  major: any(int(), str(), required=False)
+  basis: str(required=False)
 
 language:
   versions: list(include('version'))
