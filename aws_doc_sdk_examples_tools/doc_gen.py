@@ -33,6 +33,7 @@ from .metadata_errors import (
     ActionNameFormat,
     ServiceNameFormat,
     YamlParseError,
+    DuplicateYamlKey,
 )
 from .metadata_validator import validate_metadata
 from .project_validator import ValidationConfig
@@ -45,6 +46,39 @@ from .snippets import (
     validate_snippets,
 )
 from .yaml_mapper import example_from_yaml
+from .yaml_duplicates import DuplicateKey, load_yaml_with_duplicates
+
+
+def report_duplicate_key(
+    path: Path, duplicate: DuplicateKey, meta: Any, errors: MetadataErrors
+) -> None:
+    """Every repeated key is an error, whether or not its copies are identical."""
+    errors.append(
+        DuplicateYamlKey(
+            file=path,
+            id=top_level_key(duplicate, meta),
+            key=duplicate.key,
+            path=duplicate.path,
+            first="{}:{}".format(*duplicate.first),
+            again="{}:{}".format(*duplicate.again),
+            identical=duplicate.identical,
+        )
+    )
+
+
+def top_level_key(duplicate: DuplicateKey, meta: Any) -> str:
+    """The example id the duplicate is in. Example ids can contain dots."""
+    if not duplicate.path:
+        return duplicate.key
+    ids = meta.keys() if isinstance(meta, dict) else []
+    matches = [
+        str(example_id)
+        for example_id in ids
+        if duplicate.path == str(example_id)
+        or duplicate.path.startswith(f"{example_id}.")
+        or duplicate.path.startswith(f"{example_id}[")
+    ]
+    return max(matches, key=len, default=duplicate.path.split(".", 1)[0])
 
 
 @dataclass
@@ -225,9 +259,12 @@ class DocGen:
             return self
         try:
             content = self.fs.read(path)
+            meta, duplicates = load_yaml_with_duplicates(content)
+            for duplicate in duplicates:
+                report_duplicate_key(path, duplicate, meta, self.errors)
             examples, errs = parse_examples(
                 path,
-                yaml.safe_load(content),
+                meta,
                 self.sdks,
                 self.services,
                 self.standard_categories,
