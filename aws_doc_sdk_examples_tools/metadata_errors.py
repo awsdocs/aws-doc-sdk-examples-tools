@@ -118,6 +118,34 @@ class YamlParseError(MetadataError):
 
 
 @dataclass
+class DuplicateYamlKey(MetadataError):
+    key: str = ""
+    # Dotted path of the mapping that repeats the key; "" is the top level.
+    path: str = ""
+    first: str = ""
+    again: str = ""
+    identical: bool = False
+
+    def prefix(self):
+        prefix = f"In {self.file}"
+        if self.id:
+            prefix += f" at {self.id}"
+        return prefix + ","
+
+    def message(self) -> str:
+        where = f"under {self.path}" if self.path else "at the top level"
+        copies = (
+            "The copies are identical; remove one."
+            if self.identical
+            else "The copies differ, and only the last one is used; remove or rename one."
+        )
+        return (
+            f"duplicate key {self.key!r} {where}, at line:col {self.first} "
+            f"and again at {self.again}. {copies}"
+        )
+
+
+@dataclass
 class ParseXMLError(MetadataError):
     xml_err_message: Optional[str] = field(default=None)
     value: Optional[str] = field(default=None)
