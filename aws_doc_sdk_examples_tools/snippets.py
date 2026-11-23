@@ -20,6 +20,7 @@ from . import validator_config
 
 SNIPPET_START = "snippet-start:["
 SNIPPET_END = "snippet-end:["
+STEERING_DOCS = "steering_docs"
 
 
 @dataclass
@@ -170,6 +171,8 @@ def collect_snippets(
     snippets: Dict[str, Snippet] = {}
     errors = MetadataErrors()
     for file in get_files(root, skip, fs=fs):
+        if STEERING_DOCS in file.relative_to(root).parts:
+            continue  # agent guidance with template tags, not example code
         snips, errs = find_snippets(file, prefix, fs=fs)
         snippets.update(snips)
         errors.extend(errs)
