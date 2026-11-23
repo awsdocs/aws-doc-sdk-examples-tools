@@ -179,6 +179,29 @@ def example2():
         assert "example1" in snippet_dict
         assert "example2" in snippet_dict
 
+    def test_collect_snippets_skips_steering_docs(self):
+        """Snippet tags in steering_docs/ are templates for authors, not
+        example code, so collect_snippets does not register them."""
+        fs = RecordFs(
+            {
+                Path("/project/python/example.py"): "# snippet"
+                + "-start:[python.example]\n"
+                "def example():\n"
+                "    pass\n"
+                "# snippet" + "-end:[python.example]\n",
+                Path("/project/steering_docs/python-tech/hello.md"): "# snippet"
+                + "-start:[python.example_code.{service}.Hello]\n"
+                "def hello():\n"
+                "    pass\n"
+                "# snippet" + "-end:[python.example_code.{service}.Hello]\n",
+            }
+        )
+
+        snippet_dict, errors = snippets.collect_snippets(Path("/project"), fs=fs)
+
+        assert len(errors) == 0
+        assert list(snippet_dict) == ["python.example"]
+
 
 class TestCollectSnippetFilesFs:
     """Test collect_snippet_files with filesystem abstraction."""

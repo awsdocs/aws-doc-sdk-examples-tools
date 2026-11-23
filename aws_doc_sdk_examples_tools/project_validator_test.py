@@ -87,5 +87,23 @@ def test_verify_no_secret_keys(file_contents: str, expected_error_count: int):
     assert error_count == expected_error_count
 
 
+def test_check_files_scans_steering_docs(tmp_path: Path):
+    """check_files still validates files under steering_docs/, even though
+    collect_snippets does not register their snippet tags."""
+    steering = tmp_path / "steering_docs" / "python-tech"
+    steering.mkdir(parents=True)
+    (steering / "hello.md").write_text(
+        "A key that is not allowed: AKIA" + "ZZZZZZZZZZZZZZZZ here.\n"
+    )
+    errors = MetadataErrors()
+    project_validator.check_files(
+        tmp_path, project_validator.ValidationConfig(), errors
+    )
+    secret_errors = [
+        e for e in errors if isinstance(e, project_validator.PossibleSecretKey)
+    ]
+    assert [e.file for e in secret_errors] == [steering / "hello.md"]
+
+
 if __name__ == "__main__":
     pytest.main([__file__])
