@@ -8,6 +8,7 @@ Test for that parts of DocGen that aren't file I/O.
 import pytest
 from pathlib import Path
 import json
+from typing import Iterator, List
 
 from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
@@ -304,6 +305,116 @@ def test_fill_fields(sample_doc_gen: DocGen):
     assert example.title == "<code>PutObject</code>"
     assert example.title_abbrev == "ExcerptPartsUsage"
     assert example.synopsis == "&S3; PutObject"
+
+
+def test_fill_fields_without_template_uses_service():
+    doc_gen = DocGen(
+        root=Path("/test/root"),
+        errors=MetadataErrors(),
+        services={
+            "acm": Service(
+                long="&ACMlong;",
+                short="&ACM;",
+                sort="ACM",
+                version="2015-12-08",
+                sdk_id="ACM",
+            )
+        },
+        examples={
+            "acm_Scenario": Example(
+                "acm_Scenario",
+                file=Path("acm_metadata.yaml"),
+                languages={},
+                title="Manage certificates",
+                title_abbrev="Manage certificates",
+                category="Scenarios",
+                synopsis_list=["Request a certificate.", "Delete it."],
+                services={"acm": {"RequestCertificate", "DeleteCertificate"}},
+            )
+        },
+        categories={"Scenarios": Category("Scenarios", "Scenarios")},
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["acm_Scenario"]
+    assert example.title == "Manage certificates"
+    assert example.title_abbrev == "Manage certificates"
+    assert example.synopsis == "&ACM;"
+
+
+S3_API_ACTIONS = [
+    "PutObject",
+    "GetObject",
+    "ListObjects",
+    "HeadObject",
+    "DeleteBucket",
+    "CreateBucket",
+]
+
+
+class OrderedSet(set):
+    """A set that iterates in the order of a given list."""
+
+    def __init__(self, order: List[str]):
+        super().__init__(order)
+        self.order = order
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.order)
+
+
+def s3_api_doc_gen(actions: OrderedSet) -> DocGen:
+    return DocGen(
+        root=Path("/test/root"),
+        errors=MetadataErrors(),
+        services={
+            "s3": Service(
+                long="&S3long;",
+                short="&S3;",
+                sort="Amazon S3",
+                version="2006-03-01",
+                sdk_id="S3",
+            )
+        },
+        examples={
+            "s3_Api": Example(
+                "s3_Api",
+                file=Path("s3_metadata.yaml"),
+                languages={},
+                services={"s3": actions},
+            )
+        },
+        categories={
+            "Actions": Category(
+                "Actions",
+                "Actions",
+                overrides=TitleInfo(
+                    title="Use <code>{{.Action}}</code>",
+                    title_abbrev="<code>{{.Action}}</code>",
+                    synopsis="use <code>{{.Action}}</code>.",
+                ),
+            )
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    "order",
+    [
+        S3_API_ACTIONS,
+        list(reversed(S3_API_ACTIONS)),
+        sorted(S3_API_ACTIONS),
+        sorted(S3_API_ACTIONS, reverse=True),
+    ],
+)
+def test_fill_fields_same_for_any_action_order(order: List[str]):
+    doc_gen = s3_api_doc_gen(OrderedSet(order))
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["s3_Api"]
+    assert [example.title, example.title_abbrev, example.synopsis] == [
+        "Use <code>CreateBucket</code>",
+        "<code>CreateBucket</code>",
+        "use <code>CreateBucket</code>.",
+    ]
 
 
 def test_language_not_in_sdks():
