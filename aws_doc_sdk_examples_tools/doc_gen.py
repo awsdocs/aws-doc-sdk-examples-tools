@@ -296,7 +296,7 @@ class DocGen:
                 # TODO Log and find which tributaries this effects, as it was supposed to be caught by validations.
                 service_id = id_service
             action = (
-                next((k for k in example.services.get(service_id, [])), None)
+                min(example.services.get(service_id, []), default=None)
                 or safe_split_id(example.id)[1]
             )
             if action is None:

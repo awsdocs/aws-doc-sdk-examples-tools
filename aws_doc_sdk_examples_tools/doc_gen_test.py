@@ -8,6 +8,7 @@ Test for that parts of DocGen that aren't file I/O.
 import pytest
 from pathlib import Path
 import json
+from typing import Dict, Iterator, List
 
 from .categories import Category, TitleInfo
 from .doc_gen import DocGen, DocGenEncoder
@@ -304,6 +305,278 @@ def test_fill_fields(sample_doc_gen: DocGen):
     assert example.title == "<code>PutObject</code>"
     assert example.title_abbrev == "ExcerptPartsUsage"
     assert example.synopsis == "&S3; PutObject"
+
+
+def test_fill_fields_without_template_uses_service():
+    doc_gen = DocGen(
+        root=Path("/test/root"),
+        errors=MetadataErrors(),
+        services={
+            "acm": Service(
+                long="&ACMlong;",
+                short="&ACM;",
+                sort="ACM",
+                version="2015-12-08",
+                sdk_id="ACM",
+            )
+        },
+        examples={
+            "acm_Scenario": Example(
+                "acm_Scenario",
+                file=Path("acm_metadata.yaml"),
+                languages={},
+                title="Manage certificates",
+                title_abbrev="Manage certificates",
+                category="Scenarios",
+                synopsis_list=["Request a certificate.", "Delete it."],
+                services={"acm": {"RequestCertificate", "DeleteCertificate"}},
+            )
+        },
+        categories={"Scenarios": Category("Scenarios", "Scenarios")},
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["acm_Scenario"]
+    assert example.title == "Manage certificates"
+    assert example.title_abbrev == "Manage certificates"
+    assert example.synopsis == "&ACM;"
+
+
+S3_API_ACTIONS = [
+    "PutObject",
+    "GetObject",
+    "ListObjects",
+    "HeadObject",
+    "DeleteBucket",
+    "CreateBucket",
+]
+
+
+class OrderedSet(set):
+    """A set that iterates in the order of a given list."""
+
+    def __init__(self, order: List[str]):
+        super().__init__(order)
+        self.order = order
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.order)
+
+
+def s3_api_doc_gen(actions: OrderedSet) -> DocGen:
+    return DocGen(
+        root=Path("/test/root"),
+        errors=MetadataErrors(),
+        services={
+            "s3": Service(
+                long="&S3long;",
+                short="&S3;",
+                sort="Amazon S3",
+                version="2006-03-01",
+                sdk_id="S3",
+            )
+        },
+        examples={
+            "s3_Api": Example(
+                "s3_Api",
+                file=Path("s3_metadata.yaml"),
+                languages={},
+                services={"s3": actions},
+            )
+        },
+        categories={
+            "Actions": Category(
+                "Actions",
+                "Actions",
+                overrides=TitleInfo(
+                    title="Use <code>{{.Action}}</code>",
+                    title_abbrev="<code>{{.Action}}</code>",
+                    synopsis="use <code>{{.Action}}</code>.",
+                ),
+            )
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    "order",
+    [
+        S3_API_ACTIONS,
+        list(reversed(S3_API_ACTIONS)),
+        sorted(S3_API_ACTIONS),
+        sorted(S3_API_ACTIONS, reverse=True),
+    ],
+)
+def test_fill_fields_same_for_any_action_order(order: List[str]):
+    doc_gen = s3_api_doc_gen(OrderedSet(order))
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["s3_Api"]
+    assert [example.title, example.title_abbrev, example.synopsis] == [
+        "Use <code>CreateBucket</code>",
+        "<code>CreateBucket</code>",
+        "use <code>CreateBucket</code>.",
+    ]
+
+
+def category_doc_gen(examples: Dict[str, Example]) -> DocGen:
+    """A DocGen with categories shaped like config/categories.yaml, plus a
+    source-defined category with no templates."""
+    return DocGen(
+        root=Path("/test/root"),
+        errors=MetadataErrors(),
+        services={
+            "s3": Service(
+                long="&S3long;",
+                short="&S3;",
+                sort="Amazon S3",
+                sdk_id="S3",
+                version="2006-03-01",
+            ),
+            "sqs": Service(
+                long="&SQSlong;",
+                short="&SQS;",
+                sort="Amazon SQS",
+                sdk_id="SQS",
+                version="2012-11-05",
+            ),
+        },
+        categories={
+            "Actions": Category(
+                "Actions",
+                "Actions",
+                overrides=TitleInfo(
+                    title="Use <code>{{.Action}}</code>",
+                    title_abbrev="<code>{{.Action}}</code>",
+                    synopsis="use <code>{{.Action}}</code>.",
+                ),
+            ),
+            "Basics": Category(
+                "Basics",
+                "Basics",
+                defaults=TitleInfo(
+                    title="Learn the basics of {{.ServiceEntity.Short}}",
+                    title_abbrev="Learn the basics",
+                ),
+            ),
+            "Scenarios": Category("Scenarios", "Scenarios"),
+            "Policies": Category("Policies", "Policies"),
+        },
+        examples=examples,
+    )
+
+
+@pytest.mark.parametrize("category", ["Custom category", "Policies"])
+def test_fill_fields_category_without_templates_keeps_yaml_fields(category):
+    doc_gen = category_doc_gen(
+        {
+            "s3_Custom": Example(
+                "s3_Custom",
+                file=Path("s3_metadata.yaml"),
+                languages={},
+                title="Upload a file with a custom category",
+                title_abbrev="Upload a file",
+                synopsis="upload a file to a bucket.",
+                category=category,
+                services={"s3": {"PutObject"}},
+            )
+        }
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["s3_Custom"]
+    assert example.title == "Upload a file with a custom category"
+    assert example.title_abbrev == "Upload a file"
+    assert example.synopsis == "upload a file to a bucket."
+
+
+@pytest.mark.parametrize("category", ["Custom category", "Policies"])
+def test_fill_fields_category_without_templates_or_yaml_fields_stays_empty(
+    category,
+):
+    doc_gen = category_doc_gen(
+        {
+            "s3_Custom": Example(
+                "s3_Custom",
+                file=Path("s3_metadata.yaml"),
+                languages={},
+                category=category,
+                services={"s3": {"PutObject"}},
+            )
+        }
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["s3_Custom"]
+    assert example.title == ""
+    assert example.title_abbrev == ""
+    assert example.synopsis == ""
+
+
+@pytest.mark.parametrize("category", [None, "", "Api"])
+def test_fill_fields_empty_category_one_service_uses_actions(category):
+    doc_gen = category_doc_gen(
+        {
+            "s3_PutObject": Example(
+                "s3_PutObject",
+                file=Path("s3_metadata.yaml"),
+                languages={},
+                title="YAML title",
+                category=category,
+                services={"s3": {"PutObject"}},
+            )
+        }
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["s3_PutObject"]
+    assert example.title == "Use <code>PutObject</code>"
+    assert example.title_abbrev == "<code>PutObject</code>"
+    assert example.synopsis == "use <code>PutObject</code>."
+
+
+@pytest.mark.parametrize("category", [None, "", "Scenarios"])
+def test_fill_fields_empty_category_many_services_uses_scenarios(category):
+    doc_gen = category_doc_gen(
+        {
+            "cross_Queue": Example(
+                "cross_Queue",
+                file=Path("cross_metadata.yaml"),
+                languages={},
+                title="Send S3 events to a queue",
+                category=category,
+                services={"s3": {"PutObject"}, "sqs": {"SendMessage"}},
+            )
+        }
+    )
+    doc_gen.fill_missing_fields()
+    example = doc_gen.examples["cross_Queue"]
+    assert example.title == "Send S3 events to a queue"
+    assert example.title_abbrev == "&S3;"
+    assert example.synopsis == "&S3;"
+
+
+def test_fill_fields_shipped_basics_default_synopsis():
+    doc_gen = DocGen.default()
+    doc_gen.examples = {
+        "s3_Basics": Example(
+            "s3_Basics",
+            file=Path("s3_metadata.yaml"),
+            languages={},
+            category="Basics",
+            synopsis_list=["Create a bucket."],
+            services={"s3": {"CreateBucket"}},
+        ),
+        "s3_BasicsWithSynopsis": Example(
+            "s3_BasicsWithSynopsis",
+            file=Path("s3_metadata.yaml"),
+            languages={},
+            category="Basics",
+            synopsis="create a bucket and upload a file.",
+            services={"s3": {"CreateBucket"}},
+        ),
+    }
+    doc_gen.fill_missing_fields()
+    assert doc_gen.examples["s3_Basics"].synopsis == "learn the basics of &S3;."
+    assert (
+        doc_gen.examples["s3_BasicsWithSynopsis"].synopsis
+        == "create a bucket and upload a file."
+    )
 
 
 def test_language_not_in_sdks():

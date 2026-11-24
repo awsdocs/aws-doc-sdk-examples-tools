@@ -23,6 +23,7 @@ categories:
     defaults:
       title: "Learn the basics of {{.ServiceEntity.Short}} with an &AWS; SDK"
       title_abbrev: "Learn the basics"
+      synopsis: "learn the basics of {{.ServiceEntity.Short}}."
     description: "are code examples that show you how to perform the essential operations within a service."
   Scenarios:
     display: "Scenarios"
