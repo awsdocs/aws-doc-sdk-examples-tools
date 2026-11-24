@@ -207,10 +207,21 @@ class Example:
         Original Zexii code at https://code.amazon.com/packages/GoAmzn-AWSDocsCodeExampleDocBuilder/blobs/1321fffadd8ff02e6acbae4a1f42b81006cdfa72/--/zexi/zonbook/category.go#L31-L50.
         """
         if self.category in categories:
-            return categories[self.category]
-        if len(self.services) == 1:
-            return categories["Actions"]
-        return categories["Scenarios"]
+            category = categories[self.category]
+            # A category with no templates, other than the standard Scenarios,
+            # leaves the YAML title, title_abbrev and synopsis as they are.
+            if category.overrides or category.defaults or self.category == "Scenarios":
+                return category
+            return None
+        # Only an example without a category of its own falls back by service
+        # count. yaml_mapper records an empty YAML category as "Api" or
+        # "Scenarios". Any other category has no templates, so the example
+        # keeps its YAML title, title_abbrev and synopsis.
+        if self.category in (None, "", "Api"):
+            if len(self.services) == 1:
+                return categories.get("Actions")
+            return categories.get("Scenarios")
+        return None
 
     def merge(self, other: Example, errors: MetadataErrors):
         """Combine `other` Example into self example.
